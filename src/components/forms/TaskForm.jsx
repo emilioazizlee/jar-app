@@ -11,6 +11,7 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { TASK_TYPES, TASK_STATUSES } from '@/lib/constants';
 import { format } from 'date-fns';
+import StepSequencer from '@/components/tasks/StepSequencer';
 
 export default function TaskForm({ open, onClose, onSaved }) {
   const queryClient = useQueryClient();
@@ -33,6 +34,7 @@ export default function TaskForm({ open, onClose, onSaved }) {
     expected_output: '',
     tags: [],
     subtasks: [],
+    steps: [],
   });
   const [tagInput, setTagInput] = useState('');
   const [subtaskInput, setSubtaskInput] = useState('');
@@ -74,6 +76,7 @@ export default function TaskForm({ open, onClose, onSaved }) {
       expected_output: form.expected_output,
       tags: form.tags.length ? form.tags : undefined,
       subtasks: form.subtasks.length ? form.subtasks : undefined,
+      description: form.steps.length ? JSON.stringify({ steps: form.steps }) : form.description,
     });
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });
@@ -148,6 +151,11 @@ export default function TaskForm({ open, onClose, onSaved }) {
               <Label className="text-xs text-muted-foreground font-mono">DEADLINE</Label>
               <Input type="date" value={form.deadline} onChange={e => update('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" />
             </div>
+          </div>
+
+          {/* Step Sequencer */}
+          <div className="border-t border-border pt-4">
+            <StepSequencer steps={form.steps} onChange={v => update('steps', v)} />
           </div>
 
           {/* Subtasks */}

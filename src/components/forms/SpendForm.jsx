@@ -11,6 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
+import SmokeForm from './SmokeForm';
+import GroceriesForm from './GroceriesForm';
+
+const SMOKE_CATEGORIES = ['zz', 'cigarettes'];
+const ITEMIZED_CATEGORIES = ['groceries', 'food_out', 'pharmacy'];
 
 export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
   const queryClient = useQueryClient();
@@ -26,9 +31,20 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
+  // Route to specialized forms (after all hooks)
+  if (category && SMOKE_CATEGORIES.includes(category)) {
+    return <SmokeForm open={open} onClose={onClose} onSaved={onSaved} category={category} />;
+  }
+  if (category && ITEMIZED_CATEGORIES.includes(category)) {
+    return <GroceriesForm open={open} onClose={onClose} onSaved={onSaved} category={category} />;
+  }
+
   const selectCategory = (cat) => {
     setCategory(cat);
-    setStep('details');
+    // Smoke and itemized categories are handled by routing above — just set category
+    if (!SMOKE_CATEGORIES.includes(cat) && !ITEMIZED_CATEGORIES.includes(cat)) {
+      setStep('details');
+    }
   };
 
   const handleSave = async () => {

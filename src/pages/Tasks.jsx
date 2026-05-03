@@ -130,11 +130,30 @@ export default function Tasks() {
                       <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${task.progress}%` }} />
                     </div>
                   )}
-                  {task.subtasks?.length > 0 && (
-                    <p className="font-mono text-[10px] text-muted-foreground mt-1">
-                      {task.subtasks.filter(s => s.done).length}/{task.subtasks.length} subtasks
-                    </p>
-                  )}
+                  {(() => {
+                    try {
+                      const desc = JSON.parse(task.description || '{}');
+                      const steps = desc.steps || [];
+                      if (steps.length > 0) {
+                        const doneCount = steps.filter(s => s.status === 'done').length;
+                        const totalMin = steps.reduce((sum, s) => sum + (Number(s.duration) || 0), 0);
+                        return (
+                          <div className="flex items-center gap-3 mt-1">
+                            <p className="font-mono text-[10px] text-muted-foreground">{doneCount}/{steps.length} steps</p>
+                            {totalMin > 0 && <p className="font-mono text-[10px] text-muted-foreground">{totalMin}m</p>}
+                            <div className="h-1 bg-muted rounded-full overflow-hidden w-24">
+                              <div className="h-full bg-primary rounded-full" style={{ width: `${steps.length ? (doneCount / steps.length) * 100 : 0}%` }} />
+                            </div>
+                          </div>
+                        );
+                      }
+                    } catch {}
+                    return task.subtasks?.length > 0 ? (
+                      <p className="font-mono text-[10px] text-muted-foreground mt-1">
+                        {task.subtasks.filter(s => s.done).length}/{task.subtasks.length} subtasks
+                      </p>
+                    ) : null;
+                  })()}
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
