@@ -1,0 +1,22 @@
+{
+  "name": "Link",
+  "type": "object",
+  "properties": {
+    "from_item_id": {
+      "type": "string",
+      "description": "Source item ID"
+    },
+    "to_item_id": {
+      "type": "string",
+      "description": "Target item ID"
+    },
+    "relationship": {
+      "type": "string",
+      "description": "Type of relationship"
+    }
+  },
+  "required": [
+    "from_item_id",
+    "to_item_id"
+  ]
+}

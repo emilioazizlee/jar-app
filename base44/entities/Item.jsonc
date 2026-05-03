@@ -1,0 +1,189 @@
+{
+  "name": "Item",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "task",
+        "spend",
+        "subscription",
+        "payment",
+        "meeting",
+        "note",
+        "goal",
+        "contact"
+      ],
+      "description": "Item type"
+    },
+    "title": {
+      "type": "string",
+      "description": "Item title"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category within the type"
+    },
+    "status": {
+      "type": "string",
+      "description": "Current status"
+    },
+    "priority": {
+      "type": "number",
+      "description": "Priority 1-5"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Monetary amount or quantity"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "description": "Currency"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Quantity/units"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Item date"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Deadline"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date"
+    },
+    "duration_estimate": {
+      "type": "number",
+      "description": "Estimated hours"
+    },
+    "time_logged": {
+      "type": "number",
+      "description": "Hours logged"
+    },
+    "progress": {
+      "type": "number",
+      "description": "Progress percentage 0-100"
+    },
+    "recurring": {
+      "type": "string",
+      "enum": [
+        "none",
+        "daily",
+        "weekly",
+        "monthly",
+        "custom"
+      ],
+      "description": "Recurrence pattern"
+    },
+    "billing_cycle": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "description": "Billing cycle for subscriptions"
+    },
+    "next_renewal": {
+      "type": "string",
+      "format": "date",
+      "description": "Next renewal date"
+    },
+    "description": {
+      "type": "string",
+      "description": "Full description"
+    },
+    "note": {
+      "type": "string",
+      "description": "Quick note"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags"
+    },
+    "subtasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Subtask checklist"
+    },
+    "linked_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of linked items"
+    },
+    "for_whom": {
+      "type": "string",
+      "description": "Client/professor/self"
+    },
+    "assigned_by": {
+      "type": "string",
+      "description": "Who assigned"
+    },
+    "expected_output": {
+      "type": "string",
+      "description": "Expected outcome"
+    },
+    "actual_output": {
+      "type": "string",
+      "description": "Actual outcome"
+    },
+    "reflection": {
+      "type": "string",
+      "description": "Reflection"
+    },
+    "contact_info": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "description": "Contact details"
+    },
+    "is_active": {
+      "type": "boolean",
+      "description": "Whether subscription/item is active"
+    }
+  },
+  "required": [
+    "type",
+    "title"
+  ]
+}
