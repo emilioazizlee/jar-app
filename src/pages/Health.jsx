@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { format, subDays, isSameDay, startOfMonth, startOfWeek } from 'date-fns';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { ResponsiveLine } from '@nivo/line';
+import { nivoTheme } from '@/lib/nivoTheme';
 import JarVisual from '@/components/jar/JarVisual';
 
 const SMOKE_CATS = ['zz', 'cigarettes'];
@@ -99,28 +100,38 @@ export default function Health() {
       {/* 30-day trend chart */}
       <div className="bg-card border border-border rounded-2xl p-5">
         <p className="mono-header text-[10px] text-muted-foreground mb-4">30-DAY TREND</p>
-        <ResponsiveContainer width="100%" height={180}>
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="gZz" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ffee32" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#ffee32" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="gCig" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#c1121f" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#c1121f" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="date" tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#666' }} tickLine={false} axisLine={false} interval={6} />
-            <YAxis tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#666' }} tickLine={false} axisLine={false} />
-            <Tooltip contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontFamily: 'JetBrains Mono', fontSize: 11 }} />
-            <Area type="monotone" dataKey="Zz" stroke="#ffee32" fill="url(#gZz)" strokeWidth={2} dot={false} />
-            <Area type="monotone" dataKey="Cigarettes" stroke="#c1121f" fill="url(#gCig)" strokeWidth={2} dot={false} />
-          </AreaChart>
-        </ResponsiveContainer>
+        <div className="h-44">
+          <ResponsiveLine
+            data={[
+              { id: 'Zz', color: '#ffee32', data: chartData.map(d => ({ x: d.date, y: d.Zz })) },
+              { id: 'Cigarettes', color: '#c1121f', data: chartData.map(d => ({ x: d.date, y: d.Cigarettes })) },
+            ]}
+            theme={nivoTheme}
+            colors={['#ffee32', '#c1121f']}
+            curve="monotoneX"
+            enableArea={true}
+            areaOpacity={0.12}
+            lineWidth={2}
+            pointSize={0}
+            enableSlices="x"
+            useMesh={false}
+            enableGridX={false}
+            axisBottom={{ tickSize: 0, tickPadding: 6, tickValues: 5 }}
+            axisLeft={{ tickSize: 0, tickPadding: 6 }}
+            margin={{ top: 10, right: 10, bottom: 30, left: 30 }}
+            motionConfig="gentle"
+            sliceTooltip={({ slice }) => (
+              <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                {slice.points.map(p => (
+                  <div key={p.id}><span style={{ color: p.serieColor }}>■</span> {p.serieId}: <strong>{p.data.y}</strong></div>
+                ))}
+              </div>
+            )}
+          />
+        </div>
         <div className="flex items-center gap-4 mt-2">
-          <div className="flex items-center gap-1.5"><div className="w-3 h-1 rounded bg-yellow-400" /><span className="font-mono text-[10px] text-muted-foreground">Zz</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-3 h-1 rounded bg-red-500" /><span className="font-mono text-[10px] text-muted-foreground">Cigarettes</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-1 rounded" style={{ background: '#ffee32' }} /><span className="font-mono text-[10px] text-muted-foreground">Zz</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-1 rounded" style={{ background: '#c1121f' }} /><span className="font-mono text-[10px] text-muted-foreground">Cigarettes</span></div>
         </div>
       </div>
 

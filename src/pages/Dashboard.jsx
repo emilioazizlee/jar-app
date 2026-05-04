@@ -9,8 +9,10 @@ import RecentEntries from '@/components/dashboard/RecentEntries';
 import JarVisual from '@/components/jar/JarVisual';
 import SpendForm from '@/components/forms/SpendForm';
 import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from 'recharts';
+import { ResponsivePie } from '@nivo/pie';
+import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor } from '@/lib/constants';
+import { nivoTheme } from '@/lib/nivoTheme';
 
 const QUICK_TAPS = [
   { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },
@@ -98,11 +100,21 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard title="THIS MONTH" value={totalJarsMonth} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>
           <div className="w-24 h-12">
-            <ResponsiveContainer>
-              <AreaChart data={chartData}>
-                <Area type="monotone" dataKey="count" stroke={PALETTE.green} fill={PALETTE.green} fillOpacity={0.1} strokeWidth={1.5} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <ResponsiveBar
+              data={chartData.slice(-14).map(d => ({ day: d.day, count: d.count }))}
+              keys={['count']}
+              indexBy="day"
+              theme={nivoTheme}
+              colors={PALETTE.green}
+              borderRadius={2}
+              padding={0.3}
+              enableLabel={false}
+              enableGridY={false}
+              axisBottom={null}
+              axisLeft={null}
+              isInteractive={false}
+              animate={false}
+            />
           </div>
         </StatCard>
 
@@ -142,15 +154,30 @@ export default function Dashboard() {
           {categoryData.length > 0 ? (
             <div className="flex items-center gap-4">
               <div className="w-28 h-28">
-                <ResponsiveContainer>
-                  <PieChart>
-                    <Pie data={categoryData} innerRadius={30} outerRadius={50} paddingAngle={2} dataKey="value">
-                      {categoryData.map((entry, i) => (
-                        <Cell key={i} fill={getCategoryColor(entry.name?.toLowerCase().replace(/ /g,'_'), i)} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+                <ResponsivePie
+                  data={categoryData.map(c => ({
+                    id: c.name,
+                    label: c.name,
+                    value: c.value,
+                    color: getCategoryColor(c.name?.toLowerCase().replace(/ /g, '_')),
+                  }))}
+                  colors={({ data }) => data.color}
+                  innerRadius={0.65}
+                  padAngle={2}
+                  cornerRadius={3}
+                  borderWidth={0}
+                  enableArcLinkLabels={false}
+                  enableArcLabels={false}
+                  activeOuterRadiusOffset={6}
+                  theme={nivoTheme}
+                  motionConfig="gentle"
+                  isInteractive={true}
+                  tooltip={({ datum }) => (
+                    <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                      <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>{datum.value}</strong>
+                    </div>
+                  )}
+                />
               </div>
               <div className="space-y-1 flex-1">
                 {categoryData.slice(0, 5).map((cat, i) => (

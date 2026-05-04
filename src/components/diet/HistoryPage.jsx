@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { format, subDays, parseISO } from 'date-fns';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { ResponsiveLine } from '@nivo/line';
+import { nivoTheme } from '@/lib/nivoTheme';
 
 export default function HistoryPage() {
   const { data: logs = [] } = useQuery({
@@ -82,16 +83,38 @@ export default function HistoryPage() {
 
       <div className="bg-card border border-border rounded-xl p-4">
         <p className="font-mono text-[10px] text-muted-foreground mb-3">WEEKLY CALORIES & PROTEIN</p>
-        <ResponsiveContainer width="100%" height={160}>
-          <LineChart data={last30Days.filter((_, i) => i % 3 === 0)}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" />
-            <XAxis dataKey="label" tick={{ fontSize: 9, fontFamily: 'monospace', fill: '#777' }} />
-            <YAxis tick={{ fontSize: 9, fontFamily: 'monospace', fill: '#777' }} />
-            <Tooltip contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontFamily: 'monospace', fontSize: 11 }} />
-            <Line type="monotone" dataKey="calories" stroke="#abff4f" strokeWidth={1.5} dot={false} name="kcal" />
-            <Line type="monotone" dataKey="protein" stroke="#0096c7" strokeWidth={1.5} dot={false} name="protein g" />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="h-40">
+          <ResponsiveLine
+            data={[
+              { id: 'kcal', color: '#abff4f', data: last30Days.filter((_, i) => i % 3 === 0).map(d => ({ x: d.label, y: d.calories })) },
+              { id: 'protein g', color: '#0096c7', data: last30Days.filter((_, i) => i % 3 === 0).map(d => ({ x: d.label, y: d.protein })) },
+            ]}
+            theme={nivoTheme}
+            colors={['#abff4f', '#0096c7']}
+            curve="monotoneX"
+            lineWidth={1.5}
+            pointSize={0}
+            enableArea={false}
+            enableSlices="x"
+            useMesh={false}
+            enableGridX={false}
+            axisBottom={{ tickSize: 0, tickPadding: 5 }}
+            axisLeft={{ tickSize: 0, tickPadding: 5 }}
+            margin={{ top: 10, right: 10, bottom: 28, left: 40 }}
+            motionConfig="gentle"
+            sliceTooltip={({ slice }) => (
+              <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                {slice.points.map(p => (
+                  <div key={p.id}><span style={{ color: p.serieColor }}>■</span> {p.serieId}: <strong>{p.data.y}</strong></div>
+                ))}
+              </div>
+            )}
+          />
+        </div>
+        <div className="flex items-center gap-4 mt-1">
+          <div className="flex items-center gap-1.5"><div className="w-3 h-1 rounded" style={{ background: '#abff4f' }} /><span className="font-mono text-[10px] text-muted-foreground">kcal</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-1 rounded" style={{ background: '#0096c7' }} /><span className="font-mono text-[10px] text-muted-foreground">protein g</span></div>
+        </div>
       </div>
     </div>
   );

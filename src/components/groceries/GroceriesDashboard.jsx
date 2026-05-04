@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { format, startOfMonth } from 'date-fns';
 import { ShoppingCart, Package, AlertTriangle, Store, Database } from 'lucide-react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-
+import { ResponsivePie } from '@nivo/pie';
 import { CHART_COLORS, PALETTE } from '@/lib/constants';
+import { nivoTheme } from '@/lib/nivoTheme';
 const COLORS = CHART_COLORS;
 
 function StatCard({ icon: Icon, label, value, sub, color = PALETTE.green }) {
@@ -66,14 +66,26 @@ export default function GroceriesDashboard() {
         {byStore.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-4">
             <p className="font-mono text-[10px] text-muted-foreground mb-3">SPEND BY STORE</p>
-            <ResponsiveContainer width="100%" height={160}>
-              <PieChart>
-                <Pie data={byStore} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={65} strokeWidth={0}>
-                  {byStore.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                </Pie>
-                <Tooltip formatter={(v) => `€${v.toFixed(2)}`} contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontFamily: 'monospace', fontSize: 11 }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="h-40">
+              <ResponsivePie
+                data={byStore.map((s, i) => ({ id: s.name, label: s.name, value: s.value, color: COLORS[i % COLORS.length] }))}
+                colors={({ data }) => data.color}
+                innerRadius={0.6}
+                padAngle={2}
+                cornerRadius={3}
+                borderWidth={0}
+                enableArcLinkLabels={false}
+                enableArcLabels={false}
+                activeOuterRadiusOffset={6}
+                theme={nivoTheme}
+                motionConfig="gentle"
+                tooltip={({ datum }) => (
+                  <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                    <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>€{datum.value.toFixed(2)}</strong>
+                  </div>
+                )}
+              />
+            </div>
             <div className="flex flex-wrap gap-2 mt-2">
               {byStore.map((s, i) => (
                 <div key={s.name} className="flex items-center gap-1">
@@ -87,14 +99,26 @@ export default function GroceriesDashboard() {
         {byCategory.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-4">
             <p className="font-mono text-[10px] text-muted-foreground mb-3">SPEND BY CATEGORY</p>
-            <ResponsiveContainer width="100%" height={160}>
-              <PieChart>
-                <Pie data={byCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={65} strokeWidth={0}>
-                  {byCategory.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                </Pie>
-                <Tooltip formatter={(v) => `€${v.toFixed(2)}`} contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontFamily: 'monospace', fontSize: 11 }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="h-40">
+              <ResponsivePie
+                data={byCategory.map((c, i) => ({ id: c.name, label: c.name, value: c.value, color: COLORS[i % COLORS.length] }))}
+                colors={({ data }) => data.color}
+                innerRadius={0.6}
+                padAngle={2}
+                cornerRadius={3}
+                borderWidth={0}
+                enableArcLinkLabels={false}
+                enableArcLabels={false}
+                activeOuterRadiusOffset={6}
+                theme={nivoTheme}
+                motionConfig="gentle"
+                tooltip={({ datum }) => (
+                  <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                    <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>€{datum.value.toFixed(2)}</strong>
+                  </div>
+                )}
+              />
+            </div>
           </div>
         )}
       </div>

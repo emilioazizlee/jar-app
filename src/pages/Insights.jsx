@@ -3,7 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { format, subDays, isSameDay, startOfMonth, differenceInDays } from 'date-fns';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, LabelList } from 'recharts';
+import { ResponsivePie } from '@nivo/pie';
+import { ResponsiveBar } from '@nivo/bar';
+import { ResponsiveLine } from '@nivo/line';
+import { nivoTheme } from '@/lib/nivoTheme';
 import JarVisual from '@/components/jar/JarVisual';
 import { ITEM_TYPES, CHART_COLORS, PALETTE, getCategoryColor } from '@/lib/constants';
 
@@ -84,61 +87,92 @@ export default function Insights() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card border border-border rounded-2xl p-5">
         <p className="mono-header text-[10px] text-muted-foreground mb-4">30-DAY ACTIVITY</p>
         <div className="h-48">
-          <ResponsiveContainer>
-            <BarChart data={dailyData}>
-              <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} width={30} />
-              <Tooltip
-                contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: '#7a7a7a', fontFamily: 'JetBrains Mono' }}
-              />
-              <Bar dataKey="count" fill={PALETTE.blue} radius={[4, 4, 0, 0]} fillOpacity={0.7} />
-            </BarChart>
-          </ResponsiveContainer>
+          <ResponsiveBar
+            data={dailyData}
+            keys={['count']}
+            indexBy="day"
+            theme={nivoTheme}
+            colors={PALETTE.blue}
+            borderRadius={4}
+            padding={0.3}
+            enableLabel={false}
+            enableGridY={true}
+            axisBottom={{ tickSize: 0, tickPadding: 6, tickRotation: 0 }}
+            axisLeft={{ tickSize: 0, tickPadding: 6 }}
+            margin={{ top: 10, right: 10, bottom: 30, left: 35 }}
+            tooltip={({ id, value, indexValue }) => (
+              <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                <span style={{ color: PALETTE.blue }}>■</span> {indexValue}: <strong>{value}</strong> entries
+              </div>
+            )}
+            motionConfig="gentle"
+          />
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Type distribution */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-4">TYPE DISTRIBUTION</p>
-          <div className="flex items-center gap-4">
-            <div className="w-32 h-32">
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie data={typeDistribution} innerRadius={35} outerRadius={55} paddingAngle={2} dataKey="value">
-                    {typeDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="space-y-1.5 flex-1">
-              {typeDistribution.map((t) => (
-                <div key={t.name} className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ background: t.color }} />
-                  <span className="font-mono text-xs text-muted-foreground flex-1">{t.name}</span>
-                  <span className="font-mono text-xs text-foreground">{t.value}</span>
+        <p className="mono-header text-[10px] text-muted-foreground mb-4">TYPE DISTRIBUTION</p>
+        <div className="flex items-center gap-4">
+          <div className="w-32 h-32">
+            <ResponsivePie
+              data={typeDistribution.map(t => ({ id: t.name, label: t.name, value: t.value, color: t.color }))}
+              colors={({ data }) => data.color}
+              innerRadius={0.65}
+              padAngle={2}
+              cornerRadius={3}
+              borderWidth={0}
+              enableArcLinkLabels={false}
+              enableArcLabels={false}
+              activeOuterRadiusOffset={6}
+              theme={nivoTheme}
+              motionConfig="gentle"
+              tooltip={({ datum }) => (
+                <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                  <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>{datum.value}</strong>
                 </div>
-              ))}
-            </div>
+              )}
+            />
           </div>
+          <div className="space-y-1.5 flex-1">
+            {typeDistribution.map((t) => (
+              <div key={t.name} className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ background: t.color }} />
+                <span className="font-mono text-xs text-muted-foreground flex-1">{t.name}</span>
+                <span className="font-mono text-xs text-foreground">{t.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
         </motion.div>
 
         {/* Top spend categories */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-card border border-border rounded-2xl p-5">
           <p className="mono-header text-[10px] text-muted-foreground mb-4">TOP SPEND CATEGORIES</p>
           <div className="h-48">
-            <ResponsiveContainer>
-              <BarChart data={topSpendCats} layout="vertical">
-                <XAxis type="number" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} width={80} />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]} fillOpacity={0.8}>
-                    {topSpendCats.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
-                    ))}
-                  </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <ResponsiveBar
+              data={topSpendCats.map(c => ({ category: c.name, value: parseFloat(c.value.toFixed(2)), color: c.color }))}
+              keys={['value']}
+              indexBy="category"
+              layout="horizontal"
+              theme={nivoTheme}
+              colors={({ data }) => data.color}
+              borderRadius={4}
+              padding={0.3}
+              enableLabel={false}
+              enableGridX={true}
+              enableGridY={false}
+              axisLeft={{ tickSize: 0, tickPadding: 6 }}
+              axisBottom={{ tickSize: 0, tickPadding: 4, format: v => `€${v}` }}
+              margin={{ top: 5, right: 10, bottom: 30, left: 90 }}
+              tooltip={({ data, value }) => (
+                <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                  <span style={{ color: data.color }}>■</span> {data.category}: <strong>€{value.toFixed(2)}</strong>
+                </div>
+              )}
+              motionConfig="gentle"
+            />
           </div>
         </motion.div>
       </div>
@@ -147,17 +181,34 @@ export default function Insights() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-card border border-border rounded-2xl p-5">
         <p className="mono-header text-[10px] text-muted-foreground mb-4">DAILY SPEND TREND (30 DAYS)</p>
         <div className="h-48">
-          <ResponsiveContainer>
-            <LineChart data={dailyData}>
-              <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} width={40} />
-              <Tooltip
-                contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontSize: 12 }}
-                formatter={(v) => `€${v.toFixed(2)}`}
-              />
-              <Line type="monotone" dataKey="spent" stroke={PALETTE.orange} strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
+          <ResponsiveLine
+            data={[{
+              id: 'Spend',
+              color: PALETTE.orange,
+              data: dailyData.map(d => ({ x: d.day, y: d.spent })),
+            }]}
+            theme={nivoTheme}
+            colors={[PALETTE.orange]}
+            curve="monotoneX"
+            enableArea={true}
+            areaOpacity={0.15}
+            lineWidth={2}
+            pointSize={0}
+            enableSlices="x"
+            useMesh={false}
+            enableGridX={false}
+            axisBottom={{ tickSize: 0, tickPadding: 6, tickValues: 6 }}
+            axisLeft={{ tickSize: 0, tickPadding: 6, format: v => `€${v}` }}
+            margin={{ top: 10, right: 10, bottom: 30, left: 50 }}
+            motionConfig="gentle"
+            sliceTooltip={({ slice }) => (
+              <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                {slice.points.map(p => (
+                  <div key={p.id}><span style={{ color: PALETTE.orange }}>■</span> {p.data.xFormatted}: <strong>€{Number(p.data.y).toFixed(2)}</strong></div>
+                ))}
+              </div>
+            )}
+          />
         </div>
       </motion.div>
     </div>
