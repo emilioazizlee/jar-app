@@ -12,12 +12,12 @@ import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from 'recharts';
 
 const QUICK_TAPS = [
-  { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: '#ff9f43' },
-  { key: 'zz', label: 'Zz', icon: '💨', color: '#a855f7' },
-  { key: 'coffee', label: 'Coffee', icon: '☕', color: '#ffd60a' },
-  { key: 'taxi', label: 'Taxi', icon: '🚕', color: '#4da6ff' },
-  { key: 'food_out', label: 'Food Out', icon: '🍽️', color: '#ff2d2d' },
-  { key: 'groceries', label: 'Groceries', icon: '🛒', color: '#39ff14' },
+{ key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: '#ff9f43' },
+{ key: 'zz', label: 'Zz', icon: '💨', color: '#a855f7' },
+{ key: 'coffee', label: 'Coffee', icon: '☕', color: '#ffd60a' },
+{ key: 'taxi', label: 'Taxi', icon: '🚕', color: '#4da6ff' },
+{ key: 'food_out', label: 'Food Out', icon: '🍽️', color: '#ff2d2d' },
+{ key: 'groceries', label: 'Groceries', icon: '🛒', color: '#abff4f' },
 ];
 
 export default function Dashboard() {
@@ -42,16 +42,24 @@ export default function Dashboard() {
   const totalJarsToday = (todayItems.length / 10).toFixed(1);
 
   // Category distribution for donut
+  // Normalize category names: strip underscores, title-case, merge duplicates
+  const normalizeCategory = (raw) => {
+    if (!raw) return 'Other';
+    // Strip suffixes like _health, keep base name
+    const base = raw.replace(/_health$/, '').replace(/_/g, ' ');
+    return base.replace(/\b\w/g, c => c.toUpperCase());
+  };
+
   const categoryData = useMemo(() => {
     const counts = {};
     todayItems.forEach(i => {
-      const cat = i.category || i.type;
+      const cat = normalizeCategory(i.category || i.type);
       counts[cat] = (counts[cat] || 0) + 1;
     });
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [todayItems]);
 
-  const DONUT_COLORS = ['#39ff14', '#ffd60a', '#ff2d2d', '#4da6ff', '#a855f7', '#ff9f43', '#06d6a0', '#7a7a7a'];
+  const DONUT_COLORS = ['#abff4f', '#ffd60a', '#ff2d2d', '#4da6ff', '#a855f7', '#ff9f43', '#06d6a0', '#7a7a7a'];
 
   // 30-day chart data
   const chartData = useMemo(() => {
@@ -91,7 +99,7 @@ export default function Dashboard() {
           <div className="w-24 h-12">
             <ResponsiveContainer>
               <AreaChart data={chartData}>
-                <Area type="monotone" dataKey="count" stroke="#39ff14" fill="#39ff14" fillOpacity={0.1} strokeWidth={1.5} />
+                <Area type="monotone" dataKey="count" stroke="#abff4f" fill="#abff4f" fillOpacity={0.1} strokeWidth={1.5} />
               </AreaChart>
             </ResponsiveContainer>
           </div>

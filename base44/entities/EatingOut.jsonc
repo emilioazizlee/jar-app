@@ -1,0 +1,83 @@
+{
+  "name": "EatingOut",
+  "type": "object",
+  "properties": {
+    "place": {
+      "type": "string",
+      "description": "Restaurant / bar / cafe name"
+    },
+    "place_type": {
+      "type": "string",
+      "enum": [
+        "Restaurant",
+        "Bar",
+        "Cafe",
+        "Fast Food",
+        "Bakery",
+        "Other"
+      ],
+      "description": "Type of establishment"
+    },
+    "items_ordered": {
+      "type": "string",
+      "description": "Free-text list of items ordered"
+    },
+    "total": {
+      "type": "number",
+      "description": "Total bill amount"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "description": "Currency"
+    },
+    "people_with": {
+      "type": "string",
+      "description": "Who you were with"
+    },
+    "occasion": {
+      "type": "string",
+      "enum": [
+        "Casual",
+        "Date",
+        "Work",
+        "Celebration",
+        "Solo"
+      ],
+      "description": "Occasion / mood tag"
+    },
+    "meal_slot": {
+      "type": "string",
+      "enum": [
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+        "Snack"
+      ],
+      "description": "Meal slot"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date"
+    },
+    "time": {
+      "type": "string",
+      "description": "Time (HH:MM)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "place",
+    "date",
+    "meal_slot"
+  ]
+}

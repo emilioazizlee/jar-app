@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { format, startOfMonth, differenceInDays, parseISO, isAfter } from 'date-fns';
-import { ShoppingCart, Package, AlertTriangle, TrendingDown, Store, Trash2 } from 'lucide-react';
+import { format, startOfMonth } from 'date-fns';
+import { ShoppingCart, Package, AlertTriangle, Store, Database } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const COLORS = ['#39ff14', '#ffd60a', '#4da6ff', '#ff9f43', '#a855f7', '#ff2d2d', '#06d6a0', '#f97316'];
+const COLORS = ['#abff4f', '#ffd60a', '#4da6ff', '#ff9f43', '#a855f7', '#ff2d2d', '#06d6a0', '#f97316'];
 
-function StatCard({ icon: Icon, label, value, sub, color = '#39ff14' }) {
+function StatCard({ icon: Icon, label, value, sub, color = '#abff4f' }) {
   return (
     <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-1">
       <div className="flex items-center gap-2">
@@ -25,22 +25,13 @@ export default function GroceriesDashboard() {
   const monthStart = format(startOfMonth(now), 'yyyy-MM-dd');
 
   const { data: shops = [] } = useQuery({ queryKey: ['grocery-shops'], queryFn: () => base44.entities.GroceryShop.list('-date', 50) });
-  const { data: pantry = [] } = useQuery({ queryKey: ['pantry'], queryFn: () => base44.entities.PantryItem.list() });
-  const { data: spendItems = [] } = useQuery({ queryKey: ['items-month'], queryFn: () => base44.entities.Item.filter({ type: 'spend' }, '-date', 200) });
+  const { data: products = [] } = useQuery({ queryKey: ['grocery-products'], queryFn: () => base44.entities.GroceryProduct.list('-buy_count', 500) });
 
   const monthShops = useMemo(() => shops.filter(s => s.date >= monthStart), [shops, monthStart]);
   const monthTotal = useMemo(() => monthShops.reduce((s, sh) => s + (sh.total || 0), 0), [monthShops]);
 
-  const activePantry = useMemo(() => pantry.filter(p => !p.is_wasted), [pantry]);
-  const pantryValue = useMemo(() => activePantry.reduce((s, p) => s + ((p.purchase_price || 0) * (p.quantity || 0)), 0), [activePantry]);
-
-  const expiringSoon = useMemo(() => activePantry.filter(p => {
-    if (!p.expiry_date) return false;
-    const days = differenceInDays(parseISO(p.expiry_date), now);
-    return days <= 5;
-  }), [activePantry]);
-
-  const wasted = useMemo(() => pantry.filter(p => p.is_wasted), [pantry]);
+  const expiringSoon = [];
+  const wasted = [];
 
   const byStore = useMemo(() => {
     const map = {};
@@ -65,9 +56,9 @@ export default function GroceriesDashboard() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard icon={ShoppingCart} label="This Month" value={`€${monthTotal.toFixed(2)}`} sub={`${monthShops.length} shops`} color="#ffd60a" />
-        <StatCard icon={Package} label="Pantry Items" value={activePantry.length} sub={`~€${pantryValue.toFixed(2)} value`} />
-        <StatCard icon={AlertTriangle} label="Expiring Soon" value={expiringSoon.length} sub="within 5 days" color={expiringSoon.length > 0 ? '#ff2d2d' : '#39ff14'} />
-        <StatCard icon={Trash2} label="Wasted This Month" value={wasted.length} sub="items thrown out" color="#ff9f43" />
+        <StatCard icon={Database} label="Items DB" value={products.length} sub="unique products" />
+        <StatCard icon={AlertTriangle} label="Expiring Soon" value={expiringSoon.length} sub="within 5 days" color={expiringSoon.length > 0 ? '#ff2d2d' : '#abff4f'} />
+        <StatCard icon={Store} label="Shops This Month" value={monthShops.length} sub="trips" color="#ff9f43" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

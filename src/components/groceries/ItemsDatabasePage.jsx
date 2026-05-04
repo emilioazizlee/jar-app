@@ -77,7 +77,7 @@ function ProductCard({ product, onToggleStaple }) {
                       <XAxis dataKey="date" tick={{ fontSize: 9, fontFamily: 'monospace' }} tickFormatter={d => d?.slice(5)} />
                       <YAxis tick={{ fontSize: 9, fontFamily: 'monospace' }} width={35} />
                       <Tooltip formatter={v => `€${v?.toFixed(2)}`} contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 6, fontSize: 10, fontFamily: 'monospace' }} />
-                      <Line type="monotone" dataKey="price" stroke="#39ff14" strokeWidth={1.5} dot={{ r: 2 }} />
+                      <Line type="monotone" dataKey="price" stroke="#abff4f" strokeWidth={1.5} dot={{ r: 2 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

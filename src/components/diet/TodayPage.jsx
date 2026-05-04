@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const MEAL_SLOTS = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 const DIET_UNITS = ['g', 'ml', 'pcs', 'serving', 'cup', 'tbsp', 'tsp', 'L'];
-const SLOT_COLORS = { Breakfast: '#ffd60a', Lunch: '#39ff14', Dinner: '#4da6ff', Snack: '#ff9f43' };
+const SLOT_COLORS = { Breakfast: '#ffd60a', Lunch: '#abff4f', Dinner: '#4da6ff', Snack: '#ff9f43' };
 
 function AddFoodForm({ slot, onSave, onCancel }) {
   const [form, setForm] = useState({

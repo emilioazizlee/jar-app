@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBasket } from 'lucide-react';
 import GroceriesDashboard from '@/components/groceries/GroceriesDashboard';
-import PantryPage from '@/components/groceries/PantryPage';
+import AtHomePage from '@/components/groceries/AtHomePage';
 import ShoppingListPage from '@/components/groceries/ShoppingListPage';
 import ShopLogPage from '@/components/groceries/ShopLogPage';
 import ItemsDatabasePage from '@/components/groceries/ItemsDatabasePage';
@@ -11,7 +11,7 @@ import ReceiptMode from '@/components/groceries/ReceiptMode';
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard' },
-  { id: 'pantry', label: 'Pantry' },
+  { id: 'athome', label: 'At Home' },
   { id: 'list', label: 'Shopping List' },
   { id: 'log', label: 'Shop Log' },
   { id: 'items', label: 'Items DB' },
@@ -65,7 +65,7 @@ export default function Groceries() {
       {/* Content */}
       <div>
         {tab === 'dashboard' && <GroceriesDashboard />}
-        {tab === 'pantry' && <PantryPage onAddItem={openReceiptMode} />}
+        {tab === 'athome' && <AtHomePage />}
         {tab === 'list' && <ShoppingListPage onOpenReceiptMode={openReceiptMode} />}
         {tab === 'log' && <ShopLogPage onNewShop={() => setReceiptOpen(true)} />}
         {tab === 'items' && <ItemsDatabasePage />}

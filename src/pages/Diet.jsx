@@ -5,10 +5,11 @@ import TodayPage from '@/components/diet/TodayPage';
 import RecipesPage from '@/components/diet/RecipesPage';
 import GoalsPage from '@/components/diet/GoalsPage';
 import HistoryPage from '@/components/diet/HistoryPage';
+import EatingOutPage from '@/components/diet/EatingOutPage';
 
 const TABS = [
-  { id: 'dashboard', label: 'Dashboard' },
   { id: 'today', label: 'Today' },
+  { id: 'eating_out', label: 'Eating Out' },
   { id: 'recipes', label: 'Recipes' },
   { id: 'goals', label: 'Goals' },
   { id: 'history', label: 'History' },
@@ -45,8 +46,8 @@ export default function Diet() {
 
       {/* Content */}
       <div>
-        {tab === 'dashboard' && <DietDashboard />}
         {tab === 'today' && <TodayPage />}
+        {tab === 'eating_out' && <EatingOutPage />}
         {tab === 'recipes' && <RecipesPage />}
         {tab === 'goals' && <GoalsPage />}
         {tab === 'history' && <HistoryPage />}

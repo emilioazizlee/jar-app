@@ -1,27 +1,25 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Plus, X, AlertTriangle, ShoppingCart } from 'lucide-react';
+import { Trash2, AlertTriangle, ShoppingCart, ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import ProductAutocomplete from '@/components/shared/ProductAutocomplete';
-import { updateProductAfterPurchase, getOrCreateProduct } from '@/lib/productDB';
-import { invalidateProductCache } from '@/lib/productDB';
+import { updateProductAfterPurchase, getOrCreateProduct, invalidateProductCache } from '@/lib/productDB';
 
-const UNITS = ['kg', 'g', 'L', 'ml', 'pcs', 'pack', 'box', 'bottle', 'can'];
-const CATEGORIES = ['Produce', 'Dairy', 'Meat', 'Frozen', 'Pantry', 'Beverages', 'Household', 'Bakery', 'Snacks', 'Other'];
+const UNITS = ['pcs', 'kg', 'g', 'L', 'ml', 'pack', 'box', 'bottle', 'can'];
 const CURRENCIES = ['EUR', 'USD', 'AZN', 'RUB'];
 const SAVED_STORES = ['Mercadona', 'Carrefour', 'Lidl', 'Aldi', 'Bazar', 'Local Market'];
 
-const EXPIRY_DEFAULTS = {
-  Produce: 7, Dairy: 14, Meat: 5, Frozen: 90, Pantry: 365,
-  Beverages: 180, Household: 730, Bakery: 5, Snacks: 60, Other: 30,
+const CATEGORY_COLORS = {
+  Produce: '#abff4f', Dairy: '#4da6ff', Meat: '#ff9f43', Frozen: '#a855f7',
+  Pantry: '#ffd60a', Beverages: '#06d6a0', Household: '#7a7a7a', Bakery: '#ff9f43',
+  Snacks: '#ff2d2d', Other: '#555',
 };
 
-const emptyRow = () => ({ name: '', brand: '', quantity: 1, unit: 'pcs', price_per_unit: '', subtotal: 0, category: 'Other', product_id: null });
+const emptyRow = () => ({ id: Date.now() + Math.random(), name: '', brand: '', brandVisible: false, quantity: '', unit: 'pcs', price_per_unit: '', subtotal: 0, category: 'Other', product_id: null });
 
 export default function ReceiptMode({ open, onClose, onSaved }) {
   const qc = useQueryClient();
@@ -31,60 +29,97 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
   const [items, setItems] = useState([emptyRow()]);
   const [actualTotal, setActualTotal] = useState('');
   const [saving, setSaving] = useState(false);
+  const nameRefs = useRef({});
 
-  const updateItem = (i, k, v) => {
-    setItems(prev => {
-      const next = [...prev];
-      next[i] = { ...next[i], [k]: v };
-      const qty = k === 'quantity' ? Number(v) : Number(next[i].quantity);
-      const price = k === 'price_per_unit' ? Number(v) : Number(next[i].price_per_unit);
-      next[i].subtotal = qty * price;
+  // Top frequent items for chips
+  const { data: products = [] } = useQuery({
+    queryKey: ['grocery-products'],
+    queryFn: () => base44.entities.GroceryProduct.list('-buy_count', 20),
+  });
+
+  const topChips = useMemo(() => products.slice(0, 20), [products]);
+
+  const updateItem = (id, k, v) => {
+    setItems(prev => prev.map(row => {
+      if (row.id !== id) return row;
+      const next = { ...row, [k]: v };
+      const qty = k === 'quantity' ? Number(v) : Number(next.quantity);
+      const price = k === 'price_per_unit' ? Number(v) : Number(next.price_per_unit);
+      next.subtotal = (qty && price) ? parseFloat((qty * price).toFixed(2)) : 0;
       return next;
-    });
+    }));
   };
 
-  const handleProductSelected = (i, product) => {
-    setItems(prev => {
-      const next = [...prev];
-      next[i] = {
-        ...next[i],
+  const handleProductSelected = (id, product) => {
+    setItems(prev => prev.map(row => {
+      if (row.id !== id) return row;
+      const next = {
+        ...row,
         name: product.name,
-        brand: product.brand || next[i].brand,
-        unit: product.default_unit || next[i].unit,
-        price_per_unit: product.last_price ? String(product.last_price) : next[i].price_per_unit,
-        category: product.category || next[i].category,
+        brand: product.brand || row.brand,
+        unit: product.default_unit || row.unit,
+        price_per_unit: product.last_price ? String(product.last_price) : row.price_per_unit,
+        category: product.category || row.category,
         product_id: product.id || null,
       };
-      const qty = Number(next[i].quantity);
-      const price = Number(next[i].price_per_unit);
-      next[i].subtotal = qty * price;
+      const qty = Number(next.quantity) || 1;
+      const price = Number(next.price_per_unit);
+      next.subtotal = price ? parseFloat((qty * price).toFixed(2)) : 0;
       return next;
+    }));
+  };
+
+  const addRow = (prefill = null) => {
+    const row = emptyRow();
+    if (prefill) {
+      Object.assign(row, prefill, { subtotal: Number(prefill.quantity || 1) * Number(prefill.price_per_unit || 0) });
+    }
+    setItems(prev => [...prev, row]);
+    setTimeout(() => nameRefs.current[row.id]?.focus(), 50);
+  };
+
+  const removeRow = (id) => setItems(prev => prev.filter(r => r.id !== id));
+
+  const handleChipTap = (product) => {
+    addRow({
+      name: product.name,
+      brand: product.brand || '',
+      unit: product.default_unit || 'pcs',
+      price_per_unit: product.last_price ? String(product.last_price) : '',
+      category: product.category || 'Other',
+      product_id: product.id,
+      quantity: '1',
     });
   };
 
-  const addRow = () => setItems(prev => [...prev, emptyRow()]);
-  const removeRow = (i) => setItems(prev => prev.filter((_, j) => j !== i));
+  const handleRowKeyDown = (e, id, field) => {
+    if (e.key === 'Enter' && field === 'subtotal') {
+      e.preventDefault();
+      addRow();
+    }
+  };
 
   const total = useMemo(() => items.reduce((s, r) => s + (r.subtotal || 0), 0), [items]);
-  const discrepancy = actualTotal && Math.abs(total - Number(actualTotal)) > 0.05;
+  const discrepancy = actualTotal && Math.abs(total - Number(actualTotal)) > 0.05 ? (total - Number(actualTotal)) : null;
   const isValid = store.trim() && items.some(r => r.name.trim());
+  const currencySymbol = currency === 'EUR' ? '€' : currency === 'USD' ? '$' : currency;
 
   const handleSave = async () => {
     setSaving(true);
     const validItems = items.filter(r => r.name.trim() && Number(r.price_per_unit) > 0);
 
-    // 1. Create GroceryShop record
     const shop = await base44.entities.GroceryShop.create({
-      store, date, currency, total, actual_receipt_total: actualTotal ? Number(actualTotal) : undefined,
+      store, date, currency, total,
+      actual_receipt_total: actualTotal ? Number(actualTotal) : undefined,
       item_count: validItems.length,
       items: validItems.map(r => ({
         product_id: r.product_id, name: r.name, brand: r.brand,
-        quantity: Number(r.quantity), unit: r.unit,
+        quantity: Number(r.quantity) || 1, unit: r.unit,
         price_per_unit: Number(r.price_per_unit), subtotal: r.subtotal, category: r.category,
       })),
     });
 
-    // 2. Update pantry + product DB for each item
+    // Only update Items Database (no pantry auto-creation)
     for (const row of validItems) {
       let productId = row.product_id;
       if (!productId) {
@@ -92,32 +127,9 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
         productId = p.id;
       }
       await updateProductAfterPurchase(productId, { store, price: Number(row.price_per_unit), unit: row.unit, date });
-
-      const expiryDays = EXPIRY_DEFAULTS[row.category] || 30;
-      const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + expiryDays);
-
-      const existing = await base44.entities.PantryItem.list().then(all =>
-        all.find(p => p.name.toLowerCase() === row.name.toLowerCase() && !p.is_wasted)
-      );
-      if (existing) {
-        await base44.entities.PantryItem.update(existing.id, {
-          quantity: (existing.quantity || 0) + Number(row.quantity),
-          expiry_date: format(expiryDate, 'yyyy-MM-dd'),
-          purchase_price: Number(row.price_per_unit),
-          shop_id: shop.id,
-        });
-      } else {
-        await base44.entities.PantryItem.create({
-          product_id: productId, name: row.name, brand: row.brand,
-          category: row.category, quantity: Number(row.quantity), unit: row.unit,
-          expiry_date: format(expiryDate, 'yyyy-MM-dd'),
-          purchase_price: Number(row.price_per_unit), currency, shop_id: shop.id,
-        });
-      }
     }
 
-    // 3. Create spend entry
+    // Create spend entry
     await base44.entities.Item.create({
       type: 'spend', title: `Groceries — ${store}`, category: 'groceries',
       amount: total, currency, date,
@@ -126,9 +138,8 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
 
     invalidateProductCache();
     qc.invalidateQueries({ queryKey: ['grocery-shops'] });
-    qc.invalidateQueries({ queryKey: ['pantry'] });
+    qc.invalidateQueries({ queryKey: ['grocery-products'] });
     qc.invalidateQueries({ queryKey: ['items'] });
-    qc.invalidateQueries({ queryKey: ['items-spends'] });
     qc.invalidateQueries({ queryKey: ['items-month'] });
     setSaving(false);
     setItems([emptyRow()]);
@@ -138,85 +149,145 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
     onClose();
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="mono-header text-sm text-secondary flex items-center gap-2">
-            <ShoppingCart className="w-4 h-4" /> NEW SHOP
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 pt-2">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <Label className="font-mono text-[10px] text-muted-foreground">STORE</Label>
-              <div className="mt-1">
-                <Input list="stores-list" value={store} onChange={e => setStore(e.target.value)} className="bg-muted border-none font-mono text-sm" placeholder="Mercadona..." />
-                <datalist id="stores-list">{SAVED_STORES.map(s => <option key={s} value={s} />)}</datalist>
-              </div>
-            </div>
-            <div>
-              <Label className="font-mono text-[10px] text-muted-foreground">DATE</Label>
-              <Input type="date" value={date} onChange={e => setDate(e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" />
-            </div>
-            <div>
-              <Label className="font-mono text-[10px] text-muted-foreground">CURRENCY</Label>
-              <select value={currency} onChange={e => setCurrency(e.target.value)} className="w-full bg-muted border-none mt-1 font-mono text-sm h-9 rounded-md px-3">
-                {CURRENCIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-          </div>
+  const handleClose = () => {
+    setItems([emptyRow()]);
+    setStore('');
+    setActualTotal('');
+    onClose();
+  };
 
-          <div>
-            <div className="grid grid-cols-12 gap-1 px-1 mb-1">
-              <span className="col-span-3 font-mono text-[10px] text-muted-foreground">PRODUCT</span>
-              <span className="col-span-2 font-mono text-[10px] text-muted-foreground">BRAND</span>
-              <span className="col-span-1 font-mono text-[10px] text-muted-foreground">QTY</span>
-              <span className="col-span-1 font-mono text-[10px] text-muted-foreground">UNIT</span>
-              <span className="col-span-2 font-mono text-[10px] text-muted-foreground">PRICE/UNIT</span>
-              <span className="col-span-2 font-mono text-[10px] text-muted-foreground">CATEGORY</span>
-              <span className="col-span-1" />
-            </div>
-            <div className="space-y-1.5">
-              {items.map((row, i) => (
-                <div key={i} className="grid grid-cols-12 gap-1 items-center">
-                  <ProductAutocomplete value={row.name} onChange={v => updateItem(i, 'name', v)}
-                    onProductSelected={p => handleProductSelected(i, p)} mode="groceries"
-                    placeholder="Product..." className="col-span-3 bg-muted border-none font-mono text-sm h-8" />
-                  <Input value={row.brand} onChange={e => updateItem(i, 'brand', e.target.value)} placeholder="Brand" className="col-span-2 bg-muted border-none font-mono text-sm h-8" />
-                  <Input type="number" value={row.quantity} onChange={e => updateItem(i, 'quantity', e.target.value)} className="col-span-1 bg-muted border-none font-mono text-sm h-8" min={0} step={0.1} />
-                  <select value={row.unit} onChange={e => updateItem(i, 'unit', e.target.value)} className="col-span-1 bg-muted rounded-md font-mono text-xs h-8 px-1">
-                    {UNITS.map(u => <option key={u}>{u}</option>)}
-                  </select>
-                  <Input type="number" value={row.price_per_unit} onChange={e => updateItem(i, 'price_per_unit', e.target.value)} placeholder="0.00" step="0.01" className="col-span-2 bg-muted border-none font-mono text-sm h-8" />
-                  <select value={row.category} onChange={e => updateItem(i, 'category', e.target.value)} className="col-span-2 bg-muted rounded-md font-mono text-xs h-8 px-1">
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                  <div className="col-span-1 flex items-center gap-1">
-                    {row.subtotal > 0 && <span className="font-mono text-[10px] text-secondary">{row.subtotal.toFixed(2)}</span>}
-                    <button onClick={() => removeRow(i)} className="text-muted-foreground hover:text-destructive transition-colors ml-auto"><X className="w-3 h-3" /></button>
-                  </div>
-                </div>
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="bg-card border-border max-w-2xl max-h-[92vh] flex flex-col p-0 gap-0">
+        {/* Header — compact single row */}
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-border shrink-0 h-[60px]">
+          <ShoppingCart className="w-4 h-4 text-secondary shrink-0" />
+          <Input list="stores-list" value={store} onChange={e => setStore(e.target.value)}
+            placeholder="Store..." className="flex-1 bg-muted border-none font-mono text-sm h-8" />
+          <datalist id="stores-list">{SAVED_STORES.map(s => <option key={s} value={s} />)}</datalist>
+          <Input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-36 bg-muted border-none font-mono text-sm h-8" />
+          <select value={currency} onChange={e => setCurrency(e.target.value)} className="bg-muted border-none font-mono text-sm h-8 rounded-md px-2">
+            {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+          </select>
+        </div>
+
+        {/* Quick-add chips */}
+        {topChips.length > 0 && (
+          <div className="px-4 py-2 border-b border-border/40 overflow-x-auto shrink-0">
+            <div className="flex gap-1.5 min-w-max">
+              {topChips.map(p => (
+                <button key={p.id} onClick={() => handleChipTap(p)}
+                  className="flex flex-col items-start px-2.5 py-1.5 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary transition-colors min-w-[80px] text-left">
+                  <span className="font-mono text-xs font-bold leading-tight truncate max-w-[90px]">{p.name}</span>
+                  {p.brand && <span className="font-mono text-[9px] text-muted-foreground leading-tight truncate max-w-[90px]">{p.brand}</span>}
+                </button>
               ))}
             </div>
-            <button onClick={addRow} className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-primary transition-colors mt-2">
-              <Plus className="w-3 h-3" /> ADD ROW
-            </button>
           </div>
+        )}
 
-          <div className="border-t border-border pt-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-sm text-muted-foreground">CALCULATED TOTAL</span>
-              <span className="font-mono text-2xl font-bold text-secondary">{currency === 'EUR' ? '€' : currency}{total.toFixed(2)}</span>
+        {/* Item rows */}
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+          {items.map((row, idx) => (
+            <div key={row.id} className="bg-muted/40 rounded-xl p-3 space-y-2 group/row relative">
+              {/* Line 1: Product name + brand toggle */}
+              <div className="flex items-center gap-2">
+                {/* Category dot */}
+                <button
+                  className="w-3 h-3 rounded-full shrink-0 border border-border/60"
+                  style={{ background: CATEGORY_COLORS[row.category] || '#555' }}
+                  title={row.category}
+                  onClick={() => {
+                    const cats = Object.keys(CATEGORY_COLORS);
+                    const i = cats.indexOf(row.category);
+                    updateItem(row.id, 'category', cats[(i + 1) % cats.length]);
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <ProductAutocomplete
+                    value={row.name}
+                    onChange={v => updateItem(row.id, 'name', v)}
+                    onProductSelected={p => handleProductSelected(row.id, p)}
+                    mode="groceries"
+                    placeholder="Product name..."
+                    className="bg-transparent border-none font-mono text-sm h-7 px-0 focus:bg-muted/60 focus:px-2 rounded transition-all"
+                    inputRef={el => (nameRefs.current[row.id] = el)}
+                  />
+                </div>
+                {!row.brandVisible ? (
+                  <button onClick={() => updateItem(row.id, 'brandVisible', true)}
+                    className="text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors shrink-0 whitespace-nowrap">
+                    + brand
+                  </button>
+                ) : (
+                  <Input value={row.brand} onChange={e => updateItem(row.id, 'brand', e.target.value)}
+                    placeholder="Brand" className="w-28 bg-muted border-none font-mono text-xs h-7" />
+                )}
+              </div>
+
+              {/* Line 2: Qty, Unit, Price, Subtotal, Trash */}
+              <div className="flex items-center gap-2">
+                <Input
+                  inputMode="decimal"
+                  value={row.quantity}
+                  onChange={e => updateItem(row.id, 'quantity', e.target.value)}
+                  placeholder="Qty"
+                  className="w-14 bg-muted border-none font-mono text-sm h-7 text-center"
+                />
+                <select value={row.unit} onChange={e => updateItem(row.id, 'unit', e.target.value)}
+                  className="bg-muted rounded-md font-mono text-xs h-7 px-1 border-none">
+                  {UNITS.map(u => <option key={u}>{u}</option>)}
+                </select>
+                <Input
+                  inputMode="decimal"
+                  value={row.price_per_unit}
+                  onChange={e => updateItem(row.id, 'price_per_unit', e.target.value)}
+                  placeholder={`${currencySymbol}/unit`}
+                  onKeyDown={e => handleRowKeyDown(e, row.id, 'price')}
+                  className="flex-1 bg-muted border-none font-mono text-sm h-7"
+                />
+                <div
+                  className="w-16 text-right font-mono text-sm font-bold shrink-0"
+                  style={{ color: row.subtotal > 0 ? '#abff4f' : '#555' }}
+                  tabIndex={0}
+                  onKeyDown={e => handleRowKeyDown(e, row.id, 'subtotal')}
+                >
+                  {row.subtotal > 0 ? `${currencySymbol}${row.subtotal.toFixed(2)}` : '—'}
+                </div>
+                <button onClick={() => removeRow(row.id)}
+                  className="opacity-0 group-hover/row:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-xs text-muted-foreground">Receipt total (optional)</span>
-              <Input type="number" value={actualTotal} onChange={e => setActualTotal(e.target.value)} placeholder="0.00" step="0.01" className="w-32 bg-muted border-none font-mono text-sm h-7" />
-              {discrepancy && <div className="flex items-center gap-1 text-xs text-destructive font-mono"><AlertTriangle className="w-3 h-3" />Δ€{Math.abs(total - Number(actualTotal)).toFixed(2)}</div>}
-            </div>
+          ))}
+
+          <button onClick={() => addRow()}
+            className="w-full py-2 text-xs font-mono text-muted-foreground hover:text-primary transition-colors border border-dashed border-border/40 rounded-xl hover:border-primary/40">
+            + ADD ROW
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="px-4 py-4 border-t border-border space-y-3 shrink-0">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Total</span>
+            <span className="font-mono text-3xl font-bold" style={{ color: '#abff4f' }}>
+              {currencySymbol}{total.toFixed(2)}
+            </span>
           </div>
-
-          <Button onClick={handleSave} disabled={saving || !isValid} className="w-full bg-secondary text-secondary-foreground font-mono">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-xs text-muted-foreground">Match receipt?</span>
+            <Input inputMode="decimal" value={actualTotal} onChange={e => setActualTotal(e.target.value)}
+              placeholder="0.00" className="w-28 bg-muted border-none font-mono text-sm h-7" />
+            {discrepancy !== null && (
+              <div className="flex items-center gap-1 text-xs font-mono font-bold" style={{ color: '#ffd60a' }}>
+                <AlertTriangle className="w-3 h-3" />
+                {discrepancy > 0 ? '+' : ''}{currencySymbol}{discrepancy.toFixed(2)} difference
+              </div>
+            )}
+          </div>
+          <Button onClick={handleSave} disabled={saving || !isValid} className="w-full bg-secondary text-secondary-foreground font-mono font-bold h-11">
             {saving ? 'SAVING...' : 'SAVE SHOP'}
           </Button>
         </div>

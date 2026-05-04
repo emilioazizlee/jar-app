@@ -14,7 +14,7 @@ function expiryTag(expiryDate) {
   const days = differenceInDays(parseISO(expiryDate), new Date());
   if (days < 0) return { label: 'EXPIRED', color: '#ff2d2d' };
   if (days <= 5) return { label: `${days}d`, color: '#ffd60a' };
-  return { label: `${days}d`, color: '#39ff14' };
+  return { label: `${days}d`, color: '#abff4f' };
 }
 
 export default function PantryPage({ onAddItem }) {
