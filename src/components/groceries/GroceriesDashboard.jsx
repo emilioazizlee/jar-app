@@ -5,9 +5,10 @@ import { format, startOfMonth } from 'date-fns';
 import { ShoppingCart, Package, AlertTriangle, Store, Database } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const COLORS = ['#abff4f', '#ffd60a', '#4da6ff', '#ff9f43', '#a855f7', '#ff2d2d', '#06d6a0', '#f97316'];
+import { CHART_COLORS, PALETTE } from '@/lib/constants';
+const COLORS = CHART_COLORS;
 
-function StatCard({ icon: Icon, label, value, sub, color = '#abff4f' }) {
+function StatCard({ icon: Icon, label, value, sub, color = PALETTE.green }) {
   return (
     <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-1">
       <div className="flex items-center gap-2">
@@ -55,10 +56,10 @@ export default function GroceriesDashboard() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={ShoppingCart} label="This Month" value={`€${monthTotal.toFixed(2)}`} sub={`${monthShops.length} shops`} color="#ffd60a" />
+        <StatCard icon={ShoppingCart} label="This Month" value={`€${monthTotal.toFixed(2)}`} sub={`${monthShops.length} shops`} color={PALETTE.yellow} />
         <StatCard icon={Database} label="Items DB" value={products.length} sub="unique products" />
-        <StatCard icon={AlertTriangle} label="Expiring Soon" value={expiringSoon.length} sub="within 5 days" color={expiringSoon.length > 0 ? '#ff2d2d' : '#abff4f'} />
-        <StatCard icon={Store} label="Shops This Month" value={monthShops.length} sub="trips" color="#ff9f43" />
+        <StatCard icon={AlertTriangle} label="Expiring Soon" value={expiringSoon.length} sub="within 5 days" color={expiringSoon.length > 0 ? PALETTE.red : PALETTE.green} />
+        <StatCard icon={Store} label="Shops This Month" value={monthShops.length} sub="trips" color={PALETTE.orange} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -58,7 +58,7 @@ export default function Health() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="mono-header text-xl" style={{ color: '#ff2d2d' }}>HEALTH — SMOKE TRACKER</h1>
+        <h1 className="mono-header text-xl" style={{ color: '#c1121f' }}>HEALTH — SMOKE TRACKER</h1>
         <p className="text-sm text-muted-foreground mt-1">Dual-tracked from Spends — health impact view</p>
       </div>
 
@@ -76,7 +76,7 @@ export default function Health() {
                 <span className="text-2xl">{t.icon}</span>
                 <p className="mono-header text-xs text-muted-foreground mt-1">{t.label.toUpperCase()}</p>
               </div>
-              <JarVisual fillPercent={(t.today % 10) * 10} completedJars={Math.floor(t.today / 10)} size="sm" color="#ff2d2d" showLabel={false} />
+              <JarVisual fillPercent={(t.today % 10) * 10} completedJars={Math.floor(t.today / 10)} size="sm" color="#c1121f" showLabel={false} />
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3">
               <div>
@@ -103,19 +103,19 @@ export default function Health() {
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="gZz" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ffd60a" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#ffd60a" stopOpacity={0} />
+                <stop offset="5%" stopColor="#ffee32" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#ffee32" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="gCig" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ff2d2d" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#ff2d2d" stopOpacity={0} />
+                <stop offset="5%" stopColor="#c1121f" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#c1121f" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis dataKey="date" tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#666' }} tickLine={false} axisLine={false} interval={6} />
             <YAxis tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#666' }} tickLine={false} axisLine={false} />
             <Tooltip contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontFamily: 'JetBrains Mono', fontSize: 11 }} />
-            <Area type="monotone" dataKey="Zz" stroke="#ffd60a" fill="url(#gZz)" strokeWidth={2} dot={false} />
-            <Area type="monotone" dataKey="Cigarettes" stroke="#ff2d2d" fill="url(#gCig)" strokeWidth={2} dot={false} />
+            <Area type="monotone" dataKey="Zz" stroke="#ffee32" fill="url(#gZz)" strokeWidth={2} dot={false} />
+            <Area type="monotone" dataKey="Cigarettes" stroke="#c1121f" fill="url(#gCig)" strokeWidth={2} dot={false} />
           </AreaChart>
         </ResponsiveContainer>
         <div className="flex items-center gap-4 mt-2">

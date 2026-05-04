@@ -63,7 +63,18 @@ module.exports = {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
+  			},
+  			/* ─── JAR semantic palette tokens ───────────────── */
+  			jar: {
+  				green:  'var(--color-green)',
+  				yellow: 'var(--color-yellow)',
+  				red:    'var(--color-red)',
+  				blue:   'var(--color-blue)',
+  				orange: 'var(--color-orange)',
+  				violet: 'var(--color-violet)',
+  				pink:   'var(--color-pink)',
   			}
+  			/* ─────────────────────────────────────────────────── */
   		},
   		keyframes: {
   			'accordion-down': {

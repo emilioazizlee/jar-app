@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import JarVisual from '../jar/JarVisual';
 
-export default function QuickTapTile({ label, icon, todayCount, color = '#39ff14', onClick, delay = 0 }) {
+export default function QuickTapTile({ label, icon, todayCount, color = '#abff4f', onClick, delay = 0 }) {
   const fillPercent = (todayCount % 10) * 10;
   const completedJars = Math.floor(todayCount / 10);
 

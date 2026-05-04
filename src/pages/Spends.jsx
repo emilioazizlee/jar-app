@@ -112,7 +112,7 @@ export default function Spends() {
                   fillPercent={(count % 10) * 10}
                   completedJars={Math.floor(count / 10)}
                   size="sm"
-                  color="#ffd60a"
+                  color="#ffee32"
                   showLabel={false}
                 />
               </div>

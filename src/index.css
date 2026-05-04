@@ -9,30 +9,60 @@
     --font-inter: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
+    /* ─── JAR Palette ─────────────────────────────────────── */
+    --color-green:   #abff4f;
+    --color-yellow:  #ffee32;
+    --color-red:     #c1121f;
+    --color-blue:    #0096c7;
+    --color-orange:  #ff6d00;
+    --color-violet:  #9d4edd;
+    --color-pink:    #ffb3c6;
+
+    /* Dim variants (10% opacity backgrounds) */
+    --color-green-dim:  rgba(171, 255,  79, 0.10);
+    --color-yellow-dim: rgba(255, 238,  50, 0.10);
+    --color-red-dim:    rgba(193,  18,  31, 0.10);
+    --color-blue-dim:   rgba(  0, 150, 199, 0.10);
+    --color-orange-dim: rgba(255, 109,   0, 0.10);
+    --color-violet-dim: rgba(157,  78, 221, 0.10);
+    --color-pink-dim:   rgba(255, 179, 198, 0.10);
+    /* ──────────────────────────────────────────────────────── */
+
     --background: 0 0% 4%;
     --foreground: 0 0% 100%;
     --card: 0 0% 7.8%;
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 7.8%;
     --popover-foreground: 0 0% 100%;
+
+    /* primary = green #abff4f  → hsl(88 100% 65%) */
     --primary: 88 100% 65%;
     --primary-foreground: 0 0% 4%;
-    --secondary: 48 100% 52%;
+
+    /* secondary = yellow #ffee32 → hsl(55 100% 60%) */
+    --secondary: 55 100% 60%;
     --secondary-foreground: 0 0% 4%;
+
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 48%;
     --accent: 0 0% 12%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 100% 59%;
+
+    /* destructive = red #c1121f → hsl(355 83% 37%) */
+    --destructive: 355 83% 37%;
     --destructive-foreground: 0 0% 100%;
+
     --border: 0 0% 12%;
     --input: 0 0% 12%;
     --ring: 88 100% 65%;
-    --chart-1: 88 100% 65%;
-    --chart-2: 48 100% 52%;
-    --chart-3: 0 100% 59%;
-    --chart-4: 200 80% 50%;
-    --chart-5: 280 70% 55%;
+
+    /* Chart tokens mapped to palette */
+    --chart-1: 88 100% 65%;   /* green  */
+    --chart-2: 55 100% 60%;   /* yellow */
+    --chart-3: 355 83% 37%;   /* red    */
+    --chart-4: 196 100% 39%;  /* blue   */
+    --chart-5: 281 68% 59%;   /* violet */
+
     --radius: 0.75rem;
     --sidebar-background: 0 0% 5.5%;
     --sidebar-foreground: 0 0% 100%;
@@ -53,22 +83,22 @@
     --popover-foreground: 0 0% 100%;
     --primary: 88 100% 65%;
     --primary-foreground: 0 0% 4%;
-    --secondary: 48 100% 52%;
+    --secondary: 55 100% 60%;
     --secondary-foreground: 0 0% 4%;
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 48%;
     --accent: 0 0% 12%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 100% 59%;
+    --destructive: 355 83% 37%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 12%;
     --input: 0 0% 12%;
     --ring: 88 100% 65%;
     --chart-1: 88 100% 65%;
-    --chart-2: 48 100% 52%;
-    --chart-3: 0 100% 59%;
-    --chart-4: 200 80% 50%;
-    --chart-5: 280 70% 55%;
+    --chart-2: 55 100% 60%;
+    --chart-3: 355 83% 37%;
+    --chart-4: 196 100% 39%;
+    --chart-5: 281 68% 59%;
     --sidebar-background: 0 0% 5.5%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 88 100% 65%;
@@ -122,11 +152,11 @@
 
 /* Neon glow effects */
 .neon-glow {
-  box-shadow: 0 0 20px rgba(171, 255, 79, 0.15);
+  box-shadow: 0 0 20px var(--color-green-dim);
 }
 .neon-glow-hover:hover {
   box-shadow: 0 0 25px rgba(171, 255, 79, 0.25);
 }
 .neon-gold-glow {
-  box-shadow: 0 0 20px rgba(255, 214, 10, 0.15);
+  box-shadow: 0 0 20px var(--color-yellow-dim);
 }

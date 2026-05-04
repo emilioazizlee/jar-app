@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { format, subDays, isSameDay, startOfMonth, differenceInDays } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import JarVisual from '@/components/jar/JarVisual';
-import { ITEM_TYPES } from '@/lib/constants';
+import { ITEM_TYPES, CHART_COLORS, PALETTE } from '@/lib/constants';
 
-const COLORS = ['#39ff14', '#ffd60a', '#ff2d2d', '#4da6ff', '#a855f7', '#ff9f43', '#06d6a0', '#7a7a7a'];
+const COLORS = CHART_COLORS;
 
 export default function Insights() {
   const { data: items = [] } = useQuery({
@@ -60,10 +60,10 @@ export default function Insights() {
       {/* Key metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'TOTAL ENTRIES', value: items.length, color: '#39ff14' },
-          { label: 'AVG DAILY', value: avgDaily.toFixed(1), color: '#ffd60a' },
-          { label: 'AVG DAILY SPEND', value: `€${avgDailySpend.toFixed(2)}`, color: '#ff9f43' },
-          { label: 'TOTAL JARS', value: (items.length / 10).toFixed(1), color: '#4da6ff' },
+          { label: 'TOTAL ENTRIES', value: items.length, color: PALETTE.green  },
+          { label: 'AVG DAILY', value: avgDaily.toFixed(1), color: PALETTE.yellow },
+          { label: 'AVG DAILY SPEND', value: `€${avgDailySpend.toFixed(2)}`, color: PALETTE.orange },
+          { label: 'TOTAL JARS', value: (items.length / 10).toFixed(1), color: PALETTE.blue  },
         ].map((m, i) => (
           <motion.div
             key={m.label}
@@ -90,7 +90,7 @@ export default function Insights() {
                 contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: '#7a7a7a', fontFamily: 'JetBrains Mono' }}
               />
-              <Bar dataKey="count" fill="#39ff14" radius={[4, 4, 0, 0]} fillOpacity={0.7} />
+              <Bar dataKey="count" fill={PALETTE.green} radius={[4, 4, 0, 0]} fillOpacity={0.7} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -130,7 +130,7 @@ export default function Insights() {
               <BarChart data={topSpendCats} layout="vertical">
                 <XAxis type="number" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} width={80} />
-                <Bar dataKey="value" fill="#ffd60a" radius={[0, 4, 4, 0]} fillOpacity={0.7} />
+                <Bar dataKey="value" fill={PALETTE.yellow} radius={[0, 4, 4, 0]} fillOpacity={0.7} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -149,7 +149,7 @@ export default function Insights() {
                 contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontSize: 12 }}
                 formatter={(v) => `€${v.toFixed(2)}`}
               />
-              <Line type="monotone" dataKey="spent" stroke="#ffd60a" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="spent" stroke={PALETTE.yellow} strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function JarVisual({ fillPercent = 0, completedJars = 0, label, size = 'md', color = '#39ff14', showLabel = true }) {
+export default function JarVisual({ fillPercent = 0, completedJars = 0, label, size = 'md', color = '#abff4f', showLabel = true }) {
   const [animatedFill, setAnimatedFill] = useState(0);
 
   useEffect(() => {

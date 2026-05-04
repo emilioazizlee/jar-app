@@ -67,25 +67,25 @@ export default function DietDashboard() {
       <div className="bg-card border border-border rounded-xl p-5">
         <p className="font-mono text-[10px] text-muted-foreground mb-4">TODAY'S PROGRESS</p>
         <div className="flex justify-around flex-wrap gap-4">
-          <RadialProgress value={totalCal} max={goal?.daily_calories || 2000} color="#39ff14" label="CALORIES" sub="kcal" />
-          <RadialProgress value={totalProtein} max={goal ? Math.round(goal.daily_calories * (goal.protein_pct || 25) / 100 / 4) : 150} color="#4da6ff" label="PROTEIN" sub="g" />
-          <RadialProgress value={totalCarbs} max={goal ? Math.round(goal.daily_calories * (goal.carbs_pct || 50) / 100 / 4) : 250} color="#ffd60a" label="CARBS" sub="g" />
-          <RadialProgress value={totalFat} max={goal ? Math.round(goal.daily_calories * (goal.fat_pct || 25) / 100 / 9) : 55} color="#ff9f43" label="FAT" sub="g" />
+          <RadialProgress value={totalCal} max={goal?.daily_calories || 2000} color="#abff4f" label="CALORIES" sub="kcal" />
+          <RadialProgress value={totalProtein} max={goal ? Math.round(goal.daily_calories * (goal.protein_pct || 25) / 100 / 4) : 150} color="#0096c7" label="PROTEIN" sub="g" />
+          <RadialProgress value={totalCarbs} max={goal ? Math.round(goal.daily_calories * (goal.carbs_pct || 50) / 100 / 4) : 250} color="#ffee32" label="CARBS" sub="g" />
+          <RadialProgress value={totalFat} max={goal ? Math.round(goal.daily_calories * (goal.fat_pct || 25) / 100 / 9) : 55} color="#ff6d00" label="FAT" sub="g" />
         </div>
       </div>
 
       {/* Hydration */}
       <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-4">
-        <Droplets className="w-6 h-6 text-blue-400 shrink-0" />
+        <Droplets className="w-6 h-6 shrink-0" style={{ color: '#0096c7' }} />
         <div className="flex-1">
           <p className="font-mono text-[10px] text-muted-foreground">HYDRATION</p>
           <div className="flex items-baseline gap-2 mt-0.5">
-            <span className="font-mono text-2xl font-bold text-blue-400">{waterTotal.toFixed(1)}</span>
+            <span className="font-mono text-2xl font-bold" style={{ color: '#0096c7' }}>{waterTotal.toFixed(1)}</span>
             <span className="font-mono text-sm text-muted-foreground">/ {goal?.water_target_liters || 2.0} L</span>
           </div>
         </div>
         <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
-          <div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${Math.min(100, (waterTotal / (goal?.water_target_liters || 2)) * 100)}%` }} />
+        <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, (waterTotal / (goal?.water_target_liters || 2)) * 100)}%`, background: '#0096c7' }} />
         </div>
       </div>
 

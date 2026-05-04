@@ -1,33 +1,81 @@
+/* ─── JAR Global Palette ──────────────────────────────────────────────────
+   Single source of truth for all accent hex values used across the app.
+   Reference via PALETTE.green, PALETTE.yellow, etc.
+   ──────────────────────────────────────────────────────────────────────── */
+export const PALETTE = {
+  green:  '#abff4f',
+  yellow: '#ffee32',
+  red:    '#c1121f',
+  blue:   '#0096c7',
+  orange: '#ff6d00',
+  violet: '#9d4edd',
+  pink:   '#ffb3c6',
+  muted:  '#7a7a7a',
+};
+
+export const PALETTE_DIM = {
+  green:  'rgba(171,255, 79,0.10)',
+  yellow: 'rgba(255,238, 50,0.10)',
+  red:    'rgba(193, 18, 31,0.10)',
+  blue:   'rgba(  0,150,199,0.10)',
+  orange: 'rgba(255,109,  0,0.10)',
+  violet: 'rgba(157, 78,221,0.10)',
+  pink:   'rgba(255,179,198,0.10)',
+  muted:  'rgba(122,122,122,0.10)',
+};
+
 export const ITEM_TYPES = [
-  { key: 'task', label: 'Task', icon: 'CheckSquare', color: '#39ff14' },
-  { key: 'spend', label: 'Spend', icon: 'DollarSign', color: '#ffd60a' },
-  { key: 'subscription', label: 'Subscription', icon: 'RefreshCw', color: '#4da6ff' },
-  { key: 'payment', label: 'Payment', icon: 'CreditCard', color: '#ff9f43' },
-  { key: 'meeting', label: 'Meeting', icon: 'Users', color: '#a855f7' },
-  { key: 'note', label: 'Note', icon: 'FileText', color: '#7a7a7a' },
-  { key: 'goal', label: 'Goal', icon: 'Target', color: '#ff2d2d' },
-  { key: 'contact', label: 'Contact', icon: 'User', color: '#06d6a0' },
+  { key: 'task',         label: 'Task',         icon: 'CheckSquare', color: PALETTE.green  },
+  { key: 'spend',        label: 'Spend',        icon: 'DollarSign',  color: PALETTE.yellow },
+  { key: 'subscription', label: 'Subscription', icon: 'RefreshCw',   color: PALETTE.blue   },
+  { key: 'payment',      label: 'Payment',      icon: 'CreditCard',  color: PALETTE.orange },
+  { key: 'meeting',      label: 'Meeting',      icon: 'Users',       color: PALETTE.violet },
+  { key: 'note',         label: 'Note',         icon: 'FileText',    color: PALETTE.muted  },
+  { key: 'goal',         label: 'Goal',         icon: 'Target',      color: PALETTE.red    },
+  { key: 'contact',      label: 'Contact',      icon: 'User',        color: PALETTE.blue   },
 ];
 
+/* Category color map — used by all spend category dots/tags */
+export const CATEGORY_COLORS = {
+  groceries:      PALETTE.green,
+  food_out:       PALETTE.orange,
+  coffee:         PALETTE.orange,
+  cigarettes:     PALETTE.red,
+  zz:             PALETTE.red,
+  phone:          PALETTE.yellow,
+  laundry:        PALETTE.pink,
+  transport:      PALETTE.green,
+  taxi:           PALETTE.orange,
+  fines:          PALETTE.red,
+  gifts:          PALETTE.pink,
+  subscriptions:  PALETTE.green,
+  fixed_recurring:PALETTE.blue,
+  football_work:  PALETTE.violet,
+  studies:        PALETTE.yellow,
+  health:         PALETTE.pink,
+  lifestyle:      PALETTE.orange,
+  other:          PALETTE.muted,
+};
+
 export const SPEND_CATEGORIES = [
-  { key: 'cigarettes', label: 'Cigarettes', icon: '🚬' },
-  { key: 'zz', label: 'Zz', icon: '💨' },
-  { key: 'coffee', label: 'Coffee', icon: '☕' },
-  { key: 'food_out', label: 'Food Out', icon: '🍽️' },
-  { key: 'groceries', label: 'Groceries', icon: '🛒' },
-  { key: 'transport', label: 'Public Transport', icon: '🚌' },
-  { key: 'taxi', label: 'Taxi', icon: '🚕' },
-  { key: 'phone', label: 'Phone & Comms', icon: '📱' },
-  { key: 'laundry', label: 'Laundry', icon: '👕' },
-  { key: 'fines', label: 'Fines', icon: '⚠️' },
-  { key: 'gifts', label: 'Gifts', icon: '🎁' },
-  { key: 'subscriptions', label: 'Subscriptions', icon: '🔄' },
-  { key: 'fixed_recurring', label: 'Fixed Recurring', icon: '📅' },
-  { key: 'football_work', label: 'Football Work', icon: '⚽' },
-  { key: 'studies', label: 'Studies', icon: '📚' },
-  { key: 'health', label: 'Health', icon: '💊' },
-  { key: 'lifestyle', label: 'Lifestyle', icon: '✨' },
-  { key: 'other', label: 'Other', icon: '📦' },
+  { key: 'cigarettes',     label: 'Cigarettes',     icon: '🚬', color: CATEGORY_COLORS.cigarettes     },
+  { key: 'zz',             label: 'Zz',             icon: '💨', color: CATEGORY_COLORS.zz             },
+  { key: 'coffee',         label: 'Coffee',         icon: '☕', color: CATEGORY_COLORS.coffee         },
+  { key: 'food_out',       label: 'Food Out',       icon: '🍽️', color: CATEGORY_COLORS.food_out       },
+  { key: 'groceries',      label: 'Groceries',      icon: '🛒', color: CATEGORY_COLORS.groceries      },
+  { key: 'transport',      label: 'Public Transport',icon: '🚌', color: CATEGORY_COLORS.transport      },
+  { key: 'taxi',           label: 'Taxi',           icon: '🚕', color: CATEGORY_COLORS.taxi           },
+  { key: 'phone',          label: 'Phone & Comms',  icon: '📱', color: CATEGORY_COLORS.phone          },
+  { key: 'laundry',        label: 'Laundry',        icon: '👕', color: CATEGORY_COLORS.laundry        },
+  { key: 'fines',          label: 'Fines',          icon: '⚠️', color: CATEGORY_COLORS.fines          },
+  { key: 'gifts',          label: 'Gifts',          icon: '🎁', color: CATEGORY_COLORS.gifts          },
+  { key: 'subscriptions',  label: 'Subscriptions',  icon: '🔄', color: CATEGORY_COLORS.subscriptions  },
+  { key: 'fixed_recurring',label: 'Fixed Recurring',icon: '📅', color: CATEGORY_COLORS.fixed_recurring},
+  { key: 'football_work',  label: 'Football Work',  icon: '⚽', color: CATEGORY_COLORS.football_work  },
+  { key: 'studies',        label: 'Studies',        icon: '📚', color: CATEGORY_COLORS.studies        },
+  { key: 'health',         label: 'Health',         icon: '💊', color: CATEGORY_COLORS.health         },
+  { key: 'lifestyle',      label: 'Lifestyle',      icon: '✨', color: CATEGORY_COLORS.lifestyle      },
+  { key: 'other',          label: 'Other',          icon: '📦', color: CATEGORY_COLORS.other          },
 ];
 
 export const TASK_TYPES = ['Work', 'Study', 'Personal', 'Football', 'Health', 'Creative', 'Admin', 'Custom'];
@@ -35,13 +83,25 @@ export const TASK_STATUSES = ['Idea', 'Planned', 'In Progress', 'Blocked', 'Done
 export const CURRENCIES = ['EUR', 'USD', 'AZN', 'RUB'];
 
 export const SUBSCRIPTION_CATALOG = {
-  'Streaming': ['Netflix', 'Spotify', 'SoundCloud', 'Apple Music', 'YouTube Premium', 'Prime Video', 'Disney+', 'HBO Max', 'Twitch'],
+  'Streaming':         ['Netflix', 'Spotify', 'SoundCloud', 'Apple Music', 'YouTube Premium', 'Prime Video', 'Disney+', 'HBO Max', 'Twitch'],
   'AI & Productivity': ['Claude Pro', 'ChatGPT Plus', 'Gemini Advanced', 'Perplexity Pro', 'Suno', 'ElevenLabs', 'Canva', 'Notion', 'Base44', 'LightPDF', 'Cursor'],
-  'Gaming': ['PlayStation Plus', 'Xbox Game Pass', 'Minecraft Realms', 'FIFA Mobile', 'Brawl Stars Pass', 'Clash Royale Pass', 'Steam'],
-  'Telecom & Utilities': ['Vodafone Spain', 'Revolut Metal', 'NordVPN', 'ExpressVPN', 'ProtonMail', 'iCloud', 'Google One', 'Dropbox'],
-  'Food Delivery': ['Uber', 'Uber Eats', 'Glovo', 'Just Eat', 'Bolt', 'Cabify'],
-  'Travel': ['ALSA', 'Renfe', 'Booking', 'Airbnb'],
-  'Learning': ['Duolingo', 'Elevate', 'Coursera', 'Udemy', 'Brilliant'],
-  'Lifestyle': ['Tinder', 'Bumble', 'Strava', 'Chess.com', 'Picsart'],
-  'Local': ['appWash', 'Gym Membership'],
+  'Gaming':            ['PlayStation Plus', 'Xbox Game Pass', 'Minecraft Realms', 'FIFA Mobile', 'Brawl Stars Pass', 'Clash Royale Pass', 'Steam'],
+  'Telecom & Utilities':['Vodafone Spain', 'Revolut Metal', 'NordVPN', 'ExpressVPN', 'ProtonMail', 'iCloud', 'Google One', 'Dropbox'],
+  'Food Delivery':     ['Uber', 'Uber Eats', 'Glovo', 'Just Eat', 'Bolt', 'Cabify'],
+  'Travel':            ['ALSA', 'Renfe', 'Booking', 'Airbnb'],
+  'Learning':          ['Duolingo', 'Elevate', 'Coursera', 'Udemy', 'Brilliant'],
+  'Lifestyle':         ['Tinder', 'Bumble', 'Strava', 'Chess.com', 'Picsart'],
+  'Local':             ['appWash', 'Gym Membership'],
 };
+
+/* Ordered chart palette — for donut/bar/line charts */
+export const CHART_COLORS = [
+  PALETTE.green,
+  PALETTE.yellow,
+  PALETTE.orange,
+  PALETTE.blue,
+  PALETTE.violet,
+  PALETTE.red,
+  PALETTE.pink,
+  PALETTE.muted,
+];

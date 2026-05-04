@@ -32,12 +32,12 @@ export default function HistoryPage() {
   const calHeatmap = useMemo(() => last30Days.map(d => {
     const pct = d.calories / calTarget;
     if (d.calories === 0) return { ...d, color: '#1f1f1f' };
-    if (pct >= 0.9 && pct <= 1.1) return { ...d, color: '#39ff14' };
-    if (pct < 0.9) return { ...d, color: '#ffd60a' };
-    return { ...d, color: '#ff2d2d' };
+    if (pct >= 0.9 && pct <= 1.1) return { ...d, color: '#abff4f' };
+    if (pct < 0.9) return { ...d, color: '#ffee32' };
+    return { ...d, color: '#c1121f' };
   }), [last30Days, calTarget]);
 
-  const onTarget = calHeatmap.filter(d => d.color === '#39ff14').length;
+  const onTarget = calHeatmap.filter(d => d.color === '#abff4f').length;
   const daysLogged = calHeatmap.filter(d => d.calories > 0).length;
 
   return (
@@ -71,7 +71,7 @@ export default function HistoryPage() {
           ))}
         </div>
         <div className="flex gap-4 mt-3">
-          {[{ color: '#39ff14', label: 'On target' }, { color: '#ffd60a', label: 'Under' }, { color: '#ff2d2d', label: 'Over' }, { color: '#1f1f1f', label: 'No data' }].map(({ color, label }) => (
+          {[{ color: '#abff4f', label: 'On target' }, { color: '#ffee32', label: 'Under' }, { color: '#c1121f', label: 'Over' }, { color: '#1f1f1f', label: 'No data' }].map(({ color, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded" style={{ background: color }} />
               <span className="font-mono text-[10px] text-muted-foreground">{label}</span>
@@ -88,8 +88,8 @@ export default function HistoryPage() {
             <XAxis dataKey="label" tick={{ fontSize: 9, fontFamily: 'monospace', fill: '#777' }} />
             <YAxis tick={{ fontSize: 9, fontFamily: 'monospace', fill: '#777' }} />
             <Tooltip contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontFamily: 'monospace', fontSize: 11 }} />
-            <Line type="monotone" dataKey="calories" stroke="#39ff14" strokeWidth={1.5} dot={false} name="kcal" />
-            <Line type="monotone" dataKey="protein" stroke="#4da6ff" strokeWidth={1.5} dot={false} name="protein g" />
+            <Line type="monotone" dataKey="calories" stroke="#abff4f" strokeWidth={1.5} dot={false} name="kcal" />
+            <Line type="monotone" dataKey="protein" stroke="#0096c7" strokeWidth={1.5} dot={false} name="protein g" />
           </LineChart>
         </ResponsiveContainer>
       </div>

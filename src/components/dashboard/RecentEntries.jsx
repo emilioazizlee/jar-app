@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { ITEM_TYPES, SPEND_CATEGORIES } from '@/lib/constants';
+import { ITEM_TYPES, SPEND_CATEGORIES, CATEGORY_COLORS } from '@/lib/constants';
 
 export default function RecentEntries({ items = [] }) {
   const recent = items.slice(0, 8);
@@ -15,6 +15,9 @@ export default function RecentEntries({ items = [] }) {
   };
 
   const getColor = (item) => {
+    if (item.type === 'spend' && item.category) {
+      return CATEGORY_COLORS[item.category] || '#7a7a7a';
+    }
     return ITEM_TYPES.find(t => t.key === item.type)?.color || '#7a7a7a';
   };
 
