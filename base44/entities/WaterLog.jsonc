@@ -1,0 +1,34 @@
+{
+  "name": "WaterLog",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date"
+    },
+    "amount_liters": {
+      "type": "number",
+      "description": "Total liters for the day"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "amount_ml": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Individual water intake entries"
+    }
+  },
+  "required": [
+    "date",
+    "amount_liters"
+  ]
+}

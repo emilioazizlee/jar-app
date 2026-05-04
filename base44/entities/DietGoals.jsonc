@@ -1,0 +1,47 @@
+{
+  "name": "DietGoals",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "Cut",
+        "Bulk",
+        "Maintain"
+      ],
+      "description": "Diet mode"
+    },
+    "daily_calories": {
+      "type": "number",
+      "description": "Daily calorie target"
+    },
+    "protein_pct": {
+      "type": "number",
+      "description": "Protein % of calories"
+    },
+    "carbs_pct": {
+      "type": "number",
+      "description": "Carbs % of calories"
+    },
+    "fat_pct": {
+      "type": "number",
+      "description": "Fat % of calories"
+    },
+    "water_target_liters": {
+      "type": "number",
+      "description": "Daily water target in liters"
+    },
+    "body_weight_target": {
+      "type": "number",
+      "description": "Target body weight in kg"
+    },
+    "is_active": {
+      "type": "boolean",
+      "description": "Is this the active goal"
+    }
+  },
+  "required": [
+    "mode",
+    "daily_calories"
+  ]
+}

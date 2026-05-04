@@ -1,0 +1,66 @@
+{
+  "name": "ShoppingListItem",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "GroceryProduct ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Item name"
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Quantity needed"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit"
+    },
+    "estimated_price": {
+      "type": "number",
+      "description": "Estimated price"
+    },
+    "best_store": {
+      "type": "string",
+      "description": "Cheapest known store"
+    },
+    "category": {
+      "type": "string",
+      "description": "Product category for grouping"
+    },
+    "is_checked": {
+      "type": "boolean",
+      "description": "Checked off"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "pantry_low",
+        "recipe",
+        "staple",
+        "diet_plan"
+      ],
+      "description": "Why it was added"
+    },
+    "recipe_id": {
+      "type": "string",
+      "description": "Source recipe if from recipe"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "name",
+    "quantity",
+    "unit"
+  ]
+}

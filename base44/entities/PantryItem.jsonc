@@ -1,0 +1,64 @@
+{
+  "name": "PantryItem",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "GroceryProduct ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Product name (denormalized)"
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Current quantity at home"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expiry date"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where in home (fridge, pantry, freezer)"
+    },
+    "min_quantity": {
+      "type": "number",
+      "description": "Reorder threshold"
+    },
+    "purchase_price": {
+      "type": "number",
+      "description": "Price paid"
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency"
+    },
+    "shop_id": {
+      "type": "string",
+      "description": "GroceryShop ID it came from"
+    },
+    "is_wasted": {
+      "type": "boolean",
+      "description": "Marked as thrown out"
+    }
+  },
+  "required": [
+    "name",
+    "quantity",
+    "unit"
+  ]
+}

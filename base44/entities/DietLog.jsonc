@@ -1,0 +1,91 @@
+{
+  "name": "DietLog",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Log date"
+    },
+    "meal_slot": {
+      "type": "string",
+      "enum": [
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+        "Snack"
+      ],
+      "description": "Meal slot"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "GroceryProduct ID (optional link)"
+    },
+    "recipe_id": {
+      "type": "string",
+      "description": "Recipe ID (optional link)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Food name"
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Quantity consumed"
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "g",
+        "ml",
+        "pcs",
+        "serving",
+        "cup",
+        "tbsp",
+        "tsp",
+        "L",
+        "kg"
+      ],
+      "description": "Unit"
+    },
+    "calories": {
+      "type": "number",
+      "description": "Calories consumed"
+    },
+    "protein": {
+      "type": "number",
+      "description": "Protein g"
+    },
+    "carbs": {
+      "type": "number",
+      "description": "Carbs g"
+    },
+    "fat": {
+      "type": "number",
+      "description": "Fat g"
+    },
+    "time": {
+      "type": "string",
+      "description": "Time logged (HH:MM)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    },
+    "decremented_pantry": {
+      "type": "boolean",
+      "description": "Whether pantry was decremented"
+    }
+  },
+  "required": [
+    "date",
+    "meal_slot",
+    "name",
+    "quantity",
+    "unit"
+  ]
+}

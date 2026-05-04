@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
-  Calendar, CheckSquare, Apple, Heart, Settings,
+  Calendar, CheckSquare, Apple, Heart, Settings, ShoppingBasket,
   ChevronLeft, ChevronRight, Plus, FolderOpen, Loader2,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -27,7 +27,8 @@ const CORE_SECTIONS = [
     items: [
       { path: '/calendar', icon: Calendar, label: 'Calendar' },
       { path: '/tasks', icon: CheckSquare, label: 'Tasks' },
-      { path: '/diet', icon: Apple, label: 'Diet & Groceries' },
+      { path: '/diet', icon: Apple, label: 'Diet' },
+      { path: '/groceries', icon: ShoppingBasket, label: 'Groceries' },
       { path: '/health', icon: Heart, label: 'Health' },
     ],
   },

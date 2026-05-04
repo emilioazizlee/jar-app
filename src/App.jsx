@@ -16,6 +16,7 @@ import Insights from './pages/Insights';
 import CalendarPage from './pages/CalendarPage';
 import ProjectPage from './pages/ProjectPage';
 import Diet from './pages/Diet';
+import Groceries from './pages/Groceries';
 import Health from './pages/Health';
 import Settings from './pages/Settings';
 
@@ -54,6 +55,7 @@ const AuthenticatedApp = () => {
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/project/:projectId" element={<ProjectPage />} />
         <Route path="/diet" element={<Diet />} />
+        <Route path="/groceries" element={<Groceries />} />
         <Route path="/health" element={<Health />} />
         <Route path="/settings" element={<Settings />} />
       </Route>

@@ -1,0 +1,89 @@
+{
+  "name": "Recipe",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Recipe name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+        "Snack",
+        "Drink",
+        "Dessert"
+      ],
+      "description": "Meal category"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Ingredients list"
+    },
+    "instructions": {
+      "type": "string",
+      "description": "Prep instructions"
+    },
+    "prep_time_minutes": {
+      "type": "number",
+      "description": "Prep time in minutes"
+    },
+    "servings": {
+      "type": "number",
+      "description": "Number of servings"
+    },
+    "calories_per_serving": {
+      "type": "number",
+      "description": "Calories per serving"
+    },
+    "protein_per_serving": {
+      "type": "number",
+      "description": "Protein g per serving"
+    },
+    "carbs_per_serving": {
+      "type": "number",
+      "description": "Carbs g per serving"
+    },
+    "fat_per_serving": {
+      "type": "number",
+      "description": "Fat g per serving"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Photo URL"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "description": "Pinned as favorite"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

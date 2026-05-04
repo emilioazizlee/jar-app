@@ -1,0 +1,78 @@
+{
+  "name": "GroceryShop",
+  "type": "object",
+  "properties": {
+    "store": {
+      "type": "string",
+      "description": "Store name"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Shopping date"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "description": "Currency"
+    },
+    "total": {
+      "type": "number",
+      "description": "Total amount spent"
+    },
+    "actual_receipt_total": {
+      "type": "number",
+      "description": "Actual receipt total (for discrepancy detection)"
+    },
+    "item_count": {
+      "type": "number",
+      "description": "Number of distinct items"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "price_per_unit": {
+            "type": "number"
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Line items in this shop"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "store",
+    "date"
+  ]
+}

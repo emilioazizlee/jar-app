@@ -1,0 +1,145 @@
+{
+  "name": "GroceryProduct",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Produce",
+        "Dairy",
+        "Meat",
+        "Frozen",
+        "Pantry",
+        "Beverages",
+        "Household",
+        "Bakery",
+        "Snacks",
+        "Other"
+      ],
+      "description": "Product category"
+    },
+    "default_unit": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "g",
+        "L",
+        "ml",
+        "pcs",
+        "pack",
+        "box",
+        "bottle",
+        "can"
+      ],
+      "description": "Default unit"
+    },
+    "typical_store": {
+      "type": "string",
+      "description": "Most commonly bought at"
+    },
+    "last_price": {
+      "type": "number",
+      "description": "Last paid price per unit"
+    },
+    "avg_price": {
+      "type": "number",
+      "description": "Rolling average price per unit"
+    },
+    "min_price": {
+      "type": "number",
+      "description": "Lowest ever price"
+    },
+    "max_price": {
+      "type": "number",
+      "description": "Highest ever price"
+    },
+    "cheapest_store": {
+      "type": "string",
+      "description": "Store with lowest price"
+    },
+    "price_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "store": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Price history by store"
+    },
+    "buy_count": {
+      "type": "number",
+      "description": "Total times bought"
+    },
+    "is_staple": {
+      "type": "boolean",
+      "description": "Recurring staple item"
+    },
+    "staple_frequency_days": {
+      "type": "number",
+      "description": "Days between auto-add to shopping list"
+    },
+    "off_id": {
+      "type": "string",
+      "description": "Open Food Facts product ID"
+    },
+    "calories_per_100": {
+      "type": "number",
+      "description": "Calories per 100g or 100ml"
+    },
+    "protein_per_100": {
+      "type": "number",
+      "description": "Protein g per 100g/ml"
+    },
+    "carbs_per_100": {
+      "type": "number",
+      "description": "Carbs g per 100g/ml"
+    },
+    "fat_per_100": {
+      "type": "number",
+      "description": "Fat g per 100g/ml"
+    },
+    "default_serving_size": {
+      "type": "number",
+      "description": "Default serving size"
+    },
+    "default_serving_unit": {
+      "type": "string",
+      "description": "Default serving unit"
+    },
+    "has_nutrition": {
+      "type": "boolean",
+      "description": "Whether nutrition data is populated"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Product image URL"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
