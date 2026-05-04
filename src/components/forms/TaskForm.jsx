@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,21 +7,34 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { TASK_TYPES, TASK_STATUSES } from '@/lib/constants';
 import { format } from 'date-fns';
 import StepSequencer from '@/components/tasks/StepSequencer';
+import SmartInput from '@/components/learn/SmartInput';
+import StepTemplatePrompt from '@/components/learn/StepTemplatePrompt';
+import {
+  recordFieldValue,
+  recordMultipleValues,
+  recordCategoryPriority,
+  saveStepTemplate,
+  findSimilarTemplate,
+  getDefaultPriorityForCategory,
+} from '@/lib/learningDB';
 
 export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
+  const [templateSuggestion, setTemplateSuggestion] = useState(null);
+  const [dismissedTemplate, setDismissedTemplate] = useState(false);
+  const [form, setForm] = useState(() => ({
     title: '',
     category: initialCategory || 'Personal',
     status: 'Planned',
-    priority: 3,
+    priority: getDefaultPriorityForCategory(initialCategory || 'Personal'),
     progress: 0,
     date: format(new Date(), 'yyyy-MM-dd'),
     deadline: '',
@@ -35,15 +48,44 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
     tags: [],
     subtasks: [],
     steps: [],
-  });
+  }));
   const [tagInput, setTagInput] = useState('');
   const [subtaskInput, setSubtaskInput] = useState('');
 
-  const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  // When category changes, update default priority
+  const update = (k, v) => setForm(prev => {
+    const next = { ...prev, [k]: v };
+    if (k === 'category') {
+      next.priority = getDefaultPriorityForCategory(v);
+    }
+    return next;
+  });
+
+  // Suggest step template when title changes
+  useEffect(() => {
+    if (!dismissedTemplate && form.title.length > 3 && form.steps.length === 0) {
+      const t = findSimilarTemplate(form.title, form.category);
+      setTemplateSuggestion(t);
+    } else if (form.steps.length > 0) {
+      setTemplateSuggestion(null);
+    }
+  }, [form.title, form.category]);
+
+  const applyTemplate = (template) => {
+    const steps = template.steps.map(s => ({
+      ...s,
+      id: Date.now().toString() + Math.random(),
+      status: 'pending',
+    }));
+    update('steps', steps);
+    setTemplateSuggestion(null);
+    setDismissedTemplate(true);
+  };
 
   const addTag = () => {
     if (tagInput.trim()) {
       update('tags', [...form.tags, tagInput.trim()]);
+      recordFieldValue('task_tag', tagInput.trim());
       setTagInput('');
     }
   };
@@ -58,6 +100,16 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
   const handleSave = async () => {
     if (!form.title.trim()) return;
     setSaving(true);
+
+    // Record learned values
+    recordFieldValue('task_title', form.title);
+    recordFieldValue('task_category', form.category);
+    recordFieldValue('for_whom', form.for_whom);
+    recordFieldValue('assigned_by', form.assigned_by);
+    recordCategoryPriority(form.category, form.priority);
+    if (form.tags.length) recordMultipleValues('task_tag', form.tags);
+    if (form.steps.length > 1) saveStepTemplate(form.title, form.category, form.steps);
+
     await base44.entities.Item.create({
       type: 'task',
       title: form.title,
@@ -70,7 +122,6 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
       start_date: form.start_date,
       duration_estimate: form.duration_estimate ? Number(form.duration_estimate) : undefined,
       recurring: form.recurring,
-      description: form.description,
       for_whom: form.for_whom,
       assigned_by: form.assigned_by,
       expected_output: form.expected_output,
@@ -92,14 +143,26 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
         </DialogHeader>
         <div className="space-y-4 pt-2">
           <div>
-            <Input
-              placeholder="Task title..."
+            <SmartInput
+              fieldKey="task_title"
               value={form.title}
-              onChange={e => update('title', e.target.value)}
+              onChange={v => update('title', v)}
+              placeholder="Task title..."
               className="bg-muted border-none text-lg font-medium"
               autoFocus
             />
           </div>
+
+          {/* Step template suggestion */}
+          <AnimatePresence>
+            {templateSuggestion && !dismissedTemplate && (
+              <StepTemplatePrompt
+                template={templateSuggestion}
+                onApply={() => applyTemplate(templateSuggestion)}
+                onDismiss={() => { setTemplateSuggestion(null); setDismissedTemplate(true); }}
+              />
+            )}
+          </AnimatePresence>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -214,11 +277,25 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground font-mono">FOR WHOM</Label>
-                  <Input value={form.for_whom} onChange={e => update('for_whom', e.target.value)} className="bg-muted border-none mt-1" />
+                  <SmartInput
+                    fieldKey="for_whom"
+                    value={form.for_whom}
+                    onChange={v => update('for_whom', v)}
+                    className="bg-muted border-none mt-1"
+                    showChips
+                    chipsLimit={3}
+                  />
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground font-mono">ASSIGNED BY</Label>
-                  <Input value={form.assigned_by} onChange={e => update('assigned_by', e.target.value)} className="bg-muted border-none mt-1" />
+                  <SmartInput
+                    fieldKey="assigned_by"
+                    value={form.assigned_by}
+                    onChange={v => update('assigned_by', v)}
+                    className="bg-muted border-none mt-1"
+                    showChips
+                    chipsLimit={3}
+                  />
                 </div>
               </div>
 
@@ -230,12 +307,15 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
               <div>
                 <Label className="text-xs text-muted-foreground font-mono">TAGS</Label>
                 <div className="flex gap-2 mt-1">
-                  <Input
-                    placeholder="Add tag..."
+                  <SmartInput
+                    fieldKey="task_tag"
                     value={tagInput}
-                    onChange={e => setTagInput(e.target.value)}
+                    onChange={setTagInput}
                     onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    placeholder="Add tag..."
                     className="bg-muted border-none text-sm"
+                    showChips
+                    chipsLimit={4}
                   />
                   <Button size="sm" variant="ghost" onClick={addTag}><Plus className="w-4 h-4" /></Button>
                 </div>

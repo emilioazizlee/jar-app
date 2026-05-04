@@ -13,6 +13,8 @@ import { format } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
 import SmokeForm from './SmokeForm';
 import GroceriesForm from './GroceriesForm';
+import SmartInput from '@/components/learn/SmartInput';
+import { recordFieldValue } from '@/lib/learningDB';
 
 const SMOKE_CATEGORIES = ['zz', 'cigarettes'];
 const ITEMIZED_CATEGORIES = ['groceries', 'food_out', 'pharmacy'];
@@ -49,6 +51,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
 
   const handleSave = async () => {
     setSaving(true);
+    if (form.note) recordFieldValue('spend_note_' + category, form.note);
     const catObj = SPEND_CATEGORIES.find(c => c.key === category);
     await base44.entities.Item.create({
       type: 'spend',
@@ -152,7 +155,15 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
 
             <div>
               <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
-              <Textarea value={form.note} onChange={e => update('note', e.target.value)} className="bg-muted border-none mt-1" rows={2} placeholder="Add note..." />
+              <SmartInput
+                fieldKey={`spend_note_${category}`}
+                value={form.note}
+                onChange={v => update('note', v)}
+                placeholder="Add note..."
+                className="bg-muted border-none mt-1 text-sm"
+                showChips
+                chipsLimit={3}
+              />
             </div>
 
             <Button
