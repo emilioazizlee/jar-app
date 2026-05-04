@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings2, Database, Upload, Globe, Sparkles, Info } from 'lucide-react';
+import { Settings2, Database, Upload, Globe, Sparkles, Info, Tag } from 'lucide-react';
 import BulkImport from '@/components/settings/BulkImport';
 import ProjectSeed from '@/components/settings/ProjectSeed';
 import SeedFromWeb from '@/components/settings/SeedFromWeb';
 import InitialSetup from '@/components/settings/InitialSetup';
 import SuggestionDBManager from '@/components/settings/SuggestionDBManager';
+import MyBrands from '@/pages/MyBrands';
 
 const TABS = [
   { id: 'about', label: 'ABOUT', icon: Info },
@@ -13,6 +14,7 @@ const TABS = [
   { id: 'import', label: 'IMPORT', icon: Upload },
   { id: 'web', label: 'WEB SEED', icon: Globe },
   { id: 'db', label: 'LEARN DB', icon: Database },
+  { id: 'brands', label: 'MY BRANDS', icon: Tag },
 ];
 
 export default function Settings() {
@@ -49,6 +51,7 @@ export default function Settings() {
           {tab === 'import' && <BulkImport />}
           {tab === 'web' && <SeedFromWeb />}
           {tab === 'db' && <SuggestionDBManager />}
+          {tab === 'brands' && <MyBrands />}
         </motion.div>
       </AnimatePresence>
     </div>

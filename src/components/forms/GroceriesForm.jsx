@@ -9,6 +9,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CURRENCIES } from '@/lib/constants';
 import { format } from 'date-fns';
 import { Plus, X, ShoppingCart } from 'lucide-react';
+import BrandInput from '@/components/brand/BrandInput';
 
 const UNITS = ['pcs', 'kg', 'g', 'L', 'ml', 'pack'];
 
@@ -27,7 +28,7 @@ const QUICK_ITEMS = [
   { name: 'Water', unit: 'L', qty: 6 },
 ];
 
-const emptyRow = () => ({ name: '', qty: 1, unit: 'pcs', price_per_unit: '', subtotal: 0 });
+const emptyRow = () => ({ name: '', brand: '', qty: 1, unit: 'pcs', price_per_unit: '', subtotal: 0 });
 
 export default function GroceriesForm({ open, onClose, onSaved, category = 'groceries' }) {
   const queryClient = useQueryClient();
@@ -75,7 +76,7 @@ export default function GroceriesForm({ open, onClose, onSaved, category = 'groc
       date,
       note: store || undefined,
       subtasks: validItems.map(r => ({
-        text: `${r.name} × ${r.qty}${r.unit} @ ${r.price_per_unit || '?'}`,
+        text: `${r.brand ? r.brand + ' ' : ''}${r.name} × ${r.qty}${r.unit} @ ${r.price_per_unit || '?'}`,
         done: false,
         // Store structured data in text for insights parsing
       })),
@@ -140,9 +141,10 @@ export default function GroceriesForm({ open, onClose, onSaved, category = 'groc
             <div className="mt-2 space-y-2">
               {/* Header */}
               <div className="grid grid-cols-12 gap-1 px-1">
-                <span className="col-span-4 font-mono text-[10px] text-muted-foreground">PRODUCT</span>
-                <span className="col-span-2 font-mono text-[10px] text-muted-foreground">QTY</span>
-                <span className="col-span-2 font-mono text-[10px] text-muted-foreground">UNIT</span>
+                <span className="col-span-3 font-mono text-[10px] text-muted-foreground">PRODUCT</span>
+                <span className="col-span-3 font-mono text-[10px] text-muted-foreground">BRAND</span>
+                <span className="col-span-1 font-mono text-[10px] text-muted-foreground">QTY</span>
+                <span className="col-span-1 font-mono text-[10px] text-muted-foreground">UNIT</span>
                 <span className="col-span-2 font-mono text-[10px] text-muted-foreground">PRICE</span>
                 <span className="col-span-1 font-mono text-[10px] text-muted-foreground text-right">SUB</span>
                 <span className="col-span-1" />
@@ -153,18 +155,24 @@ export default function GroceriesForm({ open, onClose, onSaved, category = 'groc
                   <Input
                     value={row.name}
                     onChange={e => updateItem(i, 'name', e.target.value)}
-                    className="col-span-4 bg-muted border-none font-mono text-sm h-8"
+                    className="col-span-3 bg-muted border-none font-mono text-sm h-8"
                     placeholder="Product..."
+                  />
+                  <BrandInput
+                    value={row.brand || ''}
+                    onChange={v => updateItem(i, 'brand', v)}
+                    placeholder="Brand..."
+                    className="col-span-3 bg-muted border-none font-mono text-sm h-8"
                   />
                   <Input
                     type="number"
                     value={row.qty}
                     onChange={e => updateItem(i, 'qty', e.target.value)}
-                    className="col-span-2 bg-muted border-none font-mono text-sm h-8"
+                    className="col-span-1 bg-muted border-none font-mono text-sm h-8"
                     min={0} step={0.1}
                   />
                   <Select value={row.unit} onValueChange={v => updateItem(i, 'unit', v)}>
-                    <SelectTrigger className="col-span-2 bg-muted border-none font-mono text-xs h-8"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="col-span-1 bg-muted border-none font-mono text-xs h-8"><SelectValue /></SelectTrigger>
                     <SelectContent>{UNITS.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
                   </Select>
                   <Input
