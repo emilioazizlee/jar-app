@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Keyboard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 
-export default function TopBar({ totalJars = 0 }) {
+const isMac = typeof navigator !== 'undefined' && navigator.platform.startsWith('Mac');
+const modKey = isMac ? '⌘' : 'Ctrl';
+
+export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts }) {
   const [date, setDate] = useState(new Date());
 
   useEffect(() => {
@@ -18,12 +21,14 @@ export default function TopBar({ totalJars = 0 }) {
       <div className="relative w-80">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          placeholder="Search items..."
-          className="pl-10 bg-muted border-none h-9 text-sm"
+          ref={searchRef}
+          placeholder={`Search items... (${modKey}K)`}
+          className="pl-10 pr-10 bg-muted border-none h-9 text-sm"
         />
+        <kbd className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-muted-foreground bg-white/5 border border-white/10 px-1 rounded hidden sm:block pointer-events-none">{modKey}K</kbd>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* Monthly activity pill */}
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
@@ -36,6 +41,15 @@ export default function TopBar({ totalJars = 0 }) {
           </span>
           <span className="text-xs text-muted-foreground">this month</span>
         </motion.div>
+
+        {/* Shortcuts hint */}
+        <button
+          onClick={onOpenShortcuts}
+          className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          title={`Keyboard shortcuts (${modKey}?)`}
+        >
+          <Keyboard className="w-4 h-4" />
+        </button>
 
         {/* Date */}
         <div className="text-right">

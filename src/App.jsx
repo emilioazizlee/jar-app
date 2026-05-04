@@ -19,6 +19,7 @@ import Diet from './pages/Diet';
 import Groceries from './pages/Groceries';
 import Health from './pages/Health';
 import Settings from './pages/Settings';
+import Help from './pages/Help';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -58,6 +59,7 @@ const AuthenticatedApp = () => {
         <Route path="/groceries" element={<Groceries />} />
         <Route path="/health" element={<Health />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/help" element={<Help />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
