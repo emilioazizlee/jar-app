@@ -150,7 +150,7 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground font-mono">NEXT RENEWAL</Label>
-                <Input type="date" value={form.next_renewal} onChange={e => update('next_renewal', e.target.value)} className="bg-muted border-none mt-1 font-mono" />
+                <Input type="date" value={form.next_renewal} onChange={e => update('next_renewal', e.target.value)} className="bg-muted border-none mt-1 font-mono" lang="en" />
               </div>
             </div>
 

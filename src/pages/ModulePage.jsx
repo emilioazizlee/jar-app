@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Plus, Trash2 } from 'lucide-react';
+import TaskForm from '@/components/forms/TaskForm';
 import QuickItemForm from '@/components/forms/QuickItemForm';
 import JarVisual from '@/components/jar/JarVisual';
 import { format } from 'date-fns';
@@ -84,7 +85,15 @@ export default function ModulePage({ moduleTitle, filterCategory, itemType = 'ta
         )}
       </div>
 
-      {showForm && (
+      {showForm && itemType === 'task' && (
+        <TaskForm
+          open={showForm}
+          onClose={() => setShowForm(false)}
+          onSaved={() => { setShowForm(false); queryClient.invalidateQueries({ queryKey: ['items'] }); }}
+          initialCategory={filterCategory}
+        />
+      )}
+      {showForm && itemType !== 'task' && (
         <QuickItemForm
           open={showForm}
           onClose={() => setShowForm(false)}

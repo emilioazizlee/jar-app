@@ -13,13 +13,13 @@ import { TASK_TYPES, TASK_STATUSES } from '@/lib/constants';
 import { format } from 'date-fns';
 import StepSequencer from '@/components/tasks/StepSequencer';
 
-export default function TaskForm({ open, onClose, onSaved }) {
+export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     title: '',
-    category: 'Personal',
+    category: initialCategory || 'Personal',
     status: 'Planned',
     priority: 3,
     progress: 0,
@@ -145,11 +145,11 @@ export default function TaskForm({ open, onClose, onSaved }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-muted-foreground font-mono">START DATE</Label>
-              <Input type="date" value={form.start_date} onChange={e => update('start_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" />
+              <Input type="date" value={form.start_date} onChange={e => update('start_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" />
             </div>
             <div>
               <Label className="text-xs text-muted-foreground font-mono">DEADLINE</Label>
-              <Input type="date" value={form.deadline} onChange={e => update('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" />
+              <Input type="date" value={form.deadline} onChange={e => update('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" />
             </div>
           </div>
 

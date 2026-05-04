@@ -102,14 +102,14 @@ export default function QuickItemForm({ open, onClose, onSaved, itemType }) {
           {config.fields.includes('date') && (
             <div>
               <Label className="text-xs text-muted-foreground font-mono">DATE</Label>
-              <Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="bg-muted border-none mt-1 font-mono" />
+              <Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="bg-muted border-none mt-1 font-mono" lang="en" />
             </div>
           )}
 
           {config.fields.includes('deadline') && (
             <div>
               <Label className="text-xs text-muted-foreground font-mono">DEADLINE</Label>
-              <Input type="date" value={form.deadline} onChange={e => update('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono" />
+              <Input type="date" value={form.deadline} onChange={e => update('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono" lang="en" />
             </div>
           )}
 

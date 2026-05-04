@@ -118,7 +118,7 @@ function ScoutingReportForm({ workType, onSaved, onClose }) {
     <div className="space-y-4 pt-2">
       <div className="grid grid-cols-2 gap-3">
         <F label="PLAYER NAME"><Input value={f.player_name} onChange={e => u('player_name', e.target.value)} className="bg-muted border-none mt-1" /></F>
-        <F label="DATE OF BIRTH"><Input type="date" value={f.dob} onChange={e => u('dob', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DATE OF BIRTH"><Input type="date" value={f.dob} onChange={e => u('dob', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
         <F label="NATIONALITY"><Input value={f.nationality} onChange={e => u('nationality', e.target.value)} className="bg-muted border-none mt-1" /></F>
         <F label="CURRENT CLUB"><Input value={f.current_club} onChange={e => u('current_club', e.target.value)} className="bg-muted border-none mt-1" /></F>
         <F label="POSITION(S)"><Input value={f.position} onChange={e => u('position', e.target.value)} className="bg-muted border-none mt-1" placeholder="LW, CAM..." /></F>
@@ -126,7 +126,7 @@ function ScoutingReportForm({ workType, onSaved, onClose }) {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <F label="MATCH DATE"><Input type="date" value={f.match_date} onChange={e => u('match_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="MATCH DATE"><Input type="date" value={f.match_date} onChange={e => u('match_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
         <F label="OPPONENT"><Input value={f.opponent} onChange={e => u('opponent', e.target.value)} className="bg-muted border-none mt-1" /></F>
         <F label="COMPETITION"><Input value={f.competition} onChange={e => u('competition', e.target.value)} className="bg-muted border-none mt-1" /></F>
       </div>
@@ -183,7 +183,7 @@ function MeetingForm({ workType, onSaved, onClose }) {
           </Select>
         </F>
         <F label="PERSON / ORG"><Input value={f.person_org} onChange={e => u('person_org', e.target.value)} className="bg-muted border-none mt-1" /></F>
-        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
         <F label="TIME"><Input type="time" value={f.time} onChange={e => u('time', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
         <F label="FORMAT">
           <Select value={f.location_type} onValueChange={v => u('location_type', v)}>
@@ -218,7 +218,7 @@ function MatchWatchForm({ workType, onSaved, onClose }) {
         <F label="COMPETITION"><Input value={f.competition} onChange={e => u('competition', e.target.value)} className="bg-muted border-none mt-1" /></F>
         <F label="DATE & TIME">
           <div className="flex gap-2 mt-1">
-            <Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none font-mono text-sm flex-1" />
+            <Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none font-mono text-sm flex-1" lang="en" />
             <Input type="time" value={f.time} onChange={e => u('time', e.target.value)} className="bg-muted border-none font-mono text-sm w-24" />
           </div>
         </F>
@@ -281,7 +281,7 @@ function PlayerProfileForm({ workType, onSaved, onClose }) {
             <SelectContent>{['Pursue','Monitor','Pass'].map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
           </Select>
         </F>
-        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
       </div>
       <Button onClick={() => save(f, `Profile — ${f.player_name || 'Unknown'}`)} disabled={saving || !f.player_name} className="w-full font-mono" style={{ background: workType.color, color: '#000' }}>
         {saving ? 'SAVING...' : 'SAVE PROFILE REVIEW'}
@@ -312,8 +312,8 @@ function NegotiationForm({ workType, onSaved, onClose }) {
         <F label="SALARY / YEAR"><Input value={f.salary} onChange={e => u('salary', e.target.value)} className="bg-muted border-none mt-1 font-mono" /></F>
         <F label="CONTRACT LENGTH"><Input value={f.contract_length} onChange={e => u('contract_length', e.target.value)} className="bg-muted border-none mt-1" placeholder="e.g. 2 years" /></F>
         <F label="AGENT COMMISSION"><Input value={f.agent_commission} onChange={e => u('agent_commission', e.target.value)} className="bg-muted border-none mt-1 font-mono" /></F>
-        <F label="DEADLINE"><Input type="date" value={f.deadline} onChange={e => u('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
-        <F label="LAST CONTACT"><Input type="date" value={f.last_contact} onChange={e => u('last_contact', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DEADLINE"><Input type="date" value={f.deadline} onChange={e => u('deadline', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
+        <F label="LAST CONTACT"><Input type="date" value={f.last_contact} onChange={e => u('last_contact', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
       </div>
       <F label="NEXT STEP"><Input value={f.next_step} onChange={e => u('next_step', e.target.value)} className="bg-muted border-none mt-1" /></F>
       <Button onClick={() => save(f, `Deal — ${f.player_name || 'Unknown'} · ${f.stage}`)} disabled={saving} className="w-full font-mono" style={{ background: workType.color, color: '#000' }}>
@@ -346,9 +346,9 @@ function ContractDocForm({ workType, onSaved, onClose }) {
       </div>
       <F label="PARTIES INVOLVED"><Input value={f.parties} onChange={e => u('parties', e.target.value)} className="bg-muted border-none mt-1" /></F>
       <div className="grid grid-cols-3 gap-3">
-        <F label="DATE DRAFTED"><Input type="date" value={f.date_drafted} onChange={e => u('date_drafted', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
-        <F label="DATE SIGNED"><Input type="date" value={f.date_signed} onChange={e => u('date_signed', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
-        <F label="EXPIRY DATE"><Input type="date" value={f.expiry_date} onChange={e => u('expiry_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DATE DRAFTED"><Input type="date" value={f.date_drafted} onChange={e => u('date_drafted', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
+        <F label="DATE SIGNED"><Input type="date" value={f.date_signed} onChange={e => u('date_signed', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
+        <F label="EXPIRY DATE"><Input type="date" value={f.expiry_date} onChange={e => u('expiry_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
       </div>
       <F label="FILE URL"><Input value={f.file_url} onChange={e => u('file_url', e.target.value)} className="bg-muted border-none mt-1" placeholder="https://drive.google.com/..." /></F>
       <F label="NOTES"><Textarea value={f.notes} onChange={e => u('notes', e.target.value)} className="bg-muted border-none mt-1" rows={2} /></F>
@@ -373,7 +373,7 @@ function FifaExamForm({ workType, onSaved, onClose }) {
             <SelectContent>{['FFAR','RSTP','Case studies','Mock exam'].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
           </Select>
         </F>
-        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
         <F label="HOURS STUDIED"><Input type="number" value={f.hours} onChange={e => u('hours', e.target.value)} className="bg-muted border-none mt-1 font-mono" step="0.5" /></F>
         <F label="MOCK SCORE (if any)"><Input value={f.mock_score} onChange={e => u('mock_score', e.target.value)} className="bg-muted border-none mt-1 font-mono" placeholder="e.g. 75%" /></F>
       </div>
@@ -405,7 +405,7 @@ function TryoutForm({ workType, onSaved, onClose }) {
       <div className="grid grid-cols-2 gap-3">
         <F label="PLAYER NAME"><Input value={f.player_name} onChange={e => u('player_name', e.target.value)} className="bg-muted border-none mt-1" /></F>
         <F label="CLUB HOSTING"><Input value={f.club_hosting} onChange={e => u('club_hosting', e.target.value)} className="bg-muted border-none mt-1" /></F>
-        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DATE"><Input type="date" value={f.date} onChange={e => u('date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
         <F label="DURATION (min)"><Input type="number" value={f.duration} onChange={e => u('duration', e.target.value)} className="bg-muted border-none mt-1 font-mono" /></F>
         <F label="LOCATION"><Input value={f.location} onChange={e => u('location', e.target.value)} className="bg-muted border-none mt-1" /></F>
         <F label="COACHES PRESENT"><Input value={f.coaches} onChange={e => u('coaches', e.target.value)} className="bg-muted border-none mt-1" /></F>
@@ -444,8 +444,8 @@ function TravelForm({ workType, onSaved, onClose }) {
             <SelectContent>{['Not booked','Booked','Confirmed'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
           </Select>
         </F>
-        <F label="DEPARTURE"><Input type="date" value={f.departure} onChange={e => u('departure', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
-        <F label="RETURN"><Input type="date" value={f.return_date} onChange={e => u('return_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" /></F>
+        <F label="DEPARTURE"><Input type="date" value={f.departure} onChange={e => u('departure', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
+        <F label="RETURN"><Input type="date" value={f.return_date} onChange={e => u('return_date', e.target.value)} className="bg-muted border-none mt-1 font-mono text-sm" lang="en" /></F>
         <F label="ESTIMATED COST"><Input value={f.estimated_cost} onChange={e => u('estimated_cost', e.target.value)} className="bg-muted border-none mt-1 font-mono" /></F>
         <F label="LINKED PLAYERS / MEETINGS"><Input value={f.linked_players} onChange={e => u('linked_players', e.target.value)} className="bg-muted border-none mt-1" /></F>
       </div>
