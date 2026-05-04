@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, getDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { ITEM_TYPES } from '@/lib/constants';
+import { ITEM_TYPES, CATEGORY_COLORS, getCategoryColor } from '@/lib/constants';
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -101,15 +101,18 @@ export default function CalendarPage() {
           <div className="space-y-2">
             {dayItems.map((item) => {
               const typeInfo = ITEM_TYPES.find(t => t.key === item.type);
+              const dotColor = item.type === 'spend' && item.category
+                ? getCategoryColor(item.category)
+                : typeInfo?.color || '#7a7a7a';
               return (
                 <div key={item.id} className="flex items-center gap-2 py-2 border-b border-border/50 last:border-0">
-                  <div className="w-2 h-2 rounded-full" style={{ background: typeInfo?.color || '#7a7a7a' }} />
+                  <div className="w-2 h-2 rounded-full" style={{ background: dotColor }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm truncate">{item.title}</p>
                     <p className="font-mono text-[10px] text-muted-foreground">{item.type}</p>
                   </div>
                   {item.amount && (
-                    <span className="font-mono text-xs" style={{ color: typeInfo?.color }}>
+                    <span className="font-mono text-xs" style={{ color: dotColor }}>
                       €{item.amount}
                     </span>
                   )}

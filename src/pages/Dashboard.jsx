@@ -10,7 +10,7 @@ import JarVisual from '@/components/jar/JarVisual';
 import SpendForm from '@/components/forms/SpendForm';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from 'recharts';
-import { CHART_COLORS, CATEGORY_COLORS, PALETTE } from '@/lib/constants';
+import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor } from '@/lib/constants';
 
 const QUICK_TAPS = [
   { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },
@@ -60,7 +60,7 @@ export default function Dashboard() {
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [todayItems]);
 
-  const DONUT_COLORS = CHART_COLORS;
+  // Intentionally unused — donut uses getCategoryColor per segment
 
   // 30-day chart data
   const chartData = useMemo(() => {
@@ -145,8 +145,8 @@ export default function Dashboard() {
                 <ResponsiveContainer>
                   <PieChart>
                     <Pie data={categoryData} innerRadius={30} outerRadius={50} paddingAngle={2} dataKey="value">
-                      {categoryData.map((_, i) => (
-                        <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
+                      {categoryData.map((entry, i) => (
+                        <Cell key={i} fill={getCategoryColor(entry.name?.toLowerCase().replace(/ /g,'_'), i)} />
                       ))}
                     </Pie>
                   </PieChart>
@@ -155,7 +155,7 @@ export default function Dashboard() {
               <div className="space-y-1 flex-1">
                 {categoryData.slice(0, 5).map((cat, i) => (
                   <div key={cat.name} className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                    <div className="w-2 h-2 rounded-full" style={{ background: getCategoryColor(cat.name?.toLowerCase().replace(/ /g,'_'), i) }} />
                     <span className="font-mono text-[10px] text-muted-foreground truncate">{cat.name}</span>
                     <span className="font-mono text-[10px] text-foreground ml-auto">{cat.value}</span>
                   </div>
@@ -196,7 +196,7 @@ export default function Dashboard() {
                     className="h-full rounded-full"
                     style={{
                       width: `${(cat.value / (categoryData[0]?.value || 1)) * 100}%`,
-                      background: DONUT_COLORS[i % DONUT_COLORS.length]
+                      background: getCategoryColor(cat.name?.toLowerCase().replace(/ /g,'_'), i)
                     }}
                   />
                 </div>

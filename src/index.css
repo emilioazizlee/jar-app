@@ -26,6 +26,17 @@
     --color-orange-dim: rgba(255, 109,   0, 0.10);
     --color-violet-dim: rgba(157,  78, 221, 0.10);
     --color-pink-dim:   rgba(255, 179, 198, 0.10);
+
+    /* ─── Semantic role tokens ─────────────────────────────── */
+    --color-brand:     #abff4f;   /* JAR identity, jar fills, CTAs  */
+    --color-recurring: #ffee32;   /* subscriptions, monthly burn     */
+    --color-alert:     #c1121f;   /* errors, overdue, health-alert   */
+    --color-positive:  #abff4f;   /* on-track, under-target, streaks */
+    --color-warning:   #ffee32;   /* expiring soon (3-7 days)        */
+    --color-data-1:    #0096c7;   /* category viz — blue             */
+    --color-data-2:    #ff6d00;   /* category viz — orange           */
+    --color-data-3:    #9d4edd;   /* category viz — violet           */
+    --color-data-4:    #ffb3c6;   /* category viz — pink             */
     /* ──────────────────────────────────────────────────────── */
 
     --background: 0 0% 4%;

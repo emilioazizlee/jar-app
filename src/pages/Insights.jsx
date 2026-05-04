@@ -3,11 +3,9 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { format, subDays, isSameDay, startOfMonth, differenceInDays } from 'date-fns';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, LabelList } from 'recharts';
 import JarVisual from '@/components/jar/JarVisual';
-import { ITEM_TYPES, CHART_COLORS, PALETTE } from '@/lib/constants';
-
-const COLORS = CHART_COLORS;
+import { ITEM_TYPES, CHART_COLORS, PALETTE, getCategoryColor } from '@/lib/constants';
 
 export default function Insights() {
   const { data: items = [] } = useQuery({
@@ -27,14 +25,14 @@ export default function Insights() {
     });
   }, [items]);
 
-  // Type distribution
+  // Type distribution — use each type's semantic color
   const typeDistribution = useMemo(() => {
     const counts = {};
     items.forEach(i => { counts[i.type] = (counts[i.type] || 0) + 1; });
-    return ITEM_TYPES.map((t, idx) => ({
+    return ITEM_TYPES.map((t) => ({
       name: t.label,
       value: counts[t.key] || 0,
-      color: COLORS[idx],
+      color: t.color,
     })).filter(t => t.value > 0);
   }, [items]);
 
@@ -45,7 +43,11 @@ export default function Insights() {
       const cat = i.category || 'other';
       cats[cat] = (cats[cat] || 0) + (i.amount || 0);
     });
-    return Object.entries(cats).sort(([,a], [,b]) => b - a).slice(0, 8).map(([name, value]) => ({ name, value }));
+    return Object.entries(cats).sort(([,a], [,b]) => b - a).slice(0, 8).map(([name, value]) => ({
+      name,
+      value,
+      color: getCategoryColor(name),
+    }));
   }, [items]);
 
   // Averages
@@ -90,7 +92,7 @@ export default function Insights() {
                 contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: '#7a7a7a', fontFamily: 'JetBrains Mono' }}
               />
-              <Bar dataKey="count" fill={PALETTE.green} radius={[4, 4, 0, 0]} fillOpacity={0.7} />
+              <Bar dataKey="count" fill={PALETTE.blue} radius={[4, 4, 0, 0]} fillOpacity={0.7} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -130,7 +132,11 @@ export default function Insights() {
               <BarChart data={topSpendCats} layout="vertical">
                 <XAxis type="number" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: '#7a7a7a' }} axisLine={false} tickLine={false} width={80} />
-                <Bar dataKey="value" fill={PALETTE.yellow} radius={[0, 4, 4, 0]} fillOpacity={0.7} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]} fillOpacity={0.8}>
+                    {topSpendCats.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -149,7 +155,7 @@ export default function Insights() {
                 contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, fontSize: 12 }}
                 formatter={(v) => `€${v.toFixed(2)}`}
               />
-              <Line type="monotone" dataKey="spent" stroke={PALETTE.yellow} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="spent" stroke={PALETTE.orange} strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

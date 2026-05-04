@@ -24,58 +24,81 @@ export const PALETTE_DIM = {
   muted:  'rgba(122,122,122,0.10)',
 };
 
+/* ─── Semantic role tokens ────────────────────────────────────────────────
+   Green  → brand identity, jar fills, CTAs, positive/on-track
+   Yellow → subscriptions, recurring costs, monthly burn
+   Red    → alerts, errors, overdue, health-warning categories
+   Data rotation (category charts) → blue, orange, violet, pink ONLY
+   ──────────────────────────────────────────────────────────────────────── */
+export const SEMANTIC = {
+  brand:     PALETTE.green,   // JAR logo, jar fills, CTA buttons
+  recurring: PALETTE.yellow,  // subscriptions, monthly burn
+  alert:     PALETTE.red,     // errors, overdue, health-warning
+  positive:  PALETTE.green,   // on-track, under-target, streaks
+  warning:   PALETTE.yellow,  // expiring soon (3-7 days)
+  data1:     PALETTE.blue,
+  data2:     PALETTE.orange,
+  data3:     PALETTE.violet,
+  data4:     PALETTE.pink,
+};
+
 export const ITEM_TYPES = [
   { key: 'task',         label: 'Task',         icon: 'CheckSquare', color: PALETTE.green  },
-  { key: 'spend',        label: 'Spend',        icon: 'DollarSign',  color: PALETTE.yellow },
-  { key: 'subscription', label: 'Subscription', icon: 'RefreshCw',   color: PALETTE.blue   },
-  { key: 'payment',      label: 'Payment',      icon: 'CreditCard',  color: PALETTE.orange },
+  { key: 'spend',        label: 'Spend',        icon: 'DollarSign',  color: PALETTE.orange },
+  { key: 'subscription', label: 'Subscription', icon: 'RefreshCw',   color: PALETTE.yellow },
+  { key: 'payment',      label: 'Payment',      icon: 'CreditCard',  color: PALETTE.blue   },
   { key: 'meeting',      label: 'Meeting',      icon: 'Users',       color: PALETTE.violet },
   { key: 'note',         label: 'Note',         icon: 'FileText',    color: PALETTE.muted  },
-  { key: 'goal',         label: 'Goal',         icon: 'Target',      color: PALETTE.red    },
-  { key: 'contact',      label: 'Contact',      icon: 'User',        color: PALETTE.blue   },
+  { key: 'goal',         label: 'Goal',         icon: 'Target',      color: PALETTE.green  },
+  { key: 'contact',      label: 'Contact',      icon: 'User',        color: PALETTE.pink   },
 ];
 
-/* Category color map — used by all spend category dots/tags */
+/* ─── Category color map ──────────────────────────────────────────────────
+   Data viz rotation: blue → orange → violet → pink
+   Green/yellow never appear in category donut charts or dots.
+   Red reserved for health-alert tier only.
+   ──────────────────────────────────────────────────────────────────────── */
 export const CATEGORY_COLORS = {
-  groceries:      PALETTE.green,
-  food_out:       PALETTE.orange,
-  coffee:         PALETTE.orange,
-  cigarettes:     PALETTE.red,
-  zz:             PALETTE.red,
-  phone:          PALETTE.yellow,
-  laundry:        PALETTE.pink,
-  transport:      PALETTE.green,
-  taxi:           PALETTE.orange,
-  fines:          PALETTE.red,
-  gifts:          PALETTE.pink,
-  subscriptions:  PALETTE.green,
-  fixed_recurring:PALETTE.blue,
-  football_work:  PALETTE.violet,
-  studies:        PALETTE.yellow,
-  health:         PALETTE.pink,
-  lifestyle:      PALETTE.orange,
-  other:          PALETTE.muted,
+  groceries:       PALETTE.blue,
+  food_out:        PALETTE.orange,
+  coffee:          PALETTE.orange,
+  cigarettes:      PALETTE.red,    // health-alert
+  zz:              PALETTE.red,    // health-alert
+  phone:           PALETTE.blue,
+  laundry:         PALETTE.blue,
+  transport:       PALETTE.blue,
+  taxi:            PALETTE.orange,
+  fines:           PALETTE.red,    // alert tier
+  gifts:           PALETTE.pink,
+  subscriptions:   PALETTE.yellow, // recurring domain
+  fixed_recurring: PALETTE.yellow, // recurring domain
+  football_work:   PALETTE.violet,
+  studies:         PALETTE.violet,
+  health:          PALETTE.pink,
+  lifestyle:       PALETTE.pink,
+  meeting:         PALETTE.violet,
+  other:           PALETTE.muted,
 };
 
 export const SPEND_CATEGORIES = [
-  { key: 'cigarettes',     label: 'Cigarettes',     icon: '🚬', color: CATEGORY_COLORS.cigarettes     },
-  { key: 'zz',             label: 'Zz',             icon: '💨', color: CATEGORY_COLORS.zz             },
-  { key: 'coffee',         label: 'Coffee',         icon: '☕', color: CATEGORY_COLORS.coffee         },
-  { key: 'food_out',       label: 'Food Out',       icon: '🍽️', color: CATEGORY_COLORS.food_out       },
-  { key: 'groceries',      label: 'Groceries',      icon: '🛒', color: CATEGORY_COLORS.groceries      },
+  { key: 'cigarettes',     label: 'Cigarettes',      icon: '🚬', color: CATEGORY_COLORS.cigarettes     },
+  { key: 'zz',             label: 'Zz',              icon: '💨', color: CATEGORY_COLORS.zz             },
+  { key: 'coffee',         label: 'Coffee',          icon: '☕', color: CATEGORY_COLORS.coffee         },
+  { key: 'food_out',       label: 'Food Out',        icon: '🍽️', color: CATEGORY_COLORS.food_out       },
+  { key: 'groceries',      label: 'Groceries',       icon: '🛒', color: CATEGORY_COLORS.groceries      },
   { key: 'transport',      label: 'Public Transport',icon: '🚌', color: CATEGORY_COLORS.transport      },
-  { key: 'taxi',           label: 'Taxi',           icon: '🚕', color: CATEGORY_COLORS.taxi           },
-  { key: 'phone',          label: 'Phone & Comms',  icon: '📱', color: CATEGORY_COLORS.phone          },
-  { key: 'laundry',        label: 'Laundry',        icon: '👕', color: CATEGORY_COLORS.laundry        },
-  { key: 'fines',          label: 'Fines',          icon: '⚠️', color: CATEGORY_COLORS.fines          },
-  { key: 'gifts',          label: 'Gifts',          icon: '🎁', color: CATEGORY_COLORS.gifts          },
-  { key: 'subscriptions',  label: 'Subscriptions',  icon: '🔄', color: CATEGORY_COLORS.subscriptions  },
-  { key: 'fixed_recurring',label: 'Fixed Recurring',icon: '📅', color: CATEGORY_COLORS.fixed_recurring},
-  { key: 'football_work',  label: 'Football Work',  icon: '⚽', color: CATEGORY_COLORS.football_work  },
-  { key: 'studies',        label: 'Studies',        icon: '📚', color: CATEGORY_COLORS.studies        },
-  { key: 'health',         label: 'Health',         icon: '💊', color: CATEGORY_COLORS.health         },
-  { key: 'lifestyle',      label: 'Lifestyle',      icon: '✨', color: CATEGORY_COLORS.lifestyle      },
-  { key: 'other',          label: 'Other',          icon: '📦', color: CATEGORY_COLORS.other          },
+  { key: 'taxi',           label: 'Taxi',            icon: '🚕', color: CATEGORY_COLORS.taxi           },
+  { key: 'phone',          label: 'Phone & Comms',   icon: '📱', color: CATEGORY_COLORS.phone          },
+  { key: 'laundry',        label: 'Laundry',         icon: '👕', color: CATEGORY_COLORS.laundry        },
+  { key: 'fines',          label: 'Fines',           icon: '⚠️', color: CATEGORY_COLORS.fines          },
+  { key: 'gifts',          label: 'Gifts',           icon: '🎁', color: CATEGORY_COLORS.gifts          },
+  { key: 'subscriptions',  label: 'Subscriptions',   icon: '🔄', color: CATEGORY_COLORS.subscriptions  },
+  { key: 'fixed_recurring',label: 'Fixed Recurring', icon: '📅', color: CATEGORY_COLORS.fixed_recurring},
+  { key: 'football_work',  label: 'Football Work',   icon: '⚽', color: CATEGORY_COLORS.football_work  },
+  { key: 'studies',        label: 'Studies',         icon: '📚', color: CATEGORY_COLORS.studies        },
+  { key: 'health',         label: 'Health',          icon: '💊', color: CATEGORY_COLORS.health         },
+  { key: 'lifestyle',      label: 'Lifestyle',       icon: '✨', color: CATEGORY_COLORS.lifestyle      },
+  { key: 'other',          label: 'Other',           icon: '📦', color: CATEGORY_COLORS.other          },
 ];
 
 export const TASK_TYPES = ['Work', 'Study', 'Personal', 'Football', 'Health', 'Creative', 'Admin', 'Custom'];
@@ -83,25 +106,35 @@ export const TASK_STATUSES = ['Idea', 'Planned', 'In Progress', 'Blocked', 'Done
 export const CURRENCIES = ['EUR', 'USD', 'AZN', 'RUB'];
 
 export const SUBSCRIPTION_CATALOG = {
-  'Streaming':         ['Netflix', 'Spotify', 'SoundCloud', 'Apple Music', 'YouTube Premium', 'Prime Video', 'Disney+', 'HBO Max', 'Twitch'],
-  'AI & Productivity': ['Claude Pro', 'ChatGPT Plus', 'Gemini Advanced', 'Perplexity Pro', 'Suno', 'ElevenLabs', 'Canva', 'Notion', 'Base44', 'LightPDF', 'Cursor'],
-  'Gaming':            ['PlayStation Plus', 'Xbox Game Pass', 'Minecraft Realms', 'FIFA Mobile', 'Brawl Stars Pass', 'Clash Royale Pass', 'Steam'],
+  'Streaming':          ['Netflix', 'Spotify', 'SoundCloud', 'Apple Music', 'YouTube Premium', 'Prime Video', 'Disney+', 'HBO Max', 'Twitch'],
+  'AI & Productivity':  ['Claude Pro', 'ChatGPT Plus', 'Gemini Advanced', 'Perplexity Pro', 'Suno', 'ElevenLabs', 'Canva', 'Notion', 'Base44', 'LightPDF', 'Cursor'],
+  'Gaming':             ['PlayStation Plus', 'Xbox Game Pass', 'Minecraft Realms', 'FIFA Mobile', 'Brawl Stars Pass', 'Clash Royale Pass', 'Steam'],
   'Telecom & Utilities':['Vodafone Spain', 'Revolut Metal', 'NordVPN', 'ExpressVPN', 'ProtonMail', 'iCloud', 'Google One', 'Dropbox'],
-  'Food Delivery':     ['Uber', 'Uber Eats', 'Glovo', 'Just Eat', 'Bolt', 'Cabify'],
-  'Travel':            ['ALSA', 'Renfe', 'Booking', 'Airbnb'],
-  'Learning':          ['Duolingo', 'Elevate', 'Coursera', 'Udemy', 'Brilliant'],
-  'Lifestyle':         ['Tinder', 'Bumble', 'Strava', 'Chess.com', 'Picsart'],
-  'Local':             ['appWash', 'Gym Membership'],
+  'Food Delivery':      ['Uber', 'Uber Eats', 'Glovo', 'Just Eat', 'Bolt', 'Cabify'],
+  'Travel':             ['ALSA', 'Renfe', 'Booking', 'Airbnb'],
+  'Learning':           ['Duolingo', 'Elevate', 'Coursera', 'Udemy', 'Brilliant'],
+  'Lifestyle':          ['Tinder', 'Bumble', 'Strava', 'Chess.com', 'Picsart'],
+  'Local':              ['appWash', 'Gym Membership'],
 };
 
-/* Ordered chart palette — for donut/bar/line charts */
+/* ─── Data-viz chart palette ─────────────────────────────────────────────
+   CHART_COLORS: cycles through blue/orange/violet/pink ONLY.
+   Green and yellow are excluded from general category rotation.
+   ──────────────────────────────────────────────────────────────────────── */
 export const CHART_COLORS = [
-  PALETTE.green,
-  PALETTE.yellow,
-  PALETTE.orange,
   PALETTE.blue,
+  PALETTE.orange,
   PALETTE.violet,
-  PALETTE.red,
   PALETTE.pink,
   PALETTE.muted,
 ];
+
+/* ─── Category-aware chart color helper ───────────────────────────────────
+   Returns the semantic category color if known, otherwise falls back to
+   the data-viz rotation (blue → orange → violet → pink).
+   Use this for donut/bar charts that segment by category name.
+   ──────────────────────────────────────────────────────────────────────── */
+export function getCategoryColor(categoryKey, fallbackIndex = 0) {
+  const key = (categoryKey || 'other').toLowerCase();
+  return CATEGORY_COLORS[key] || CHART_COLORS[fallbackIndex % CHART_COLORS.length];
+}
