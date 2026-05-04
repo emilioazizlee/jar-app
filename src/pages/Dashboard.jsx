@@ -172,6 +172,17 @@ export default function Dashboard() {
                   theme={nivoTheme}
                   motionConfig="gentle"
                   isInteractive={true}
+                  layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', ({ centerX, centerY }) => (
+                    <text
+                      x={centerX}
+                      y={centerY}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, fill: '#ffffff' }}
+                    >
+                      {todayItems.length}
+                    </text>
+                  )]}
                   tooltip={({ datum }) => (
                     <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
                       <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>{datum.value}</strong>
