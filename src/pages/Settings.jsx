@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings2, Database, Upload, Globe, Sparkles, Info } from 'lucide-react';
 import BulkImport from '@/components/settings/BulkImport';
+import ProjectSeed from '@/components/settings/ProjectSeed';
 import SeedFromWeb from '@/components/settings/SeedFromWeb';
 import InitialSetup from '@/components/settings/InitialSetup';
 import SuggestionDBManager from '@/components/settings/SuggestionDBManager';
@@ -96,6 +97,7 @@ function AboutTab() {
         <p className="mono-header text-[10px] text-muted-foreground mb-3">CURRENCIES</p>
         <p className="text-sm text-muted-foreground">EUR · USD · AZN · RUB</p>
       </div>
+      <ProjectSeed />
     </div>
   );
 }

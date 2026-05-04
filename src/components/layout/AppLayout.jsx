@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import UniversalAddButton from '../add/UniversalAddButton';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
-import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { startOfMonth, format } from 'date-fns';
+import { PROJECT_TEMPLATES } from '@/lib/projectTemplates';
+
+const SEED_KEY = 'jar_projects_seeded_v1';
+
+async function autoSeedProjects(queryClient) {
+  if (localStorage.getItem(SEED_KEY)) return;
+  const toSeed = PROJECT_TEMPLATES.filter(t => t.id === 'football_agent' || t.id === 'studies');
+  for (const tpl of toSeed) {
+    const existing = await base44.entities.Project.list('created_date', 100).then(r => r.filter(p => p.name === tpl.name));
+    if (existing.length === 0) {
+      await base44.entities.Project.create({
+        name: tpl.name, description: tpl.description, icon: tpl.icon,
+        color: tpl.color, work_types: tpl.work_types, is_archived: false,
+      });
+    }
+  }
+  localStorage.setItem(SEED_KEY, '1');
+  queryClient.invalidateQueries({ queryKey: ['projects'] });
+}
 
 export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => { autoSeedProjects(queryClient); }, []);
 
   const { data: items = [] } = useQuery({
     queryKey: ['items-month'],

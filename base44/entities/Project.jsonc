@@ -1,0 +1,102 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Project mission / description"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Lucide icon name"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex accent color"
+    },
+    "work_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "short": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "field_type": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Custom work type schemas"
+    },
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Linked contact names"
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "due": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Project milestones"
+    },
+    "is_archived": {
+      "type": "boolean",
+      "description": "Whether project is archived"
+    },
+    "order": {
+      "type": "number",
+      "description": "Sidebar order"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

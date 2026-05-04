@@ -14,8 +14,7 @@ import Subscriptions from './pages/Subscriptions';
 import Payments from './pages/Payments';
 import Insights from './pages/Insights';
 import CalendarPage from './pages/CalendarPage';
-import Football from './pages/Football';
-import Studies from './pages/Studies';
+import ProjectPage from './pages/ProjectPage';
 import Diet from './pages/Diet';
 import Health from './pages/Health';
 import Settings from './pages/Settings';
@@ -53,8 +52,7 @@ const AuthenticatedApp = () => {
         <Route path="/payments" element={<Payments />} />
         <Route path="/insights" element={<Insights />} />
         <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/football" element={<Football />} />
-        <Route path="/studies" element={<Studies />} />
+        <Route path="/project/:projectId" element={<ProjectPage />} />
         <Route path="/diet" element={<Diet />} />
         <Route path="/health" element={<Health />} />
         <Route path="/settings" element={<Settings />} />
