@@ -139,6 +139,36 @@
   }
 }
 
+/* Mobile: prevent iOS autozoom on input focus */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area utilities */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Hide scrollbar but keep scroll */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch active feedback */
+@media (hover: none) {
+  .hover\:bg-muted:hover { background: transparent; }
+  .hover\:bg-sidebar-accent:hover { background: transparent; }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

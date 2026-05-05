@@ -59,11 +59,11 @@ export default function Insights() {
   const avgDailySpend = items.filter(i => i.type === 'spend').reduce((s, i) => s + (i.amount || 0), 0) / daysTracked;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <h1 className="mono-header text-xl text-foreground">INSIGHTS</h1>
+    <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
+      <h1 className="mono-header text-lg md:text-xl text-foreground">INSIGHTS</h1>
 
       {/* Key metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {[
           { label: 'TOTAL ENTRIES', value: items.length, color: PALETTE.green  },
           { label: 'AVG DAILY', value: avgDaily.toFixed(1), color: PALETTE.yellow },
@@ -110,7 +110,7 @@ export default function Insights() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         {/* Type distribution */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card border border-border rounded-2xl p-5">
         <p className="mono-header text-[10px] text-muted-foreground mb-4">TYPE DISTRIBUTION</p>

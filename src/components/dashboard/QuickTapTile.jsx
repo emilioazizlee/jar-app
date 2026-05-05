@@ -14,7 +14,7 @@ export default function QuickTapTile({ label, icon, todayCount, color = '#abff4f
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="bg-card border border-border rounded-2xl p-4 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+      className="bg-card border border-border rounded-2xl p-3 md:p-4 flex flex-col items-center gap-1.5 md:gap-2 hover:border-primary/30 transition-all active:scale-95 min-h-[44px]"
     >
       <span className="text-2xl">{icon}</span>
       <JarVisual fillPercent={fillPercent} completedJars={completedJars} size="sm" color={color} showLabel={false} />

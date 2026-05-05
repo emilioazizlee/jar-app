@@ -49,10 +49,10 @@ export default function Spends() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
+      <div className="flex items-center justify-between gap-2">
         <div>
-          <h1 className="mono-header text-xl text-foreground">DAILY SPENDS</h1>
+          <h1 className="mono-header text-lg md:text-xl text-foreground">DAILY SPENDS</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Today: <span className="font-mono text-secondary font-semibold">€{todayTotal.toFixed(2)}</span>
             {' · '}This month: <span className="font-mono text-foreground">€{monthTotal.toFixed(2)}</span>
@@ -62,7 +62,7 @@ export default function Spends() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-xl font-mono text-sm"
+          className="flex items-center gap-2 px-3 md:px-4 py-2 bg-secondary text-secondary-foreground rounded-xl font-mono text-sm min-h-[44px]"
         >
           <Plus className="w-4 h-4" /> LOG SPEND
         </motion.button>

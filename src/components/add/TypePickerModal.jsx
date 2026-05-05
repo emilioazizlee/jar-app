@@ -52,13 +52,13 @@ export default function TypePickerModal({ open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-card border-border max-w-lg">
+      <DialogContent className="bg-card border-border max-w-lg w-full sm:w-auto h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg flex flex-col">
         <DialogHeader>
           <DialogTitle className="mono-header text-sm text-center text-muted-foreground">
             What are you logging?
           </DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-3 gap-3 pt-2">
+        <div className="grid grid-cols-3 gap-3 pt-2 overflow-y-auto flex-1">
           {ITEM_TYPES.map((type, i) => {
             const Icon = iconMap[type.icon] || FileText;
             return (

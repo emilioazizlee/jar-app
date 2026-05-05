@@ -18,7 +18,7 @@ export default function DayStrip({ selectedDate, onSelectDate, items = [] }) {
       className="bg-card border border-border rounded-2xl p-4"
     >
       <p className="mono-header text-[10px] text-muted-foreground mb-3">14-DAY ACTIVITY</p>
-      <div className="flex gap-1 overflow-x-auto pb-1">
+      <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
         {days.map((day) => {
           const isSelected = isSameDay(day, selectedDate);
           const isToday = isSameDay(day, new Date());

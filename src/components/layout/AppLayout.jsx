@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
+import BottomNav from './BottomNav';
 import UniversalAddButton from '../add/UniversalAddButton';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -58,14 +59,20 @@ export default function AppLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+      {/* Sidebar — hidden on mobile */}
+      <div className="hidden md:block">
+        <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+      </div>
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar totalJars={totalJars} searchRef={searchRef} onOpenShortcuts={() => setShortcutsOpen(true)} />
-        <main className="flex-1 overflow-y-auto p-6">
+        <TopBar totalJars={totalJars} searchRef={searchRef} onOpenShortcuts={() => setShortcutsOpen(true)} onOpenAdd={() => setAddOpen(true)} onToggleSidebar={() => setCollapsed(c => !c)} />
+        {/* pb for bottom nav on mobile */}
+        <main className="flex-1 overflow-y-auto p-3 md:p-6 pb-20 md:pb-6">
           <Outlet />
         </main>
       </div>
       <UniversalAddButton externalOpen={addOpen} onExternalClose={() => setAddOpen(false)} />
+      {/* Bottom nav — mobile only */}
+      <BottomNav onOpenAdd={() => setAddOpen(true)} />
       <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
       <ShortcutsTip />
     </div>

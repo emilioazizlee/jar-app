@@ -19,7 +19,7 @@ export default function StatCard({ title, value, subtitle, accent = 'primary', d
       <p className="mono-header text-[10px] text-muted-foreground mb-3">{title}</p>
       <div className="flex items-end justify-between">
         <div>
-          <p className={`font-mono text-3xl font-bold ${accentColors[accent]}`}>
+          <p className={`font-mono text-2xl md:text-3xl font-bold ${accentColors[accent]}`}>
             <AnimatedNumber value={value} />
           </p>
           {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}

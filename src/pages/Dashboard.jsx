@@ -95,9 +95,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4">
+    <div className="max-w-7xl mx-auto space-y-3 md:space-y-4">
       {/* Top row - Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <StatCard title="THIS MONTH" value={totalJarsMonth} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>
           <div className="w-24 h-12">
             <ResponsiveBar
@@ -142,7 +142,7 @@ export default function Dashboard() {
       <DayStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} items={allItems} />
 
       {/* Middle row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
         {/* Category donut */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -152,7 +152,7 @@ export default function Dashboard() {
         >
           <p className="mono-header text-[10px] text-muted-foreground mb-3">TODAY'S DISTRIBUTION</p>
           {categoryData.length > 0 ? (
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="w-28 h-28">
                 <ResponsivePie
                   data={categoryData.map(c => ({
@@ -249,7 +249,7 @@ export default function Dashboard() {
       {/* Quick-tap row */}
       <div>
         <p className="mono-header text-[10px] text-muted-foreground mb-3">QUICK TAP</p>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
           {QUICK_TAPS.map((tap, i) => (
             <QuickTapTile
               key={tap.key}

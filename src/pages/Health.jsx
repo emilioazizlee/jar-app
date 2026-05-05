@@ -57,14 +57,14 @@ export default function Health() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
       <div>
-        <h1 className="mono-header text-xl" style={{ color: '#c1121f' }}>HEALTH — SMOKE TRACKER</h1>
+        <h1 className="mono-header text-lg md:text-xl" style={{ color: '#c1121f' }}>HEALTH — SMOKE TRACKER</h1>
         <p className="text-sm text-muted-foreground mt-1">Dual-tracked from Spends — health impact view</p>
       </div>
 
       {/* Per-type stat cards */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
         {todaySmokeByType.map(t => (
           <motion.div
             key={t.cat}
