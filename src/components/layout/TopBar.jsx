@@ -59,8 +59,16 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
       </div>
 
       {/* Mobile layout */}
-      <div className="flex md:hidden h-14 items-center justify-between px-4 gap-2">
-        <span className="font-mono text-lg font-bold text-primary tracking-widest">JAR</span>
+      <div className="flex md:hidden h-14 items-center justify-between px-3 gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleSidebar}
+            className="p-2 rounded-lg text-muted-foreground active:bg-muted active:scale-95 transition-all min-w-[40px] min-h-[40px] flex items-center justify-center"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <span className="font-mono text-lg font-bold text-primary tracking-widest">JAR</span>
+        </div>
 
         <div className="flex items-center gap-1 ml-auto">
           {/* Monthly burn pill */}

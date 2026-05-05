@@ -19,25 +19,25 @@ export default function Diet() {
   const [tab, setTab] = useState('today');
 
   return (
-    <div className="max-w-4xl mx-auto space-y-5">
+    <div className="max-w-4xl mx-auto space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+      <div className="flex items-center gap-2 md:gap-3">
+        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
           <Apple className="w-4 h-4 text-primary" />
         </div>
         <div>
           <h1 className="mono-header text-lg text-foreground">DIET</h1>
-          <p className="font-mono text-[10px] text-muted-foreground">food log · macros · recipes · goals</p>
+          <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">food log · macros · recipes · goals</p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 flex-wrap bg-muted/50 p-1 rounded-xl">
+      {/* Tabs — scrollable on mobile */}
+      <div className="flex gap-1 overflow-x-auto scrollbar-none bg-muted/50 p-1 rounded-xl">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setTab(id)}
-            className={`flex-1 px-3 py-2 rounded-lg text-xs font-mono font-bold transition-colors ${tab === id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`shrink-0 flex-1 min-w-[70px] px-3 py-2 rounded-lg text-xs font-mono font-bold transition-colors ${tab === id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
           >
             {label}
           </button>

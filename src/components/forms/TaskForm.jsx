@@ -137,7 +137,7 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border max-w-lg w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg overflow-y-auto flex flex-col">
         <DialogHeader>
           <DialogTitle className="mono-header text-sm text-primary">New Task</DialogTitle>
         </DialogHeader>

@@ -163,10 +163,17 @@
   display: none;
 }
 
-/* Touch active feedback */
-@media (hover: none) {
+/* Touch active feedback — disable hover on pure touch devices */
+@media (hover: none) and (pointer: coarse) {
   .hover\:bg-muted:hover { background: transparent; }
   .hover\:bg-sidebar-accent:hover { background: transparent; }
+}
+
+/* Mobile form dialogs — full height scroll */
+@media (max-width: 640px) {
+  [role="dialog"] [data-radix-scroll-area-viewport] {
+    max-height: 100vh;
+  }
 }
 
 /* Custom scrollbar */

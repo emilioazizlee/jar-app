@@ -158,15 +158,15 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-card border-border max-w-2xl max-h-[92vh] flex flex-col p-0 gap-0">
+      <DialogContent className="bg-card border-border max-w-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[92vh] rounded-none sm:rounded-lg flex flex-col p-0 gap-0">
         {/* Header — compact single row */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border shrink-0 h-[60px]">
+        <div className="flex items-center gap-2 px-3 md:px-4 py-3 border-b border-border shrink-0">
           <ShoppingCart className="w-4 h-4 text-secondary shrink-0" />
           <Input list="stores-list" value={store} onChange={e => setStore(e.target.value)}
-            placeholder="Store..." className="flex-1 bg-muted border-none font-mono text-sm h-8" />
+            placeholder="Store..." className="flex-1 bg-muted border-none font-mono text-sm h-9" />
           <datalist id="stores-list">{SAVED_STORES.map(s => <option key={s} value={s} />)}</datalist>
-          <Input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-36 bg-muted border-none font-mono text-sm h-8" />
-          <select value={currency} onChange={e => setCurrency(e.target.value)} className="bg-muted border-none font-mono text-sm h-8 rounded-md px-2">
+          <Input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-28 md:w-36 bg-muted border-none font-mono text-sm h-9" />
+          <select value={currency} onChange={e => setCurrency(e.target.value)} className="bg-muted border-none font-mono text-sm h-9 rounded-md px-2">
             {CURRENCIES.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
@@ -187,12 +187,11 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
         )}
 
         {/* Item rows */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+        <div className="flex-1 overflow-y-auto px-3 md:px-4 py-3 space-y-2">
           {items.map((row, idx) => (
             <div key={row.id} className="bg-muted/40 rounded-xl p-3 space-y-2 group/row relative">
-              {/* Line 1: Product name + brand toggle */}
+              {/* Line 1: Category dot + Product name + brand */}
               <div className="flex items-center gap-2">
-                {/* Category dot */}
                 <button
                   className="w-3 h-3 rounded-full shrink-0 border border-border/60"
                   style={{ background: CATEGORY_COLORS[row.category] || '#555' }}
@@ -210,32 +209,28 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
                     onProductSelected={p => handleProductSelected(row.id, p)}
                     mode="groceries"
                     placeholder="Product name..."
-                    className="bg-transparent border-none font-mono text-sm h-7 px-0 focus:bg-muted/60 focus:px-2 rounded transition-all"
+                    className="bg-transparent border-none font-mono text-sm h-8 px-0 focus:bg-muted/60 focus:px-2 rounded transition-all w-full"
                     inputRef={el => (nameRefs.current[row.id] = el)}
                   />
                 </div>
-                {!row.brandVisible ? (
-                  <button onClick={() => updateItem(row.id, 'brandVisible', true)}
-                    className="text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors shrink-0 whitespace-nowrap">
-                    + brand
-                  </button>
-                ) : (
-                  <Input value={row.brand} onChange={e => updateItem(row.id, 'brand', e.target.value)}
-                    placeholder="Brand" className="w-28 bg-muted border-none font-mono text-xs h-7" />
-                )}
+                {/* Delete always visible on mobile */}
+                <button onClick={() => removeRow(row.id)}
+                  className="text-muted-foreground hover:text-destructive shrink-0 p-1 active:scale-90 md:opacity-0 md:group-hover/row:opacity-100 transition-all">
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
 
-              {/* Line 2: Qty, Unit, Price, Subtotal, Trash */}
-              <div className="flex items-center gap-2">
+              {/* Line 2: Qty + Unit + Price/unit + Subtotal */}
+              <div className="flex items-center gap-1.5">
                 <Input
                   inputMode="decimal"
                   value={row.quantity}
                   onChange={e => updateItem(row.id, 'quantity', e.target.value)}
                   placeholder="Qty"
-                  className="w-14 bg-muted border-none font-mono text-sm h-7 text-center"
+                  className="w-14 bg-muted border-none font-mono text-sm h-8 text-center"
                 />
                 <select value={row.unit} onChange={e => updateItem(row.id, 'unit', e.target.value)}
-                  className="bg-muted rounded-md font-mono text-xs h-7 px-1 border-none">
+                  className="bg-muted rounded-md font-mono text-xs h-8 px-1 border-none">
                   {UNITS.map(u => <option key={u}>{u}</option>)}
                 </select>
                 <Input
@@ -244,7 +239,7 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
                   onChange={e => updateItem(row.id, 'price_per_unit', e.target.value)}
                   placeholder={`${currencySymbol}/unit`}
                   onKeyDown={e => handleRowKeyDown(e, row.id, 'price')}
-                  className="flex-1 bg-muted border-none font-mono text-sm h-7"
+                  className="flex-1 bg-muted border-none font-mono text-sm h-8"
                 />
                 <div
                   className="w-16 text-right font-mono text-sm font-bold shrink-0"
@@ -254,10 +249,6 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
                 >
                   {row.subtotal > 0 ? `${currencySymbol}${row.subtotal.toFixed(2)}` : '—'}
                 </div>
-                <button onClick={() => removeRow(row.id)}
-                  className="opacity-0 group-hover/row:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
               </div>
             </div>
           ))}

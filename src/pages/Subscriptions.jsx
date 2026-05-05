@@ -63,14 +63,14 @@ export default function Subscriptions() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-2xl p-5">
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-2xl p-4 md:p-5">
           <p className="mono-header text-[10px] text-muted-foreground mb-2">MONTHLY</p>
-          <p className="font-mono text-3xl font-bold text-secondary">€{monthlyTotal.toFixed(2)}</p>
+          <p className="font-mono text-2xl md:text-3xl font-bold text-secondary">€{monthlyTotal.toFixed(2)}</p>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-border rounded-2xl p-5">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-border rounded-2xl p-4 md:p-5">
           <p className="mono-header text-[10px] text-muted-foreground mb-2">YEARLY</p>
-          <p className="font-mono text-3xl font-bold text-foreground">€{yearlyTotal.toFixed(2)}</p>
+          <p className="font-mono text-2xl md:text-3xl font-bold text-foreground">€{yearlyTotal.toFixed(2)}</p>
         </motion.div>
       </div>
 

@@ -68,7 +68,7 @@ export default function QuickItemForm({ open, onClose, onSaved, itemType }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-md">
+      <DialogContent className="bg-card border-border max-w-md w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg overflow-y-auto flex flex-col">
         <DialogHeader>
           <DialogTitle className={`mono-header text-sm ${config.accent}`}>
             NEW {itemType.toUpperCase()}

@@ -32,6 +32,7 @@ async function autoSeedProjects(queryClient) {
 
 export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const searchRef = useRef(null);
@@ -59,14 +60,24 @@ export default function AppLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar — hidden on mobile */}
+      {/* Sidebar — hidden on mobile, visible md+ */}
       <div className="hidden md:block">
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       </div>
+
+      {/* Mobile drawer overlay */}
+      {mobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div className="flex-1 bg-black/50" onClick={() => setMobileDrawerOpen(false)} />
+          <div className="w-64 h-full">
+            <Sidebar collapsed={false} onToggle={() => setMobileDrawerOpen(false)} onMobileClose={() => setMobileDrawerOpen(false)} />
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar totalJars={totalJars} searchRef={searchRef} onOpenShortcuts={() => setShortcutsOpen(true)} onOpenAdd={() => setAddOpen(true)} onToggleSidebar={() => setCollapsed(c => !c)} />
-        {/* pb for bottom nav on mobile */}
-        <main className="flex-1 overflow-y-auto p-3 md:p-6 pb-20 md:pb-6">
+        <TopBar totalJars={totalJars} searchRef={searchRef} onOpenShortcuts={() => setShortcutsOpen(true)} onOpenAdd={() => setAddOpen(true)} onToggleSidebar={() => setMobileDrawerOpen(d => !d)} />
+        <main className="flex-1 overflow-y-auto p-3 md:p-6 pb-36 md:pb-6">
           <Outlet />
         </main>
       </div>

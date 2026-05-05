@@ -74,7 +74,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-lg">
+      <DialogContent className="bg-card border-border max-w-lg w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg flex flex-col overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="mono-header text-sm text-secondary">
             {step === 'category' ? 'LOG SPEND' : (

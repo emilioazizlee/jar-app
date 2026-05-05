@@ -70,7 +70,7 @@ export default function Health() {
             key={t.cat}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card border border-border rounded-2xl p-5"
+            className="bg-card border border-border rounded-2xl p-4 md:p-5"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -79,9 +79,9 @@ export default function Health() {
               </div>
               <JarVisual fillPercent={(t.today % 10) * 10} completedJars={Math.floor(t.today / 10)} size="sm" color="#c1121f" showLabel={false} />
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-3 grid grid-cols-3 gap-1 md:gap-3">
               <div>
-                <p className="font-mono text-2xl font-bold text-destructive">{t.today}</p>
+                <p className="font-mono text-xl md:text-2xl font-bold text-destructive">{t.today}</p>
                 <p className="font-mono text-[10px] text-muted-foreground">TODAY</p>
               </div>
               <div>
