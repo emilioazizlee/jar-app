@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ITEM_TYPES, SPEND_CATEGORIES, getCategoryLabel } from '@/lib/constants';
-import { cleanLabel } from '@/lib/labelUtils';
+import { cleanLabel, isUUID } from '@/lib/labelUtils';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -193,8 +193,8 @@ export default function RecentEntries({ items = [] }) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{cleanLabel(item.title)}</p>
                   <p className="font-mono text-[10px] text-muted-foreground">
-                    {item.category
-                      ? cleanLabel(item.category === 'cigarettes_health' ? 'cigarettes' : item.category)
+                    {item.category && !isUUID(item.category)
+                      ? cleanLabel(item.category)
                       : cleanLabel(item.type)}
                     {' · '}
                     {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}

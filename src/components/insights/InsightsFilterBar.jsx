@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { SPEND_CATEGORIES } from '@/lib/constants';
-import { cleanLabel } from '@/lib/labelUtils';
+import { cleanLabel, isUUID } from '@/lib/labelUtils';
 
 const RANGES = [
   { key: 'today', label: 'Today' },
@@ -15,9 +15,11 @@ export default function InsightsFilterBar({ filters, onChange, items = [] }) {
   const availableCategories = useMemo(() => {
     const cats = new Set();
     items.forEach(i => {
-      if (i.category) cats.add(i.category === 'cigarettes_health' ? 'cigarettes' : i.category);
+      if (i.category && !isUUID(i.category)) {
+        cats.add(i.category === 'cigarettes_health' ? 'cigarettes' : i.category);
+      }
     });
-    return [...cats].map(k => ({ key: k, label: cleanLabel(k) }));
+    return [...cats].map(k => ({ key: k, label: cleanLabel(k) })).filter(c => c.label);
   }, [items]);
 
   const toggleCategory = (key) => {

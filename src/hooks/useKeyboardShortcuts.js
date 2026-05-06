@@ -18,50 +18,50 @@ export default function useKeyboardShortcuts({ onOpenAdd, onToggleSidebar, onOpe
     const tag = document.activeElement?.tagName?.toLowerCase();
     const inInput = ['input', 'textarea', 'select'].includes(tag) || document.activeElement?.isContentEditable;
 
-    // ⌘N / Ctrl+N — open add menu
-    if (mod && e.key === 'n') {
+    // ⌘Shift+N / Ctrl+Shift+N — open add menu (avoids Chrome new window)
+    if (mod && e.shiftKey && e.key === 'N') {
       e.preventDefault();
       onOpenAdd?.();
       return;
     }
 
     // ⌘K / Ctrl+K — focus search
-    if (mod && e.key === 'k') {
+    if (mod && !e.shiftKey && e.key === 'k') {
       e.preventDefault();
       searchRef?.current?.focus();
       return;
     }
 
     // ⌘/ / Ctrl+/ — toggle sidebar
-    if (mod && e.key === '/') {
+    if (mod && !e.shiftKey && e.key === '/') {
       e.preventDefault();
       onToggleSidebar?.();
       return;
     }
 
-    // ⌘, / Ctrl+, — settings
-    if (mod && e.key === ',') {
+    // ⌘Shift+, / Ctrl+Shift+, — settings (avoids Chrome conflict)
+    if (mod && e.shiftKey && e.key === '<') {
       e.preventDefault();
       navigate('/settings');
       return;
     }
 
-    // ⌘? / Ctrl+? (Shift+/) — shortcuts overlay
-    if (mod && e.shiftKey && e.key === '/') {
+    // ⌘Shift+? / Ctrl+Shift+? (Shift+/) — shortcuts overlay
+    if (mod && e.shiftKey && e.key === '?') {
       e.preventDefault();
       onOpenShortcuts?.();
       return;
     }
 
-    // ⌘1-9 / Ctrl+1-9 — navigate sidebar sections
-    if (mod && e.key >= '1' && e.key <= '9') {
+    // ⌘Shift+1-9 / Ctrl+Shift+1-9 — navigate sidebar sections (avoids Chrome tab switching)
+    if (mod && e.shiftKey && e.key >= '1' && e.key <= '9') {
       e.preventDefault();
       const idx = parseInt(e.key, 10) - 1;
       if (NAV_ROUTES[idx]) navigate(NAV_ROUTES[idx]);
       return;
     }
 
-    // Skip rest if in input
+    // Skip all single-key shortcuts if user is typing in any input
     if (inInput) return;
   }, [onOpenAdd, onToggleSidebar, onOpenShortcuts, navigate, searchRef]);
 

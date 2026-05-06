@@ -5,13 +5,13 @@ export const SHORTCUT_SECTIONS = [
     id: 'global',
     label: 'Global',
     shortcuts: [
-      { keys: ['⌘', 'N'], win: ['Ctrl', 'N'], description: 'Open universal + menu' },
+      { keys: ['⌘', '⇧', 'N'], win: ['Ctrl', '⇧', 'N'], description: 'Open universal + menu' },
       { keys: ['⌘', 'K'], win: ['Ctrl', 'K'], description: 'Focus search bar' },
       { keys: ['⌘', '/'], win: ['Ctrl', '/'], description: 'Toggle sidebar' },
-      { keys: ['⌘', ','], win: ['Ctrl', ','], description: 'Open Settings' },
-      { keys: ['⌘', '?'], win: ['Ctrl', '?'], description: 'Open keyboard shortcuts' },
+      { keys: ['⌘', '⇧', ','], win: ['Ctrl', '⇧', ','], description: 'Open Settings' },
+      { keys: ['⌘', '⇧', '?'], win: ['Ctrl', '⇧', '?'], description: 'Open keyboard shortcuts' },
       { keys: ['Esc'], description: 'Close any modal or dropdown' },
-      { keys: ['⌘', '1–9'], win: ['Ctrl', '1–9'], description: 'Jump to sidebar section (1=Dashboard … 9=Groceries)' },
+      { keys: ['⌘', '⇧', '1–9'], win: ['Ctrl', '⇧', '1–9'], description: 'Jump to sidebar section (1=Dashboard … 9=Groceries)' },
     ],
   },
   {

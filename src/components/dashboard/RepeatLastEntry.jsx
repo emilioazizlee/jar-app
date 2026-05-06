@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { getCategoryLabel } from '@/lib/constants';
-import { cleanLabel } from '@/lib/labelUtils';
+import { cleanLabel, isUUID } from '@/lib/labelUtils';
 import { toast } from 'sonner';
 
 export default function RepeatLastEntry({ items = [] }) {
@@ -17,15 +17,16 @@ export default function RepeatLastEntry({ items = [] }) {
   if (!last) return null;
 
   const label = cleanLabel(last.title);
-  const catLabel = last.category
-    ? cleanLabel(last.category === 'cigarettes_health' ? 'cigarettes' : last.category)
+  const catLabel = last.category && !isUUID(last.category)
+    ? cleanLabel(last.category)
     : cleanLabel(last.type);
   const amount = last.amount
     ? `${last.currency === 'EUR' ? '€' : last.currency === 'USD' ? '$' : (last.currency || '')}${last.amount}`
     : '';
 
   const icon = (() => {
-    if (last.category === 'cigarettes' || last.category === 'cigarettes_health') return '🚬';
+    const cat = (last.category || '').replace(/_health$/, '');
+    if (cat === 'cigarettes') return '🚬';
     if (last.category === 'coffee') return '☕';
     if (last.category === 'taxi') return '🚕';
     if (last.category === 'food_out') return '🍽️';

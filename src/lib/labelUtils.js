@@ -18,12 +18,20 @@ const OVERRIDES = {
 export function cleanLabel(raw) {
   if (!raw) return '';
   const key = String(raw).toLowerCase();
+  // Direct override
   if (OVERRIDES[key]) return OVERRIDES[key];
-  // Strip _health suffix
+  // Strip _health suffix first, then check overrides again
   const stripped = key.replace(/_health$/, '');
   if (OVERRIDES[stripped]) return OVERRIDES[stripped];
+  // If it looks like a UUID (contains hex + dashes, long), return empty string
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(raw))) return '';
   // Title-case remaining
   return stripped.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+/** Returns true if the string looks like a UUID */
+export function isUUID(val) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(val || ''));
 }
 
 /** Format axis tick — integer only */
