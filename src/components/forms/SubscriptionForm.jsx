@@ -10,6 +10,7 @@ import { SUBSCRIPTION_CATALOG, CURRENCIES } from '@/lib/constants';
 import { motion } from 'framer-motion';
 import { Search, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
+import { getDomainForSubscription, BUNDLED_SUBSCRIPTION_NAMES } from '@/lib/subscriptionDomains';
 
 export default function SubscriptionForm({ open, onClose, onSaved }) {
   const queryClient = useQueryClient();
@@ -39,13 +40,15 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
   }, [search]);
 
   const selectService = (name, category) => {
-    setForm(prev => ({ ...prev, title: name, category }));
+    const domain = getDomainForSubscription(name) || '';
+    setForm(prev => ({ ...prev, title: name, category, domain }));
     setStep('details');
   };
 
   const handleSave = async () => {
     if (!form.title.trim()) return;
     setSaving(true);
+    const domain = form.domain || getDomainForSubscription(form.title) || '';
     await base44.entities.Item.create({
       type: 'subscription',
       title: form.title,
@@ -57,6 +60,7 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
       note: form.note || undefined,
       date: format(new Date(), 'yyyy-MM-dd'),
       is_active: true,
+      description: domain ? JSON.stringify({ domain }) : undefined,
     });
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -51,6 +51,7 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
   }));
   const [tagInput, setTagInput] = useState('');
   const [subtaskInput, setSubtaskInput] = useState('');
+  const [showSaveTemplateToast, setShowSaveTemplateToast] = useState(false);
 
   // When category changes, update default priority
   const update = (k, v) => setForm(prev => {
@@ -132,8 +133,43 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });
     setSaving(false);
-    onSaved();
+    // Offer to save step template if 3+ steps
+    if (form.steps.length >= 3) {
+      setShowSaveTemplateToast(true);
+    } else {
+      onSaved();
+    }
   };
+
+  // Step template save toast
+  if (showSaveTemplateToast) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="bg-card border-border max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="mono-header text-sm text-primary">SAVE STEP TEMPLATE?</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-muted-foreground">Save these {form.steps.length} steps as a reusable template for future tasks?</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { saveStepTemplate(form.title, form.category, form.steps); setShowSaveTemplateToast(false); onSaved(); }}
+                className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-mono text-sm hover:bg-primary/90 transition-colors"
+              >
+                Save Template
+              </button>
+              <button
+                onClick={() => { setShowSaveTemplateToast(false); onSaved(); }}
+                className="flex-1 py-2.5 rounded-xl bg-muted font-mono text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

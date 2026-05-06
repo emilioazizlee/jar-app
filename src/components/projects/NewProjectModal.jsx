@@ -8,6 +8,21 @@ import { ArrowLeft, Plus, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { PROJECT_TEMPLATES, ICON_OPTIONS, COLOR_OPTIONS } from '@/lib/projectTemplates';
+
+const ARCHETYPE_QUICK = [
+  { name: 'Work', icon: 'Briefcase', color: '#4da6ff', emoji: '💼' },
+  { name: 'Studies', icon: 'GraduationCap', color: '#4da6ff', emoji: '📚' },
+  { name: 'Side Hustle', icon: 'Zap', color: '#ffd60a', emoji: '⚡' },
+  { name: 'Health Journey', icon: 'Heart', color: '#ff2d2d', emoji: '❤️' },
+  { name: 'Travel', icon: 'Plane', color: '#40c4ff', emoji: '✈️' },
+  { name: 'Home Renovation', icon: 'Building2', color: '#ff9f43', emoji: '🏠' },
+  { name: 'Job Search', icon: 'Target', color: '#39ff14', emoji: '🎯' },
+  { name: 'Fitness Goal', icon: 'Dumbbell', color: '#06d6a0', emoji: '💪' },
+  { name: 'Learning a Language', icon: 'Globe', color: '#a855f7', emoji: '🌍' },
+  { name: 'Business', icon: 'Rocket', color: '#ff2d2d', emoji: '🚀' },
+  { name: 'Personal Finance', icon: 'Activity', color: '#39ff14', emoji: '💰' },
+  { name: 'Hobby', icon: 'Palette', color: '#e040fb', emoji: '🎨' },
+];
 import DynIcon from './DynIcon';
 
 export default function NewProjectModal({ open, onClose, onCreated }) {
@@ -84,7 +99,29 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
         <AnimatePresence mode="wait">
           {step === 'template' && (
             <motion.div key="template" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+              className="space-y-4 pt-2">
+              {/* Quick archetype chips */}
+              <div>
+                <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-[2px] mb-2">QUICK START</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {ARCHETYPE_QUICK.map(a => (
+                    <motion.button
+                      key={a.name}
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() => {
+                        setProject({ name: a.name, description: '', icon: a.icon, color: a.color, work_types: [] });
+                        setStep('configure');
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/50 border border-border text-xs font-mono text-muted-foreground hover:text-foreground transition-all"
+                      style={{ borderRadius: 999 }}
+                    >
+                      <span>{a.emoji}</span>{a.name}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-[2px] mt-2">OR CHOOSE TEMPLATE</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {PROJECT_TEMPLATES.map((tpl, i) => (
                 <motion.button
                   key={tpl.id}
@@ -108,6 +145,7 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
                   )}
                 </motion.button>
               ))}
+              </div>
             </motion.div>
           )}
 

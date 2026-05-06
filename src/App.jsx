@@ -23,6 +23,8 @@ import Finance from './pages/Finance';
 import Favorites from './pages/Favorites';
 import Settings from './pages/Settings';
 import Help from './pages/Help';
+import MyBrands from './pages/MyBrands';
+import StepTemplateLibrary from './components/settings/StepTemplateLibrary';
 import TaskDetail from './pages/TaskDetail';
 
 const AuthenticatedApp = () => {
@@ -67,6 +69,8 @@ const AuthenticatedApp = () => {
         <Route path="/finance" element={<Finance />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/brands" element={<MyBrands />} />
+        <Route path="/settings/templates" element={<StepTemplateLibrary />} />
         <Route path="/help" element={<Help />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
