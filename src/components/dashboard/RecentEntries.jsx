@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { ITEM_TYPES, SPEND_CATEGORIES, CATEGORY_COLORS } from '@/lib/constants';
+import { ITEM_TYPES, SPEND_CATEGORIES, CATEGORY_COLORS, getCategoryLabel } from '@/lib/constants';
 
 export default function RecentEntries({ items = [] }) {
   const recent = items.slice(0, 8);
 
   const getIcon = (item) => {
     if (item.type === 'spend') {
-      const cat = SPEND_CATEGORIES.find(c => c.key === item.category);
+      // cigarettes_health is internal — show cigarettes icon
+      const lookupKey = item.category === 'cigarettes_health' ? 'cigarettes' : item.category;
+      const cat = SPEND_CATEGORIES.find(c => c.key === lookupKey);
       return cat?.icon || '💰';
     }
     return ITEM_TYPES.find(t => t.key === item.type)?.label?.[0] || '•';
@@ -45,7 +47,7 @@ export default function RecentEntries({ items = [] }) {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{item.title}</p>
               <p className="font-mono text-[10px] text-muted-foreground">
-                {item.type.toUpperCase()} • {item.date ? format(new Date(item.date), 'MMM d, HH:mm') : format(new Date(item.created_date), 'MMM d, HH:mm')}
+                {item.category ? getCategoryLabel(item.category) : item.type.toUpperCase()} • {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}
               </p>
             </div>
             {item.amount && (

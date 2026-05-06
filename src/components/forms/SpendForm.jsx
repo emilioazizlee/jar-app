@@ -16,7 +16,7 @@ import GroceriesForm from './GroceriesForm';
 import SmartInput from '@/components/learn/SmartInput';
 import { recordFieldValue } from '@/lib/learningDB';
 
-const SMOKE_CATEGORIES = ['zz', 'cigarettes'];
+const SMOKE_CATEGORIES = ['cigarettes'];
 const ITEMIZED_CATEGORIES = ['groceries', 'food_out', 'pharmacy'];
 
 export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
@@ -108,11 +108,14 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
               <div>
                 <Label className="text-xs text-muted-foreground font-mono">QUANTITY</Label>
                 <Input
-                  type="number"
+                  inputMode="decimal"
+                  type="text"
                   value={form.quantity}
-                  onChange={e => update('quantity', Number(e.target.value))}
+                  onChange={e => {
+                    const v = e.target.value.replace(/[^0-9]/g, '');
+                    update('quantity', v === '' ? '' : Number(v));
+                  }}
                   className="bg-muted border-none mt-1 font-mono text-lg"
-                  min={1}
                 />
               </div>
               <div>
@@ -131,12 +134,15 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
             <div>
               <Label className="text-xs text-muted-foreground font-mono">PRICE</Label>
               <Input
-                type="number"
+                inputMode="decimal"
+                type="text"
                 placeholder="0.00"
                 value={form.amount}
-                onChange={e => update('amount', e.target.value)}
+                onChange={e => {
+                  const v = e.target.value.replace(/[^0-9.]/g, '');
+                  update('amount', v);
+                }}
                 className="bg-muted border-none mt-1 font-mono text-2xl h-14"
-                step="0.01"
               />
             </div>
 

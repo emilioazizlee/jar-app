@@ -34,7 +34,7 @@ const CORE_SECTIONS = [
   },
 ];
 
-export default function Sidebar({ collapsed, onToggle }) {
+export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [showNewProject, setShowNewProject] = useState(false);
@@ -86,6 +86,7 @@ export default function Sidebar({ collapsed, onToggle }) {
                     <Link
                       key={item.path}
                       to={item.path}
+                      onClick={onMobileClose}
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'}`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
@@ -130,6 +131,7 @@ export default function Sidebar({ collapsed, onToggle }) {
                     >
                       <Link
                         to={path}
+                        onClick={onMobileClose}
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'}`}
                         style={isActive ? { color: project.color } : {}}
                       >

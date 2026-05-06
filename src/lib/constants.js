@@ -31,11 +31,11 @@ export const PALETTE_DIM = {
    Data rotation (category charts) → blue, orange, violet, pink ONLY
    ──────────────────────────────────────────────────────────────────────── */
 export const SEMANTIC = {
-  brand:     PALETTE.green,   // JAR logo, jar fills, CTA buttons
-  recurring: PALETTE.yellow,  // subscriptions, monthly burn
-  alert:     PALETTE.red,     // errors, overdue, health-warning
-  positive:  PALETTE.green,   // on-track, under-target, streaks
-  warning:   PALETTE.yellow,  // expiring soon (3-7 days)
+  brand:     PALETTE.green,
+  recurring: PALETTE.yellow,
+  alert:     PALETTE.red,
+  positive:  PALETTE.green,
+  warning:   PALETTE.yellow,
   data1:     PALETTE.blue,
   data2:     PALETTE.orange,
   data3:     PALETTE.violet,
@@ -56,33 +56,67 @@ export const ITEM_TYPES = [
 /* ─── Category color map ──────────────────────────────────────────────────
    Data viz rotation: blue → orange → violet → pink
    Green/yellow never appear in category donut charts or dots.
-   Red reserved for health-alert tier only.
+   Red reserved for health-alert tier only (cigarettes, fines).
    ──────────────────────────────────────────────────────────────────────── */
 export const CATEGORY_COLORS = {
-  groceries:       PALETTE.blue,
-  food_out:        PALETTE.orange,
-  coffee:          PALETTE.orange,
-  cigarettes:      PALETTE.red,    // health-alert
-  zz:              PALETTE.red,    // health-alert
-  phone:           PALETTE.blue,
-  laundry:         PALETTE.blue,
-  transport:       PALETTE.blue,
-  taxi:            PALETTE.orange,
-  fines:           PALETTE.red,    // alert tier
-  gifts:           PALETTE.pink,
-  subscriptions:   PALETTE.yellow, // recurring domain
-  fixed_recurring: PALETTE.yellow, // recurring domain
-  football_work:   PALETTE.violet,
-  studies:         PALETTE.violet,
-  health:          PALETTE.pink,
-  lifestyle:       PALETTE.pink,
-  meeting:         PALETTE.violet,
-  other:           PALETTE.muted,
+  groceries:        PALETTE.blue,
+  food_out:         PALETTE.orange,
+  coffee:           PALETTE.orange,
+  cigarettes:       PALETTE.red,    // health-alert
+  cigarettes_health:PALETTE.red,    // health-alert (internal tracking)
+  phone:            PALETTE.blue,
+  laundry:          PALETTE.blue,
+  transport:        PALETTE.blue,
+  taxi:             PALETTE.orange,
+  fines:            PALETTE.red,
+  gifts:            PALETTE.pink,
+  subscriptions:    PALETTE.yellow,
+  fixed_recurring:  PALETTE.yellow,
+  football_work:    PALETTE.violet,
+  studies:          PALETTE.violet,
+  health:           PALETTE.pink,
+  lifestyle:        PALETTE.pink,
+  meeting:          PALETTE.violet,
+  other:            PALETTE.muted,
 };
+
+/* ─── Label display map ───────────────────────────────────────────────────
+   Converts internal category keys to clean display labels.
+   No underscores should ever appear in the UI.
+   ──────────────────────────────────────────────────────────────────────── */
+export const CATEGORY_LABELS = {
+  groceries:        'Groceries',
+  food_out:         'Food Out',
+  coffee:           'Coffee',
+  cigarettes:       'Cigarettes',
+  cigarettes_health:'Cigarettes',  // merged display label
+  phone:            'Phone & Comms',
+  laundry:          'Laundry',
+  transport:        'Public Transport',
+  taxi:             'Taxi',
+  fines:            'Fines',
+  gifts:            'Gifts',
+  subscriptions:    'Subscriptions',
+  fixed_recurring:  'Fixed Recurring',
+  football_work:    'Football Work',
+  studies:          'Studies',
+  health:           'Health',
+  lifestyle:        'Lifestyle',
+  meeting:          'Meeting',
+  other:            'Other',
+};
+
+/* ─── Helper: convert any raw category key to clean display label ─────── */
+export function getCategoryLabel(raw) {
+  if (!raw) return 'Other';
+  const key = raw.toLowerCase();
+  if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
+  // Fallback: strip underscores, title-case
+  return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
 
 export const SPEND_CATEGORIES = [
   { key: 'cigarettes',     label: 'Cigarettes',      icon: '🚬', color: CATEGORY_COLORS.cigarettes     },
-  { key: 'zz',             label: 'Zz',              icon: '💨', color: CATEGORY_COLORS.zz             },
   { key: 'coffee',         label: 'Coffee',          icon: '☕', color: CATEGORY_COLORS.coffee         },
   { key: 'food_out',       label: 'Food Out',        icon: '🍽️', color: CATEGORY_COLORS.food_out       },
   { key: 'groceries',      label: 'Groceries',       icon: '🛒', color: CATEGORY_COLORS.groceries      },
@@ -132,9 +166,10 @@ export const CHART_COLORS = [
 /* ─── Category-aware chart color helper ───────────────────────────────────
    Returns the semantic category color if known, otherwise falls back to
    the data-viz rotation (blue → orange → violet → pink).
-   Use this for donut/bar charts that segment by category name.
    ──────────────────────────────────────────────────────────────────────── */
 export function getCategoryColor(categoryKey, fallbackIndex = 0) {
   const key = (categoryKey || 'other').toLowerCase();
+  // Merge cigarettes_health → cigarettes color
+  if (key === 'cigarettes_health') return PALETTE.red;
   return CATEGORY_COLORS[key] || CHART_COLORS[fallbackIndex % CHART_COLORS.length];
 }

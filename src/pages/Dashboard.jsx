@@ -8,24 +8,26 @@ import DayStrip from '@/components/dashboard/DayStrip';
 import RecentEntries from '@/components/dashboard/RecentEntries';
 import JarVisual from '@/components/jar/JarVisual';
 import SpendForm from '@/components/forms/SpendForm';
+import TypePickerModal from '@/components/add/TypePickerModal';
 import { motion } from 'framer-motion';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
-import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor } from '@/lib/constants';
+import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
 import { nivoTheme } from '@/lib/nivoTheme';
 
 const QUICK_TAPS = [
   { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },
-  { key: 'zz',         label: 'Zz',         icon: '💨', color: CATEGORY_COLORS.zz         },
   { key: 'coffee',     label: 'Coffee',     icon: '☕', color: CATEGORY_COLORS.coffee     },
   { key: 'taxi',       label: 'Taxi',       icon: '🚕', color: CATEGORY_COLORS.taxi       },
   { key: 'food_out',   label: 'Food Out',   icon: '🍽️', color: CATEGORY_COLORS.food_out   },
   { key: 'groceries',  label: 'Groceries',  icon: '🛒', color: CATEGORY_COLORS.groceries  },
+  { key: '__custom__', label: 'Custom',     icon: '➕', color: CATEGORY_COLORS.other       },
 ];
 
 export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [spendCategory, setSpendCategory] = useState(null);
+  const [customOpen, setCustomOpen] = useState(false);
 
   const { data: allItems = [] } = useQuery({
     queryKey: ['items'],
@@ -45,21 +47,30 @@ export default function Dashboard() {
   const totalJarsToday = (todayItems.length / 10).toFixed(1);
 
   // Category distribution for donut
-  // Normalize category names: strip underscores, title-case, merge duplicates
+  // Normalize category keys to clean display labels, merging _health suffixes
   const normalizeCategory = (raw) => {
     if (!raw) return 'Other';
-    // Strip suffixes like _health, keep base name
-    const base = raw.replace(/_health$/, '').replace(/_/g, ' ');
-    return base.replace(/\b\w/g, c => c.toUpperCase());
+    return getCategoryLabel(raw);
+  };
+
+  // For chart color lookups we also need the key (before label conversion)
+  const normalizeCategoryKey = (raw) => {
+    if (!raw) return 'other';
+    // Merge cigarettes_health → cigarettes for color
+    if (raw === 'cigarettes_health') return 'cigarettes';
+    return raw.toLowerCase();
   };
 
   const categoryData = useMemo(() => {
     const counts = {};
+    const keyMap = {};
     todayItems.forEach(i => {
-      const cat = normalizeCategory(i.category || i.type);
-      counts[cat] = (counts[cat] || 0) + 1;
+      const label = normalizeCategory(i.category || i.type);
+      const key = normalizeCategoryKey(i.category || i.type);
+      counts[label] = (counts[label] || 0) + 1;
+      keyMap[label] = key;
     });
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    return Object.entries(counts).map(([name, value]) => ({ name, value, key: keyMap[name] }));
   }, [todayItems]);
 
   // Intentionally unused — donut uses getCategoryColor per segment
@@ -91,7 +102,11 @@ export default function Dashboard() {
   const getQuickTapCount = (category) => todayItems.filter(i => i.category === category).length;
 
   const handleQuickTap = async (cat) => {
-    setSpendCategory(cat);
+    if (cat === '__custom__') {
+      setCustomOpen(true);
+    } else {
+      setSpendCategory(cat);
+    }
   };
 
   return (
@@ -155,11 +170,11 @@ export default function Dashboard() {
             <div className="flex flex-row items-center gap-4">
               <div className="w-28 h-28 shrink-0">
                 <ResponsivePie
-                  data={categoryData.map(c => ({
+                  data={categoryData.map((c, i) => ({
                     id: c.name,
                     label: c.name,
                     value: c.value,
-                    color: getCategoryColor(c.name?.toLowerCase().replace(/ /g, '_')),
+                    color: getCategoryColor(c.key, i),
                   }))}
                   colors={({ data }) => data.color}
                   innerRadius={0.65}
@@ -168,21 +183,25 @@ export default function Dashboard() {
                   borderWidth={0}
                   enableArcLinkLabels={false}
                   enableArcLabels={false}
-                  activeOuterRadiusOffset={6}
+                  activeOuterRadiusOffset={8}
                   theme={nivoTheme}
                   motionConfig="gentle"
                   isInteractive={true}
-                  layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', ({ centerX, centerY }) => (
-                    <text
-                      x={centerX}
-                      y={centerY}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, fill: '#ffffff' }}
-                    >
-                      {todayItems.length}
-                    </text>
-                  )]}
+                  layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', ({ centerX, centerY }) => {
+                    const dominant = categoryData.sort((a, b) => b.value - a.value)[0];
+                    const centerColor = dominant ? getCategoryColor(dominant.key, 0) : '#ffffff';
+                    return (
+                      <text
+                        x={centerX}
+                        y={centerY}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, fill: centerColor }}
+                      >
+                        {todayItems.length}
+                      </text>
+                    );
+                  }]}
                   tooltip={({ datum }) => (
                     <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
                       <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>{datum.value}</strong>
@@ -193,7 +212,7 @@ export default function Dashboard() {
               <div className="space-y-1 flex-1">
                 {categoryData.slice(0, 5).map((cat, i) => (
                   <div key={cat.name} className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ background: getCategoryColor(cat.name?.toLowerCase().replace(/ /g,'_'), i) }} />
+                    <div className="w-2 h-2 rounded-full" style={{ background: getCategoryColor(cat.key, i) }} />
                     <span className="font-mono text-[10px] text-muted-foreground truncate">{cat.name}</span>
                     <span className="font-mono text-[10px] text-foreground ml-auto">{cat.value}</span>
                   </div>
@@ -226,7 +245,7 @@ export default function Dashboard() {
         >
           <p className="mono-header text-[10px] text-muted-foreground mb-3">TOP CATEGORIES</p>
           <div className="space-y-2">
-            {categoryData.sort((a, b) => b.value - a.value).slice(0, 5).map((cat, i) => (
+            {[...categoryData].sort((a, b) => b.value - a.value).slice(0, 5).map((cat, i) => (
               <div key={cat.name} className="flex items-center gap-2">
                 <span className="font-mono text-xs text-muted-foreground w-4">{i + 1}</span>
                 <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -234,7 +253,7 @@ export default function Dashboard() {
                     className="h-full rounded-full"
                     style={{
                       width: `${(cat.value / (categoryData[0]?.value || 1)) * 100}%`,
-                      background: getCategoryColor(cat.name?.toLowerCase().replace(/ /g,'_'), i)
+                      background: getCategoryColor(cat.key, i)
                     }}
                   />
                 </div>
@@ -276,6 +295,9 @@ export default function Dashboard() {
           initialCategory={spendCategory}
         />
       )}
+
+      {/* Custom + picker */}
+      <TypePickerModal open={customOpen} onClose={() => setCustomOpen(false)} />
     </div>
   );
 }

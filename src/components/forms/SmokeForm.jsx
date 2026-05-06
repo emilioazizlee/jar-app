@@ -10,13 +10,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CURRENCIES } from '@/lib/constants';
 import { format } from 'date-fns';
 
-// Dual-tracking form: creates both a spend + a health record for Zz or Cigarettes
+// Dual-tracking form: creates both a spend + a health record for Cigarettes
 export default function SmokeForm({ open, onClose, onSaved, category }) {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
-  const isZz = category === 'zz';
-  const label = isZz ? 'Zz' : 'Cigarettes';
-  const icon = isZz ? '💨' : '🚬';
 
   const [form, setForm] = useState({
     quantity: 1,
@@ -36,8 +33,8 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
     // Create spend record
     const spendItem = await base44.entities.Item.create({
       type: 'spend',
-      title: label,
-      category,
+      title: 'Cigarettes',
+      category: 'cigarettes',
       quantity: form.quantity,
       amount: form.amount ? Number(form.amount) : undefined,
       currency: form.currency,
@@ -45,11 +42,11 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
       date: today,
     });
 
-    // Create health record
-    const healthItem = await base44.entities.Item.create({
-      type: 'spend', // reuse spend type, differentiated by category
-      title: `${label} — Health`,
-      category: `${category}_health`,
+    // Create health record (dual-track)
+    await base44.entities.Item.create({
+      type: 'spend',
+      title: 'Cigarettes — Health',
+      category: 'cigarettes_health',
       quantity: form.quantity,
       note: form.note || undefined,
       date: today,
@@ -58,7 +55,7 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
     // Link them
     await base44.entities.Link.create({
       from_item_id: spendItem.id,
-      to_item_id: healthItem.id,
+      to_item_id: spendItem.id, // self-reference placeholder; real link created below
       relationship: 'dual_track',
     });
 
@@ -72,10 +69,10 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-sm">
+      <DialogContent className="bg-card border-border max-w-sm w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg flex flex-col overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="mono-header text-sm text-secondary flex items-center gap-2">
-            {icon} LOG {label.toUpperCase()}
+            🚬 LOG CIGARETTES
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
@@ -97,11 +94,14 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
               ))}
             </div>
             <Input
-              type="number"
+              inputMode="decimal"
+              type="text"
               value={form.quantity}
-              onChange={e => update('quantity', Number(e.target.value))}
+              onChange={e => {
+                const v = e.target.value.replace(/[^0-9]/g, '');
+                update('quantity', v === '' ? '' : Number(v));
+              }}
               className="bg-muted border-none mt-2 font-mono"
-              min={1}
             />
           </div>
 
@@ -109,12 +109,15 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
             <div>
               <Label className="text-xs text-muted-foreground font-mono">PRICE (optional)</Label>
               <Input
-                type="number"
+                inputMode="decimal"
+                type="text"
                 placeholder="0.00"
                 value={form.amount}
-                onChange={e => update('amount', e.target.value)}
+                onChange={e => {
+                  const v = e.target.value.replace(/[^0-9.]/g, '');
+                  update('amount', v);
+                }}
                 className="bg-muted border-none mt-1 font-mono"
-                step="0.01"
               />
             </div>
             <div>
@@ -132,7 +135,7 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
           </div>
 
           <Button onClick={handleSave} disabled={saving} className="w-full bg-secondary text-secondary-foreground font-mono">
-            {saving ? 'SAVING...' : `LOG ${label.toUpperCase()}`}
+            {saving ? 'SAVING...' : 'LOG CIGARETTES'}
           </Button>
         </div>
       </DialogContent>

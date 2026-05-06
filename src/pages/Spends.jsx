@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { SPEND_CATEGORIES } from '@/lib/constants';
+import { SPEND_CATEGORIES, getCategoryLabel } from '@/lib/constants';
 import SpendForm from '@/components/forms/SpendForm';
 import JarVisual from '@/components/jar/JarVisual';
 import { format, isSameDay, subDays, startOfMonth } from 'date-fns';
@@ -125,8 +125,9 @@ export default function Spends() {
       <div className="bg-card border border-border rounded-2xl p-5">
         <p className="mono-header text-[10px] text-muted-foreground mb-4">RECENT SPENDS</p>
         <div className="space-y-2">
-          {spends.slice(0, 15).map((spend, i) => {
-            const cat = SPEND_CATEGORIES.find(c => c.key === spend.category);
+          {spends.filter(s => s.category !== 'cigarettes_health').slice(0, 15).map((spend, i) => {
+            const lookupKey = spend.category === 'cigarettes_health' ? 'cigarettes' : spend.category;
+            const cat = SPEND_CATEGORIES.find(c => c.key === lookupKey);
             return (
               <motion.div
                 key={spend.id}
@@ -139,7 +140,7 @@ export default function Spends() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{spend.title}</p>
                   <p className="font-mono text-[10px] text-muted-foreground">
-                    {spend.date ? format(new Date(spend.date), 'MMM d') : '—'}
+                    {getCategoryLabel(spend.category)} · {spend.date ? format(new Date(spend.date), 'MMM d') : '—'}
                     {spend.quantity > 1 ? ` · x${spend.quantity}` : ''}
                     {spend.note ? ` · ${spend.note}` : ''}
                   </p>

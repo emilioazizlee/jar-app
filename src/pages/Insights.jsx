@@ -8,7 +8,7 @@ import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveLine } from '@nivo/line';
 import { nivoTheme } from '@/lib/nivoTheme';
 import JarVisual from '@/components/jar/JarVisual';
-import { ITEM_TYPES, CHART_COLORS, PALETTE, getCategoryColor } from '@/lib/constants';
+import { ITEM_TYPES, CHART_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
 
 export default function Insights() {
   const { data: items = [] } = useQuery({
