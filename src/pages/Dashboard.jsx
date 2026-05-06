@@ -9,7 +9,10 @@ import RecentEntries from '@/components/dashboard/RecentEntries';
 import JarVisual from '@/components/jar/JarVisual';
 import SpendForm from '@/components/forms/SpendForm';
 import TypePickerModal from '@/components/add/TypePickerModal';
-import { motion } from 'framer-motion';
+import RepeatLastEntry from '@/components/dashboard/RepeatLastEntry';
+import CatchUpModal from '@/components/dashboard/CatchUpModal';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap } from 'lucide-react';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
@@ -28,6 +31,7 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [spendCategory, setSpendCategory] = useState(null);
   const [customOpen, setCustomOpen] = useState(false);
+  const [catchUpOpen, setCatchUpOpen] = useState(false);
 
   const { data: allItems = [] } = useQuery({
     queryKey: ['items'],
@@ -273,7 +277,16 @@ export default function Dashboard() {
 
       {/* Quick-tap row */}
       <div>
-        <p className="mono-header text-[10px] text-muted-foreground mb-3">QUICK TAP</p>
+        <div className="flex items-center justify-between mb-3">
+          <p className="mono-header text-[10px] text-muted-foreground">QUICK TAP</p>
+          <button
+            onClick={() => setCatchUpOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border hover:border-secondary/40 transition-all font-mono text-[10px] text-muted-foreground hover:text-secondary"
+          >
+            <Zap className="w-3 h-3" />
+            Catch-up
+          </button>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
           {QUICK_TAPS.map((tap, i) => (
             <QuickTapTile
@@ -287,6 +300,8 @@ export default function Dashboard() {
             />
           ))}
         </div>
+        {/* Repeat last entry */}
+        <RepeatLastEntry items={allItems} />
       </div>
 
       {/* Recent entries */}
@@ -304,6 +319,11 @@ export default function Dashboard() {
 
       {/* Custom + picker */}
       <TypePickerModal open={customOpen} onClose={() => setCustomOpen(false)} />
+
+      {/* Catch-up modal */}
+      <AnimatePresence>
+        {catchUpOpen && <CatchUpModal onClose={() => setCatchUpOpen(false)} />}
+      </AnimatePresence>
     </div>
   );
 }

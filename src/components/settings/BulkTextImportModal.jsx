@@ -101,13 +101,14 @@ export default function BulkTextImportModal({ onClose }) {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-2xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="bg-card border-border max-w-2xl p-0 gap-0 flex flex-col rounded-none sm:rounded-xl h-full sm:h-auto max-h-[100dvh] sm:max-h-[85vh] overflow-hidden">
+        <DialogHeader className="px-5 pt-5 pb-3 border-b border-border shrink-0">
           <DialogTitle className="font-mono text-sm text-primary">BULK TEXT IMPORT</DialogTitle>
         </DialogHeader>
+        <div className="flex-1 overflow-y-auto px-5 py-4 overscroll-contain">
 
         {!done ? (
-          <div className="space-y-4 pt-2">
+          <div className="space-y-4">
             <div className="space-y-1">
               <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-[1px]">Examples</p>
               {EXAMPLES.map(e => (
@@ -180,6 +181,7 @@ export default function BulkTextImportModal({ onClose }) {
             <Button onClick={onClose} className="bg-primary text-primary-foreground font-mono">Done</Button>
           </div>
         )}
+        </div>
       </DialogContent>
     </Dialog>
   );

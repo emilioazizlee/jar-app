@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -173,11 +175,14 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-lg w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg overflow-y-auto flex flex-col">
-        <DialogHeader>
+      <DialogContent className="bg-card border-border max-w-lg w-full p-0 gap-0 flex flex-col rounded-none sm:rounded-xl h-full sm:h-auto max-h-[100dvh] sm:max-h-[85vh] overflow-hidden">
+        {/* Sticky header */}
+        <DialogHeader className="px-5 pt-5 pb-3 border-b border-border shrink-0">
           <DialogTitle className="mono-header text-sm text-primary">New Task</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 pt-2">
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 overscroll-contain">
+        <div className="space-y-4 pb-2">
           <div>
             <SmartInput
               fieldKey="task_title"
@@ -367,6 +372,10 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
             </div>
           )}
 
+        </div>
+        </div>
+        {/* Sticky footer */}
+        <div className="px-5 pt-3 pb-5 border-t border-border shrink-0 bg-card">
           <Button onClick={handleSave} disabled={saving || !form.title.trim()} className="w-full bg-primary text-primary-foreground font-mono hover:bg-primary/90">
             {saving ? 'SAVING...' : 'SAVE TASK'}
           </Button>

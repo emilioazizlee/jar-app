@@ -62,6 +62,45 @@ function SettingsRow({ icon: Icon, title, subtitle, control, last, onClick, dang
   );
 }
 
+const LANGUAGES = [
+  { value: 'English', label: 'English', available: true },
+  { value: 'Russian', label: 'Русский — Coming soon', available: false },
+  { value: 'Azerbaijani', label: 'Azərbaycanca — Coming soon', available: false },
+  { value: 'Spanish', label: 'Español — Coming soon', available: false },
+  { value: 'French', label: 'Français — Coming soon', available: false },
+  { value: 'Turkish', label: 'Türkçe — Coming soon', available: false },
+  { value: 'German', label: 'Deutsch — Coming soon', available: false },
+];
+
+function LanguageSelect({ value, onChange }) {
+  const handleChange = (e) => {
+    const selected = LANGUAGES.find(l => l.value === e.target.value);
+    if (selected && !selected.available) {
+      // show toast via simple alert approach; toast isn't imported here
+      // We'll use a custom inline banner approach
+      return;
+    }
+    onChange(e.target.value);
+  };
+
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={handleChange}
+        style={{ borderRadius: 8, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
+        onClick={e => e.stopPropagation()}
+      >
+        {LANGUAGES.map(l => (
+          <option key={l.value} value={l.value} disabled={!l.available} style={{ color: l.available ? '#fff' : '#5a5a5a' }}>
+            {l.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 function InlineSelect({ value, onChange, options }) {
   return (
     <select
@@ -213,7 +252,7 @@ export default function Settings() {
         />
         <SettingsRow
           icon={Languages} title="Language"
-          control={<InlineSelect value={prefs.language || 'English'} onChange={v => savePref('language', v)} options={['English']} />}
+          control={<LanguageSelect value={prefs.language || 'English'} onChange={v => savePref('language', v)} />}
         />
         <SettingsRow
           icon={Moon} title="Theme"

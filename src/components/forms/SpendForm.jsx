@@ -74,102 +74,97 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
   const QUICK_CHIPS_DEFAULT = [0.5, 1, 2, 5, 10, 20];
   const QUICK_CHIPS_MORE = [50, 100, 500, 1000, 2000, 5000];
 
+  const saveButton = (
+    <Button
+      onClick={handleSave}
+      disabled={saving}
+      className="w-full bg-secondary text-secondary-foreground font-mono hover:bg-secondary/90"
+    >
+      {saving ? 'SAVING...' : 'LOG SPEND'}
+    </Button>
+  );
+
+  const titleNode = step === 'category' ? 'LOG SPEND' : (
+    <button onClick={() => setStep('category')} className="flex items-center gap-2 text-secondary hover:text-foreground transition-colors">
+      <ArrowLeft className="w-4 h-4" />
+      {SPEND_CATEGORIES.find(c => c.key === category)?.label || category}
+    </button>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-lg w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg flex flex-col overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="mono-header text-sm text-secondary">
-            {step === 'category' ? 'LOG SPEND' : (
-              <button onClick={() => setStep('category')} className="flex items-center gap-2 hover:text-foreground transition-colors">
-                <ArrowLeft className="w-4 h-4" />
-                {SPEND_CATEGORIES.find(c => c.key === category)?.label || category}
-              </button>
-            )}
-          </DialogTitle>
+      <DialogContent className="bg-card border-border max-w-lg w-full p-0 gap-0 flex flex-col rounded-none sm:rounded-xl h-full sm:h-auto max-h-[100dvh] sm:max-h-[85vh] overflow-hidden">
+        {/* Sticky header */}
+        <DialogHeader className="px-5 pt-5 pb-3 border-b border-border shrink-0">
+          <DialogTitle className="mono-header text-sm">{titleNode}</DialogTitle>
         </DialogHeader>
 
-        {step === 'category' ? (
-          <div className="grid grid-cols-3 gap-2 pt-2">
-            {SPEND_CATEGORIES.map((cat, i) => (
-              <motion.button
-                key={cat.key}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.02 }}
-                onClick={() => selectCategory(cat.key)}
-                className="flex flex-col items-center gap-1 p-3 rounded-xl bg-muted/50 border border-border hover:border-secondary/40 transition-all text-center"
-              >
-                <span className="text-xl">{cat.icon}</span>
-                <span className="font-mono text-[10px] text-muted-foreground leading-tight">{cat.label}</span>
-              </motion.button>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-4 pt-2">
-            <div className="grid grid-cols-2 gap-3">
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 overscroll-contain">
+          {step === 'category' ? (
+            <div className="grid grid-cols-3 gap-2">
+              {SPEND_CATEGORIES.map((cat, i) => (
+                <motion.button
+                  key={cat.key}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.02 }}
+                  onClick={() => selectCategory(cat.key)}
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl bg-muted/50 border border-border hover:border-secondary/40 transition-all text-center"
+                >
+                  <span className="text-xl">{cat.icon}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground leading-tight">{cat.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4 pb-2">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground font-mono">QUANTITY</Label>
+                  <Input
+                    inputMode="decimal"
+                    type="text"
+                    value={form.quantity}
+                    onChange={e => {
+                      const v = e.target.value.replace(/[^0-9]/g, '');
+                      update('quantity', v === '' ? '' : Number(v));
+                    }}
+                    className="bg-muted border-none mt-1 font-mono text-lg"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
+                  <Select value={form.currency} onValueChange={v => update('currency', v)}>
+                    <SelectTrigger className="bg-muted border-none mt-1 font-mono">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div>
-                <Label className="text-xs text-muted-foreground font-mono">QUANTITY</Label>
+                <Label className="text-xs text-muted-foreground font-mono">PRICE</Label>
                 <Input
                   inputMode="decimal"
                   type="text"
-                  value={form.quantity}
+                  placeholder="0.00"
+                  value={form.amount}
                   onChange={e => {
-                    const v = e.target.value.replace(/[^0-9]/g, '');
-                    update('quantity', v === '' ? '' : Number(v));
+                    const v = e.target.value.replace(/[^0-9.]/g, '');
+                    update('amount', v);
                   }}
-                  className="bg-muted border-none mt-1 font-mono text-lg"
+                  className="bg-muted border-none mt-1 font-mono text-2xl h-14"
                 />
               </div>
+
+              {/* Quick amount chips — locked set */}
               <div>
-                <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
-                <Select value={form.currency} onValueChange={v => update('currency', v)}>
-                  <SelectTrigger className="bg-muted border-none mt-1 font-mono">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-xs text-muted-foreground font-mono">PRICE</Label>
-              <Input
-                inputMode="decimal"
-                type="text"
-                placeholder="0.00"
-                value={form.amount}
-                onChange={e => {
-                  const v = e.target.value.replace(/[^0-9.]/g, '');
-                  update('amount', v);
-                }}
-                className="bg-muted border-none mt-1 font-mono text-2xl h-14"
-              />
-            </div>
-
-            {/* Quick amount chips — locked set */}
-            <div>
-              <div className="flex gap-1.5 flex-wrap">
-                {QUICK_CHIPS_DEFAULT.map(amt => (
-                  <button
-                    key={amt}
-                    onClick={() => update('amount', String(amt))}
-                    className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
-                  >
-                    {amt}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setShowMoreChips(!showMoreChips)}
-                  className="px-2 py-1.5 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showMoreChips ? 'Less' : 'More'}
-                </button>
-              </div>
-              {showMoreChips && (
-                <div className="flex gap-1.5 flex-wrap mt-1.5">
-                  {QUICK_CHIPS_MORE.map(amt => (
+                <div className="flex gap-1.5 flex-wrap">
+                  {QUICK_CHIPS_DEFAULT.map(amt => (
                     <button
                       key={amt}
                       onClick={() => update('amount', String(amt))}
@@ -178,30 +173,48 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
                       {amt}
                     </button>
                   ))}
+                  <button
+                    onClick={() => setShowMoreChips(!showMoreChips)}
+                    className="px-2 py-1.5 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showMoreChips ? 'Less' : 'More'}
+                  </button>
                 </div>
-              )}
-            </div>
+                {showMoreChips && (
+                  <div className="flex gap-1.5 flex-wrap mt-1.5">
+                    {QUICK_CHIPS_MORE.map(amt => (
+                      <button
+                        key={amt}
+                        onClick={() => update('amount', String(amt))}
+                        className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
+                      >
+                        {amt}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            <div>
-              <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
-              <SmartInput
-                fieldKey={`spend_note_${category}`}
-                value={form.note}
-                onChange={v => update('note', v)}
-                placeholder="Add note..."
-                className="bg-muted border-none mt-1 text-sm"
-                showChips
-                chipsLimit={3}
-              />
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
+                <SmartInput
+                  fieldKey={`spend_note_${category}`}
+                  value={form.note}
+                  onChange={v => update('note', v)}
+                  placeholder="Add note..."
+                  className="bg-muted border-none mt-1 text-sm"
+                  showChips
+                  chipsLimit={3}
+                />
+              </div>
             </div>
+          )}
+        </div>
 
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full bg-secondary text-secondary-foreground font-mono hover:bg-secondary/90"
-            >
-              {saving ? 'SAVING...' : 'LOG SPEND'}
-            </Button>
+        {/* Sticky footer — only in details step */}
+        {step === 'details' && (
+          <div className="px-5 pt-3 pb-5 border-t border-border shrink-0 bg-card">
+            {saveButton}
           </div>
         )}
       </DialogContent>

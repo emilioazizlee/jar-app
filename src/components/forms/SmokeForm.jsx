@@ -69,13 +69,16 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-sm w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] rounded-none sm:rounded-lg flex flex-col overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="bg-card border-border max-w-sm w-full p-0 gap-0 flex flex-col rounded-none sm:rounded-xl h-full sm:h-auto max-h-[100dvh] sm:max-h-[85vh] overflow-hidden">
+        {/* Sticky header */}
+        <DialogHeader className="px-5 pt-5 pb-3 border-b border-border shrink-0">
           <DialogTitle className="mono-header text-sm text-secondary flex items-center gap-2">
             🚬 LOG CIGARETTES
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 pt-2">
+
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 pb-6 overscroll-contain">
           <div className="text-xs text-muted-foreground font-mono bg-muted/40 px-3 py-2 rounded-lg">
             ↗ Tracks as <span className="text-destructive">Health</span> + <span className="text-secondary">Spend</span> simultaneously
           </div>
@@ -105,35 +108,49 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs text-muted-foreground font-mono">PRICE (optional)</Label>
-              <Input
-                inputMode="decimal"
-                type="text"
-                placeholder="0.00"
-                value={form.amount}
-                onChange={e => {
-                  const v = e.target.value.replace(/[^0-9.]/g, '');
-                  update('amount', v);
-                }}
-                className="bg-muted border-none mt-1 font-mono"
-              />
+          {/* Quick amount chips */}
+          <div>
+            <Label className="text-xs text-muted-foreground font-mono">PRICE (optional)</Label>
+            <Input
+              inputMode="decimal"
+              type="text"
+              placeholder="0.00"
+              value={form.amount}
+              onChange={e => {
+                const v = e.target.value.replace(/[^0-9.]/g, '');
+                update('amount', v);
+              }}
+              className="bg-muted border-none mt-1 font-mono text-2xl h-14"
+            />
+            <div className="flex gap-1.5 flex-wrap mt-2">
+              {[0.50, 1, 2, 5, 10, 20].map(amt => (
+                <button
+                  key={amt}
+                  onClick={() => update('amount', String(amt))}
+                  className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
+                >
+                  {amt}
+                </button>
+              ))}
             </div>
-            <div>
-              <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
-              <Select value={form.currency} onValueChange={v => update('currency', v)}>
-                <SelectTrigger className="bg-muted border-none mt-1 font-mono"><SelectValue /></SelectTrigger>
-                <SelectContent>{CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
+          </div>
+
+          <div>
+            <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
+            <Select value={form.currency} onValueChange={v => update('currency', v)}>
+              <SelectTrigger className="bg-muted border-none mt-1 font-mono"><SelectValue /></SelectTrigger>
+              <SelectContent>{CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+            </Select>
           </div>
 
           <div>
             <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
             <Textarea value={form.note} onChange={e => update('note', e.target.value)} className="bg-muted border-none mt-1" rows={2} />
           </div>
+        </div>
 
+        {/* Sticky footer */}
+        <div className="px-5 pt-3 pb-5 border-t border-border shrink-0 bg-card">
           <Button onClick={handleSave} disabled={saving} className="w-full bg-secondary text-secondary-foreground font-mono">
             {saving ? 'SAVING...' : 'LOG CIGARETTES'}
           </Button>

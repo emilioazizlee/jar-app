@@ -26,6 +26,7 @@ import Help from './pages/Help';
 import MyBrands from './pages/MyBrands';
 import StepTemplateLibrary from './components/settings/StepTemplateLibrary';
 import TaskDetail from './pages/TaskDetail';
+import Entries from './pages/Entries';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings/brands" element={<MyBrands />} />
         <Route path="/settings/templates" element={<StepTemplateLibrary />} />
         <Route path="/help" element={<Help />} />
+        <Route path="/entries" element={<Entries />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
