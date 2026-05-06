@@ -260,7 +260,12 @@ export default function Dashboard() {
                 <span className="font-mono text-[10px] text-foreground min-w-[60px] text-right truncate">{cat.name}</span>
               </div>
             ))}
-            {categoryData.length === 0 && <p className="text-sm text-muted-foreground text-center py-2">—</p>}
+            {categoryData.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-4 gap-2">
+                <span className="text-2xl opacity-30">📊</span>
+                <p className="font-mono text-[10px] text-muted-foreground text-center">Start logging to see your<br />top categories</p>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

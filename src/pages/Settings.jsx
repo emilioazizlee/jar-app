@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings2, Database, Upload, Globe, Sparkles, Info, Tag } from 'lucide-react';
+import { Settings2, Database, Upload, Globe, Sparkles, Info, Tag, SlidersHorizontal } from 'lucide-react';
 import BulkImport from '@/components/settings/BulkImport';
 import ProjectSeed from '@/components/settings/ProjectSeed';
 import SeedFromWeb from '@/components/settings/SeedFromWeb';
 import InitialSetup from '@/components/settings/InitialSetup';
 import SuggestionDBManager from '@/components/settings/SuggestionDBManager';
 import MyBrands from '@/pages/MyBrands';
+import { resetSidebarOrder } from '@/lib/sidebarOrder';
 
 const TABS = [
   { id: 'about', label: 'ABOUT', icon: Info },
+  { id: 'prefs', label: 'PREFS', icon: SlidersHorizontal },
   { id: 'setup', label: 'SETUP', icon: Sparkles },
   { id: 'import', label: 'IMPORT', icon: Upload },
   { id: 'web', label: 'WEB SEED', icon: Globe },
@@ -47,6 +49,7 @@ export default function Settings() {
           className="bg-card border border-border rounded-2xl p-6"
         >
           {tab === 'about' && <AboutTab />}
+          {tab === 'prefs' && <PrefsTab />}
           {tab === 'setup' && <InitialSetup />}
           {tab === 'import' && <BulkImport />}
           {tab === 'web' && <SeedFromWeb />}
@@ -54,6 +57,31 @@ export default function Settings() {
           {tab === 'brands' && <MyBrands />}
         </motion.div>
       </AnimatePresence>
+    </div>
+  );
+}
+
+function PrefsTab() {
+  const [resetDone, setResetDone] = useState(false);
+  const handleReset = () => {
+    resetSidebarOrder();
+    setResetDone(true);
+    setTimeout(() => setResetDone(false), 2000);
+  };
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="mono-header text-[10px] text-muted-foreground mb-3">SIDEBAR</p>
+        <p className="text-sm text-muted-foreground mb-4">
+          You can drag sidebar items to reorder them within each section. Reset below restores the default order.
+        </p>
+        <button
+          onClick={handleReset}
+          className="px-4 py-2 bg-muted border border-border rounded-lg font-mono text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+        >
+          {resetDone ? '✓ Sidebar order reset' : 'Reset sidebar order'}
+        </button>
+      </div>
     </div>
   );
 }

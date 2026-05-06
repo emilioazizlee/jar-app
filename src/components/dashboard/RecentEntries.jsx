@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { ITEM_TYPES, SPEND_CATEGORIES, CATEGORY_COLORS, getCategoryLabel } from '@/lib/constants';
+import { ITEM_TYPES, SPEND_CATEGORIES, getCategoryLabel } from '@/lib/constants';
 
 export default function RecentEntries({ items = [] }) {
   const recent = items.slice(0, 8);
@@ -16,12 +16,8 @@ export default function RecentEntries({ items = [] }) {
     return ITEM_TYPES.find(t => t.key === item.type)?.label?.[0] || '•';
   };
 
-  const getColor = (item) => {
-    if (item.type === 'spend' && item.category) {
-      return CATEGORY_COLORS[item.category] || '#7a7a7a';
-    }
-    return ITEM_TYPES.find(t => t.key === item.type)?.color || '#7a7a7a';
-  };
+  // Prices in neutral lists are white — red is reserved for alerts only
+  const getAmountColor = () => '#ffffff';
 
   return (
     <motion.div
@@ -47,11 +43,13 @@ export default function RecentEntries({ items = [] }) {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{item.title}</p>
               <p className="font-mono text-[10px] text-muted-foreground">
-                {item.category ? getCategoryLabel(item.category) : item.type.toUpperCase()} • {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}
+                {item.category
+                  ? getCategoryLabel(item.category === 'cigarettes_health' ? 'cigarettes' : item.category)
+                  : item.type.toUpperCase()} • {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}
               </p>
             </div>
             {item.amount && (
-              <span className="font-mono text-sm font-semibold" style={{ color: getColor(item) }}>
+              <span className="font-mono text-sm font-semibold" style={{ color: getAmountColor() }}>
                 {item.currency === 'EUR' ? '€' : item.currency === 'USD' ? '$' : item.currency}{item.amount}
               </span>
             )}

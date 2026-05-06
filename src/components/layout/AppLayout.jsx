@@ -11,6 +11,7 @@ import { PROJECT_TEMPLATES } from '@/lib/projectTemplates';
 import useKeyboardShortcuts from '@/hooks/useKeyboardShortcuts';
 import ShortcutsOverlay from '@/components/help/ShortcutsOverlay';
 import ShortcutsTip from '@/components/help/ShortcutsTip';
+import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
 
 const SEED_KEY = 'jar_projects_seeded_v1';
 
@@ -86,6 +87,7 @@ export default function AppLayout() {
       <BottomNav onOpenAdd={() => setAddOpen(true)} />
       <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
       <ShortcutsTip />
+      <IOSInstallPrompt />
     </div>
   );
 }

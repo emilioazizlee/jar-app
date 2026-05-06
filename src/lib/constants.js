@@ -99,7 +99,7 @@ export const CATEGORY_LABELS = {
   gifts:            'Gifts',
   subscriptions:    'Subscriptions',
   fixed_recurring:  'Fixed Recurring',
-  football_work:    'Football Work',
+  football_work:    'Football',
   studies:          'Studies',
   health:           'Health',
   lifestyle:        'Lifestyle',

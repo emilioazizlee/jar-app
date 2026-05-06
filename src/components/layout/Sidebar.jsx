@@ -1,46 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
   Calendar, CheckSquare, Apple, Heart, Settings, ShoppingBasket,
   ChevronLeft, ChevronRight, Plus, FolderOpen, Loader2, HelpCircle,
-  Wallet, Martini, Star,
+  Wallet, Martini, Star, GripVertical,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import DynIcon from '@/components/projects/DynIcon';
 import NewProjectModal from '@/components/projects/NewProjectModal';
+import { loadSidebarOrder, saveSidebarOrder } from '@/lib/sidebarOrder';
 
-const CORE_SECTIONS = [
-  {
-    label: 'TRACKING',
-    items: [
-      { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-      { path: '/spends', icon: DollarSign, label: 'Daily Spends' },
-      { path: '/subscriptions', icon: RefreshCw, label: 'Subscriptions' },
-      { path: '/payments', icon: CreditCard, label: 'Payments' },
-      { path: '/finance', icon: Wallet, label: 'Finance' },
-      { path: '/insights', icon: BarChart3, label: 'Insights' },
-    ],
-  },
-  {
-    label: 'LIFE',
-    items: [
-      { path: '/calendar', icon: Calendar, label: 'Calendar' },
-      { path: '/tasks', icon: CheckSquare, label: 'Tasks' },
-      { path: '/diet', icon: Apple, label: 'Diet' },
-      { path: '/groceries', icon: ShoppingBasket, label: 'Groceries' },
-      { path: '/health', icon: Heart, label: 'Health' },
-      { path: '/leisure', icon: Martini, label: 'Leisure' },
-    ],
-  },
-];
+const ALL_ITEMS = {
+  '/': { icon: LayoutDashboard, label: 'Dashboard' },
+  '/spends': { icon: DollarSign, label: 'Daily Spends' },
+  '/subscriptions': { icon: RefreshCw, label: 'Subscriptions' },
+  '/payments': { icon: CreditCard, label: 'Payments' },
+  '/finance': { icon: Wallet, label: 'Finance' },
+  '/insights': { icon: BarChart3, label: 'Insights' },
+  '/calendar': { icon: Calendar, label: 'Calendar' },
+  '/tasks': { icon: CheckSquare, label: 'Tasks' },
+  '/diet': { icon: Apple, label: 'Diet' },
+  '/groceries': { icon: ShoppingBasket, label: 'Groceries' },
+  '/health': { icon: Heart, label: 'Health' },
+  '/leisure': { icon: Martini, label: 'Leisure' },
+};
 
 export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [showNewProject, setShowNewProject] = useState(false);
+  const [order, setOrder] = useState(() => loadSidebarOrder());
+  const [dragging, setDragging] = useState(null); // { section, index }
+  const [dragOver, setDragOver] = useState(null); // { section, index }
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['projects'],
@@ -51,6 +45,41 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const handleProjectCreated = (project) => {
     navigate(`/project/${project.id}`);
   };
+
+  const handleDragStart = useCallback((section, index) => {
+    setDragging({ section, index });
+  }, []);
+
+  const handleDragOver = useCallback((e, section, index) => {
+    e.preventDefault();
+    if (dragging && dragging.section === section) {
+      setDragOver({ section, index });
+    }
+  }, [dragging]);
+
+  const handleDrop = useCallback((e, section, index) => {
+    e.preventDefault();
+    if (!dragging || dragging.section !== section) return;
+    const newOrder = { ...order };
+    const arr = [...newOrder[section]];
+    const [removed] = arr.splice(dragging.index, 1);
+    arr.splice(index, 0, removed);
+    newOrder[section] = arr;
+    setOrder(newOrder);
+    saveSidebarOrder(newOrder);
+    setDragging(null);
+    setDragOver(null);
+  }, [dragging, order]);
+
+  const handleDragEnd = useCallback(() => {
+    setDragging(null);
+    setDragOver(null);
+  }, []);
+
+  const SECTIONS = [
+    { label: 'TRACKING', key: 'TRACKING' },
+    { label: 'LIFE', key: 'LIFE' },
+  ];
 
   return (
     <>
@@ -68,33 +97,53 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
             </motion.div>
           )}
           {collapsed && <span className="font-mono text-xl font-bold text-primary mx-auto">J</span>}
-          <button onClick={onToggle} className="p-1 rounded hover:bg-sidebar-accent transition-colors text-muted-foreground">
+          <button onClick={onToggle} className="p-1 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground">
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
-          {/* Core sections */}
-          {CORE_SECTIONS.map((section) => (
+          {SECTIONS.map((section) => (
             <div key={section.label}>
               {!collapsed && (
-                <p className="mono-header text-[10px] text-muted-foreground px-3 mb-2">{section.label}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground px-3 mb-2">
+                  {section.label}
+                </p>
               )}
               <div className="space-y-0.5">
-                {section.items.map((item) => {
-                  const isActive = location.pathname === item.path;
+                {order[section.key].map((path, index) => {
+                  const item = ALL_ITEMS[path];
+                  if (!item) return null;
+                  const isActive = location.pathname === path;
                   const Icon = item.icon;
+                  const isDragTarget = dragOver?.section === section.key && dragOver?.index === index;
                   return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={onMobileClose}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'}`}
+                    <div
+                      key={path}
+                      draggable
+                      onDragStart={() => handleDragStart(section.key, index)}
+                      onDragOver={(e) => handleDragOver(e, section.key, index)}
+                      onDrop={(e) => handleDrop(e, section.key, index)}
+                      onDragEnd={handleDragEnd}
+                      className={`group relative transition-all ${isDragTarget ? 'translate-y-0.5 opacity-60' : ''}`}
                     >
-                      <Icon className="w-4 h-4 shrink-0" />
-                      {!collapsed && <span>{item.label}</span>}
-                    </Link>
+                      <Link
+                        to={path}
+                        onClick={onMobileClose}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
+                          isActive
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 shrink-0" />
+                        {!collapsed && <span className="flex-1">{item.label}</span>}
+                        {!collapsed && (
+                          <GripVertical className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-40 cursor-grab transition-opacity" />
+                        )}
+                      </Link>
+                    </div>
                   );
                 })}
               </div>
@@ -105,7 +154,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
           <div>
             {!collapsed && (
               <div className="flex items-center justify-between px-3 mb-2">
-                <p className="mono-header text-[10px] text-muted-foreground">PROJECTS</p>
+                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">PROJECTS</p>
                 <button
                   onClick={() => setShowNewProject(true)}
                   className="text-muted-foreground hover:text-primary transition-colors"
@@ -135,7 +184,9 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                       <Link
                         to={path}
                         onClick={onMobileClose}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'}`}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
+                          isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
+                        }`}
                         style={isActive ? { color: project.color } : {}}
                       >
                         <DynIcon
@@ -143,9 +194,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                           className="w-4 h-4 shrink-0"
                           style={{ color: isActive ? project.color : undefined }}
                         />
-                        {!collapsed && (
-                          <span className="truncate">{project.name}</span>
-                        )}
+                        {!collapsed && <span className="truncate">{project.name}</span>}
                       </Link>
                     </motion.div>
                   );
@@ -173,29 +222,22 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
           </div>
         </nav>
 
-        {/* Settings + Help */}
+        {/* Bottom fixed links */}
         <div className="px-2 pb-4 border-t border-sidebar-border pt-2 flex-shrink-0 space-y-0.5">
-          <Link
-            to="/favorites"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
-          >
-            <Star className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>Favorites</span>}
-          </Link>
-          <Link
-            to="/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
-          >
-            <Settings className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>Settings</span>}
-          </Link>
-          <Link
-            to="/help"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
-          >
-            <HelpCircle className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>Help</span>}
-          </Link>
+          {[
+            { path: '/favorites', Icon: Star, label: 'Favorites' },
+            { path: '/settings', Icon: Settings, label: 'Settings' },
+            { path: '/help', Icon: HelpCircle, label: 'Help' },
+          ].map(({ path, Icon, label }) => (
+            <Link
+              key={path}
+              to={path}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
+            >
+              <Icon className="w-4 h-4 shrink-0" />
+              {!collapsed && <span>{label}</span>}
+            </Link>
+          ))}
         </div>
       </motion.aside>
 
