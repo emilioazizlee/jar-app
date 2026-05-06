@@ -1,0 +1,34 @@
+{
+  "name": "FinanceSnapshot",
+  "type": "object",
+  "properties": {
+    "cash_on_hand": {
+      "type": "number",
+      "description": "Cash on hand"
+    },
+    "bank_balance": {
+      "type": "number",
+      "description": "Bank balance"
+    },
+    "savings": {
+      "type": "number",
+      "description": "Savings"
+    },
+    "monthly_income": {
+      "type": "number",
+      "description": "Monthly income"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Snapshot date"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    }
+  },
+  "required": [
+    "date"
+  ]
+}

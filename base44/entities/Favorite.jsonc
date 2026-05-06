@@ -1,0 +1,35 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "properties": {
+    "entity_type": {
+      "type": "string",
+      "description": "Entity type (e.g. Item, LeisureEntry, Recipe, Project)"
+    },
+    "entity_id": {
+      "type": "string",
+      "description": "ID of the favorited record"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable name for display"
+    },
+    "display_icon": {
+      "type": "string",
+      "description": "Emoji or icon name"
+    },
+    "display_type": {
+      "type": "string",
+      "description": "Display group label (Tasks, Payments, Leisure, etc.)"
+    },
+    "route": {
+      "type": "string",
+      "description": "App route to open the item"
+    }
+  },
+  "required": [
+    "entity_type",
+    "entity_id",
+    "display_name"
+  ]
+}

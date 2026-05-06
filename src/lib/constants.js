@@ -76,6 +76,7 @@ export const CATEGORY_COLORS = {
   studies:          PALETTE.violet,
   health:           PALETTE.pink,
   lifestyle:        PALETTE.pink,
+  leisure:          PALETTE.pink,
   meeting:          PALETTE.violet,
   other:            PALETTE.muted,
 };
@@ -102,6 +103,7 @@ export const CATEGORY_LABELS = {
   studies:          'Studies',
   health:           'Health',
   lifestyle:        'Lifestyle',
+  leisure:          'Leisure',
   meeting:          'Meeting',
   other:            'Other',
 };

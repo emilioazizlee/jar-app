@@ -18,6 +18,9 @@ import ProjectPage from './pages/ProjectPage';
 import Diet from './pages/Diet';
 import Groceries from './pages/Groceries';
 import Health from './pages/Health';
+import Leisure from './pages/Leisure';
+import Finance from './pages/Finance';
+import Favorites from './pages/Favorites';
 import Settings from './pages/Settings';
 import Help from './pages/Help';
 
@@ -58,6 +61,9 @@ const AuthenticatedApp = () => {
         <Route path="/diet" element={<Diet />} />
         <Route path="/groceries" element={<Groceries />} />
         <Route path="/health" element={<Health />} />
+        <Route path="/leisure" element={<Leisure />} />
+        <Route path="/finance" element={<Finance />} />
+        <Route path="/favorites" element={<Favorites />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/help" element={<Help />} />
       </Route>

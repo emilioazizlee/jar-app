@@ -1,0 +1,100 @@
+{
+  "name": "LeisureEntry",
+  "type": "object",
+  "properties": {
+    "item": {
+      "type": "string",
+      "description": "What it was (free text)"
+    },
+    "sub_tag": {
+      "type": "string",
+      "enum": [
+        "Cinema",
+        "Concerts",
+        "Gaming",
+        "Dining",
+        "Dating",
+        "Drinks & Bars",
+        "Hobbies",
+        "Streaming Events",
+        "Travel",
+        "Grooming",
+        "Books",
+        "Cigarettes",
+        "Custom"
+      ],
+      "description": "Leisure sub-tag"
+    },
+    "custom_sub_tag": {
+      "type": "string",
+      "description": "Custom sub-tag if sub_tag = Custom"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Amount spent"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "description": "Currency"
+    },
+    "context": {
+      "type": "string",
+      "enum": [
+        "Solo",
+        "With friend",
+        "On date",
+        "With family",
+        "Work-social"
+      ],
+      "description": "Social context"
+    },
+    "people": {
+      "type": "string",
+      "description": "People involved (optional)"
+    },
+    "location": {
+      "type": "string",
+      "description": "Location (optional)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date"
+    },
+    "time": {
+      "type": "string",
+      "description": "Time HH:MM"
+    },
+    "mood": {
+      "type": "string",
+      "description": "Mood at time (optional, pulled from Health)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Optional photo URL"
+    },
+    "spend_item_id": {
+      "type": "string",
+      "description": "Linked Item (spend) record ID"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "description": "Favorited"
+    }
+  },
+  "required": [
+    "item",
+    "sub_tag",
+    "date"
+  ]
+}

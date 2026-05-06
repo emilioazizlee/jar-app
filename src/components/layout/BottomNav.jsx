@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, DollarSign, CheckSquare, MoreHorizontal, X,
   RefreshCw, CreditCard, BarChart3, Calendar, Apple, ShoppingBasket,
-  Heart, Settings, HelpCircle, FolderOpen,
+  Heart, Settings, HelpCircle, FolderOpen, Wallet, Martini, Star,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -12,11 +12,14 @@ import { base44 } from '@/api/base44Client';
 const MORE_ITEMS = [
   { path: '/subscriptions', icon: RefreshCw, label: 'Subscriptions' },
   { path: '/payments', icon: CreditCard, label: 'Payments' },
+  { path: '/finance', icon: Wallet, label: 'Finance' },
   { path: '/insights', icon: BarChart3, label: 'Insights' },
   { path: '/calendar', icon: Calendar, label: 'Calendar' },
   { path: '/diet', icon: Apple, label: 'Diet' },
   { path: '/groceries', icon: ShoppingBasket, label: 'Groceries' },
   { path: '/health', icon: Heart, label: 'Health' },
+  { path: '/leisure', icon: Martini, label: 'Leisure' },
+  { path: '/favorites', icon: Star, label: 'Favorites' },
   { path: '/settings', icon: Settings, label: 'Settings' },
   { path: '/help', icon: HelpCircle, label: 'Help' },
 ];

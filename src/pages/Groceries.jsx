@@ -5,6 +5,7 @@ import AtHomePage from '@/components/groceries/AtHomePage';
 import ShoppingListPage from '@/components/groceries/ShoppingListPage';
 import ShopLogPage from '@/components/groceries/ShopLogPage';
 import ItemsDatabasePage from '@/components/groceries/ItemsDatabasePage';
+import GroceryStatsPage from '@/components/groceries/GroceryStatsPage';
 import StoresPage from '@/components/groceries/StoresPage';
 import TemplatesPage from '@/components/groceries/TemplatesPage';
 import ReceiptMode from '@/components/groceries/ReceiptMode';
@@ -17,6 +18,7 @@ const TABS = [
   { id: 'items', label: 'Items DB' },
   { id: 'stores', label: 'Stores' },
   { id: 'templates', label: 'Templates' },
+  { id: 'stats', label: 'Stats' },
 ];
 
 export default function Groceries() {
@@ -71,6 +73,7 @@ export default function Groceries() {
         {tab === 'items' && <ItemsDatabasePage />}
         {tab === 'stores' && <StoresPage />}
         {tab === 'templates' && <TemplatesPage />}
+        {tab === 'stats' && <GroceryStatsPage />}
       </div>
 
       <ReceiptMode

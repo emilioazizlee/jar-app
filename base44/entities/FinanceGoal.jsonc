@@ -1,0 +1,45 @@
+{
+  "name": "FinanceGoal",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Goal name"
+    },
+    "target_amount": {
+      "type": "number",
+      "description": "Target amount"
+    },
+    "saved_amount": {
+      "type": "number",
+      "description": "Currently saved toward this goal"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "description": "Currency"
+    },
+    "target_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target date"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji icon"
+    },
+    "is_completed": {
+      "type": "boolean",
+      "description": "Whether goal is achieved"
+    }
+  },
+  "required": [
+    "title",
+    "target_amount"
+  ]
+}
