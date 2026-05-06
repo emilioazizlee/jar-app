@@ -11,6 +11,7 @@ import { PALETTE } from '@/lib/constants';
 import GoalCard from '@/components/finance/GoalCard';
 import GoalForm from '@/components/finance/GoalForm';
 import FavoritesBar from '@/components/favorites/FavoritesBar';
+import { CategoryBreakdownPanel, BurnRatePanel, NetWorthPanel, SpendingHeatmap } from '@/components/finance/FinancePanels';
 
 export default function Finance() {
   const queryClient = useQueryClient();
@@ -260,6 +261,14 @@ export default function Finance() {
           <p className="text-sm text-muted-foreground text-center py-4">No goals yet. Add a savings goal!</p>
         )}
       </div>
+
+      {/* BI Panels B–E */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CategoryBreakdownPanel items={items} snapshots={snapshots} delay={0.05} />
+        <BurnRatePanel items={items} snapshots={snapshots} delay={0.1} />
+      </div>
+      <NetWorthPanel snapshots={snapshots} delay={0.15} />
+      <SpendingHeatmap items={items} delay={0.2} />
 
       {showGoalForm && (
         <GoalForm

@@ -23,6 +23,7 @@ import Finance from './pages/Finance';
 import Favorites from './pages/Favorites';
 import Settings from './pages/Settings';
 import Help from './pages/Help';
+import TaskDetail from './pages/TaskDetail';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/tasks/:taskId" element={<TaskDetail />} />
         <Route path="/spends" element={<Spends />} />
         <Route path="/subscriptions" element={<Subscriptions />} />
         <Route path="/payments" element={<Payments />} />

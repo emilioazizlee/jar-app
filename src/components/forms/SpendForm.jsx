@@ -24,6 +24,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
   const [step, setStep] = useState(initialCategory ? 'details' : 'category');
   const [category, setCategory] = useState(initialCategory || '');
   const [saving, setSaving] = useState(false);
+  const [showMoreChips, setShowMoreChips] = useState(false);
   const [form, setForm] = useState({
     quantity: 1,
     amount: '',
@@ -70,7 +71,8 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
     onSaved();
   };
 
-  const quickAmounts = [5, 10, 20, 50];
+  const QUICK_CHIPS_DEFAULT = [0.5, 1, 2, 5, 10, 20];
+  const QUICK_CHIPS_MORE = [50, 100, 500, 1000, 2000, 5000];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -146,17 +148,38 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
               />
             </div>
 
-            {/* Quick amount chips */}
-            <div className="flex gap-2">
-              {quickAmounts.map(amt => (
+            {/* Quick amount chips — locked set */}
+            <div>
+              <div className="flex gap-1.5 flex-wrap">
+                {QUICK_CHIPS_DEFAULT.map(amt => (
+                  <button
+                    key={amt}
+                    onClick={() => update('amount', String(amt))}
+                    className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
+                  >
+                    {amt}
+                  </button>
+                ))}
                 <button
-                  key={amt}
-                  onClick={() => update('amount', String(amt))}
-                  className="flex-1 py-2 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
+                  onClick={() => setShowMoreChips(!showMoreChips)}
+                  className="px-2 py-1.5 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {amt}
+                  {showMoreChips ? 'Less' : 'More'}
                 </button>
-              ))}
+              </div>
+              {showMoreChips && (
+                <div className="flex gap-1.5 flex-wrap mt-1.5">
+                  {QUICK_CHIPS_MORE.map(amt => (
+                    <button
+                      key={amt}
+                      onClick={() => update('amount', String(amt))}
+                      className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
+                    >
+                      {amt}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>

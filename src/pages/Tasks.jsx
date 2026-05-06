@@ -2,13 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TASK_STATUSES, TASK_TYPES } from '@/lib/constants';
 import JarVisual from '@/components/jar/JarVisual';
 import TaskForm from '@/components/forms/TaskForm';
+import TaskCardMenu from '@/components/tasks/TaskCardMenu';
 import { Plus, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
+import { getProjectName } from '@/lib/labelUtils';
 
 const STATUS_COLORS = {
   'Idea': '#7a7a7a',
@@ -21,6 +24,7 @@ const STATUS_COLORS = {
 
 export default function Tasks() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
@@ -28,6 +32,12 @@ export default function Tasks() {
   const { data: tasks = [] } = useQuery({
     queryKey: ['items', 'tasks'],
     queryFn: () => base44.entities.Item.filter({ type: 'task' }, '-created_date', 200),
+    initialData: [],
+  });
+
+  const { data: projects = [] } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => base44.entities.Project.list('name', 50),
     initialData: [],
   });
 
@@ -46,6 +56,11 @@ export default function Tasks() {
 
   const jarFill = (tasks.filter(t => t.status === 'Done').length % 10) * 10;
   const completedJars = Math.floor(tasks.filter(t => t.status === 'Done').length / 10);
+
+  const openDetail = (taskId, e) => {
+    if (e) e.stopPropagation();
+    navigate(`/tasks/${taskId}`);
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
@@ -97,12 +112,14 @@ export default function Tasks() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-card border border-border rounded-xl p-4 hover:border-primary/20 transition-all group"
+              className="bg-card border border-border rounded-xl p-4 hover:border-primary/20 transition-all group cursor-pointer"
+              onClick={(e) => openDetail(task.id, e)}
             >
               <div className="flex items-start gap-3">
-                {/* Status dot */}
+                {/* Status dot / checkbox */}
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     const next = task.status === 'Done' ? 'Planned' : 'Done';
                     updateStatus.mutate({ id: task.id, status: next });
                   }}
@@ -120,29 +137,32 @@ export default function Tasks() {
                     <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0" style={{ borderColor: STATUS_COLORS[task.status] + '40', color: STATUS_COLORS[task.status] }}>
                       {task.status}
                     </Badge>
-                    {task.category && (
+                    {/* Project name — never show raw UUID */}
+                    {task.for_whom && !task.for_whom.match(/^[0-9a-f]{20,}$/) && (
+                      <span className="font-mono text-[10px] text-muted-foreground">{task.for_whom}</span>
+                    )}
+                    {task.category && !task.category.match(/^[0-9a-f]{20,}$/) && (
                       <span className="font-mono text-[10px] text-muted-foreground">{task.category}</span>
                     )}
+                    {/* Show project name if linked — never show raw UUID */}
+                    {task.tags?.find(t => t.startsWith('project:')) && (() => {
+                      const projId = task.tags.find(t => t.startsWith('project:')).replace('project:', '');
+                      const name = getProjectName(projId, projects);
+                      return <span className="font-mono text-[10px] text-primary/70">{name !== '—' ? name : ''}</span>;
+                    })()}
                     {task.deadline && (
                       <span className="font-mono text-[10px] text-muted-foreground">Due {format(new Date(task.deadline), 'MMM d')}</span>
                     )}
                   </div>
-                  {task.progress > 0 && (
-                    <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden w-32">
-                      <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${task.progress}%` }} />
-                    </div>
-                  )}
                   {(() => {
                     try {
-                      const desc = JSON.parse(task.description || '{}');
-                      const steps = desc.steps || [];
+                      const meta = JSON.parse(task.note || '{}');
+                      const steps = meta.steps || [];
                       if (steps.length > 0) {
-                        const doneCount = steps.filter(s => s.status === 'done').length;
-                        const totalMin = steps.reduce((sum, s) => sum + (Number(s.duration) || 0), 0);
+                        const doneCount = steps.filter(s => s.done).length;
                         return (
                           <div className="flex items-center gap-3 mt-1">
                             <p className="font-mono text-[10px] text-muted-foreground">{doneCount}/{steps.length} steps</p>
-                            {totalMin > 0 && <p className="font-mono text-[10px] text-muted-foreground">{totalMin}m</p>}
                             <div className="h-1 bg-muted rounded-full overflow-hidden w-24">
                               <div className="h-full bg-primary rounded-full" style={{ width: `${steps.length ? (doneCount / steps.length) * 100 : 0}%` }} />
                             </div>
@@ -157,7 +177,17 @@ export default function Tasks() {
                     ) : null;
                   })()}
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                {/* Three-dot menu */}
+                <div onClick={e => e.stopPropagation()}>
+                  <TaskCardMenu task={task} onEdit={(t) => navigate(`/tasks/${t.id}`)} />
+                </div>
+
+                {/* Chevron */}
+                <ChevronRight
+                  className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0 mt-0.5"
+                  onClick={(e) => openDetail(task.id, e)}
+                />
               </div>
             </motion.div>
           ))}
@@ -167,7 +197,13 @@ export default function Tasks() {
         )}
       </div>
 
-      {showForm && <TaskForm open={showForm} onClose={() => setShowForm(false)} onSaved={() => { setShowForm(false); queryClient.invalidateQueries({ queryKey: ['items'] }); }} />}
+      {showForm && (
+        <TaskForm
+          open={showForm}
+          onClose={() => setShowForm(false)}
+          onSaved={() => { setShowForm(false); queryClient.invalidateQueries({ queryKey: ['items'] }); }}
+        />
+      )}
     </div>
   );
 }
