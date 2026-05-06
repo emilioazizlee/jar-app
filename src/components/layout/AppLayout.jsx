@@ -66,13 +66,13 @@ export default function AppLayout() {
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       </div>
 
-      {/* Mobile drawer overlay */}
+      {/* Mobile drawer overlay — slides in from LEFT */}
       {mobileDrawerOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex">
-          <div className="flex-1 bg-black/50" onClick={() => setMobileDrawerOpen(false)} />
           <div className="w-64 h-full">
             <Sidebar collapsed={false} onToggle={() => setMobileDrawerOpen(false)} onMobileClose={() => setMobileDrawerOpen(false)} />
           </div>
+          <div className="flex-1 bg-black/50" onClick={() => setMobileDrawerOpen(false)} />
         </div>
       )}
 

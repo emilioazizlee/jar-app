@@ -33,17 +33,23 @@ export default function IOSInstallPrompt() {
           className="fixed bottom-0 left-0 right-0 z-[999] px-4 pb-8 md:hidden"
           style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
         >
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-4 flex items-start gap-3 shadow-2xl">
+          <div className="relative bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-4 flex items-start gap-3 shadow-2xl">
+            {/* X close button — 24px, 12px from top-right */}
+            <button
+              onClick={dismiss}
+              style={{ position: 'absolute', top: 12, right: 12, width: 24, height: 24, color: '#7a7a7a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              className="hover:text-white transition-colors"
+              aria-label="Dismiss"
+            >
+              <X className="w-4 h-4" />
+            </button>
             <span className="text-2xl mt-0.5">🫙</span>
-            <div className="flex-1">
+            <div className="flex-1 pr-6">
               <p className="font-mono text-sm font-semibold text-foreground">Add JAR to your home screen</p>
               <p className="font-mono text-[11px] text-muted-foreground mt-1 leading-relaxed">
                 Tap <Share className="inline w-3 h-3 mx-0.5" /> then <strong>"Add to Home Screen"</strong> for a fullscreen experience — no browser toolbar.
               </p>
             </div>
-            <button onClick={dismiss} className="p-1 text-muted-foreground hover:text-foreground transition-colors">
-              <X className="w-4 h-4" />
-            </button>
           </div>
         </motion.div>
       )}

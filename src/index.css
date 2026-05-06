@@ -191,6 +191,14 @@
   background: #2a2a2a;
 }
 
+/* ─── Global border-radius enforcement ─────────────────────────────── */
+/* Cards: 12px */
+.bg-card, [class*="rounded-2xl"], [class*="rounded-xl"] {
+  /* Handled via Tailwind rounded-xl = 12px via --radius token */
+}
+/* Ensure dialogs/popovers use 12px */
+[role="dialog"] > div { border-radius: 12px; }
+
 /* Mono header style */
 .mono-header {
   font-family: 'JetBrains Mono', monospace;

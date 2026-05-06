@@ -31,3 +31,16 @@ export function intTick(v) {
   const n = Number(v);
   return Number.isInteger(n) ? String(n) : '';
 }
+
+/**
+ * Resolves a project ID to its display name.
+ * Pass in the projects array from your query.
+ * Returns "—" if not found, and the raw value if it's clearly not a UUID.
+ */
+export function getProjectName(projectId, projects = []) {
+  if (!projectId) return '—';
+  // If it doesn't look like a UUID/ID (no hex chars, short), return as-is
+  if (projectId.length < 10) return projectId;
+  const found = projects.find(p => p.id === projectId);
+  return found ? found.name : '—';
+}

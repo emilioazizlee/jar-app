@@ -7,7 +7,7 @@ export const nivoTheme = {
     domain: { line: { stroke: '#1f1f1f' } },
     ticks: {
       line: { stroke: '#1f1f1f' },
-      text: { fill: '#7a7a7a', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' },
+      text: { fill: '#7a7a7a', fontSize: 10, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1.6 },
     },
     legend: {
       text: { fill: '#ffffff', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'JetBrains Mono, monospace' },
@@ -30,3 +30,23 @@ export const nivoTheme = {
   },
   crosshair: { line: { stroke: '#1f1f1f', strokeWidth: 1, strokeOpacity: 1 } },
 };
+
+/**
+ * Build an integer-only tickValues array for count-based Y-axes.
+ * Returns an array [0, 1, 2, … max], capped at maxTicks steps.
+ */
+export function intTickValues(max, maxTicks = 6) {
+  const m = Math.max(1, Math.ceil(max));
+  if (m <= maxTicks) return Array.from({ length: m + 1 }, (_, i) => i);
+  const step = Math.ceil(m / maxTicks);
+  const ticks = [];
+  for (let i = 0; i <= m; i += step) ticks.push(i);
+  if (ticks[ticks.length - 1] < m) ticks.push(m);
+  return ticks;
+}
+
+/** Format integer tick — empty string for non-integers */
+export function intTickFormat(v) {
+  const n = Number(v);
+  return Number.isInteger(n) ? String(n) : '';
+}

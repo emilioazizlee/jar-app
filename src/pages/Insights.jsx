@@ -9,7 +9,7 @@ import {
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveLine } from '@nivo/line';
-import { nivoTheme } from '@/lib/nivoTheme';
+import { nivoTheme, intTickValues, intTickFormat } from '@/lib/nivoTheme';
 import { ITEM_TYPES, CHART_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
 import { cleanLabel, intTick } from '@/lib/labelUtils';
 import InsightsFilterBar from '@/components/insights/InsightsFilterBar';
@@ -151,11 +151,10 @@ export default function Insights() {
       .map(([name, value], idx) => ({ name, value, color: CHART_COLORS[idx % CHART_COLORS.length] }));
   }, [items]);
 
-  const daysTracked = Math.max(1, differenceInDays(new Date(), new Date(allItems[allItems.length - 1]?.date || new Date())) || 1);
   const totalSpend = items.filter(i => i.type === 'spend').reduce((s, i) => s + (i.amount || 0), 0);
   const avgDailySpend = totalSpend / Math.max(1, differenceInDays(new Date(), rangeStart) + 1);
 
-  // Spend trend — only show days with data as points; empty = 0 shown as faint dots
+  // Spend trend
   const spendTrendData = useMemo(() => [{
     id: 'Spend',
     color: PALETTE.orange,
@@ -163,10 +162,16 @@ export default function Insights() {
   }], [daysInRange]);
 
   const maxSpend = Math.max(...daysInRange.map(d => d.spent), 1);
-  const spendYMax = Math.ceil(maxSpend / 10) * 10;
+  const spendYMax = Math.ceil(maxSpend / 25) * 25 || 50;
+  const spendYTicks = [0, spendYMax / 2, spendYMax].filter((v, i, a) => a.indexOf(v) === i);
 
-  // Activity chart — integer y
+  // Activity chart — integer Y axis
   const maxCount = Math.max(...daysInRange.map(d => d.count), 1);
+  const countTickValues = intTickValues(maxCount, 5);
+
+  // X-axis tick intervals to prevent crowding
+  const n = daysInRange.length;
+  const xTickInterval = n <= 7 ? 1 : n <= 14 ? 2 : n <= 31 ? 5 : 15;
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 md:space-y-5">
@@ -197,18 +202,25 @@ export default function Insights() {
             enableLabel={false}
             enableGridY={true}
             axisBottom={{
-              tickSize: 0, tickPadding: 6, tickRotation: 0,
-              tickValues: daysInRange.length > 30 ? Math.floor(daysInRange.length / 10) : undefined,
+              tickSize: 0,
+              tickPadding: 6,
+              tickRotation: n > 14 ? -45 : 0,
+              format: (val, idx) => {
+                // show only every Nth label
+                const i = daysInRange.findIndex(d => d.day === val);
+                return i % xTickInterval === 0 ? val : '';
+              },
             }}
             axisLeft={{
-              tickSize: 0, tickPadding: 6,
-              format: intTick,
-              tickValues: Math.min(maxCount, 6),
+              tickSize: 0,
+              tickPadding: 6,
+              format: intTickFormat,
+              tickValues: countTickValues,
             }}
-            margin={{ top: 22, right: 22, bottom: 26, left: 34 }}
-            tooltip={({ indexValue, value }) => (
+            margin={{ top: 22, right: 22, bottom: n > 14 ? 40 : 26, left: 34 }}
+            tooltip={({ data, value }) => (
               <div style={TOOLTIP_STYLE}>
-                {indexValue}: <strong>{value}</strong> entries
+                {data.label || data.day}: <strong>{value}</strong> entries
               </div>
             )}
             motionConfig="gentle"
@@ -262,7 +274,7 @@ export default function Insights() {
           {topSpendCats.length > 0 ? (
             <div className="h-48">
               <ResponsiveBar
-                data={topSpendCats.map(c => ({ category: c.name, value: parseFloat(c.value.toFixed(2)), color: c.color }))}
+                data={topSpendCats.map(c => ({ category: cleanLabel(c.name), value: parseFloat(c.value.toFixed(2)), color: c.color }))}
                 keys={['value']}
                 indexBy="category"
                 layout="horizontal"
@@ -270,12 +282,14 @@ export default function Insights() {
                 colors={({ data }) => data.color}
                 borderRadius={4}
                 padding={0.3}
-                enableLabel={false}
+                enableLabel={true}
+                label={({ value }) => `€${value.toFixed(0)}`}
+                labelTextColor="#fff"
                 enableGridX={true}
                 enableGridY={false}
                 axisLeft={{ tickSize: 0, tickPadding: 6 }}
                 axisBottom={{ tickSize: 0, tickPadding: 4, format: v => `€${v}` }}
-                margin={{ top: 22, right: 22, bottom: 26, left: 90 }}
+                margin={{ top: 22, right: 60, bottom: 26, left: 96 }}
                 tooltip={({ data, value }) => (
                   <div style={TOOLTIP_STYLE}>
                     <span style={{ color: data.color }}>■</span> {data.category}: <strong>€{value.toFixed(2)}</strong>
@@ -310,17 +324,23 @@ export default function Insights() {
             enableSlices="x"
             useMesh={false}
             enableGridX={false}
-            yScale={{ type: 'linear', min: 0, max: spendYMax, nice: true }}
+            yScale={{ type: 'linear', min: 0, max: spendYMax, nice: false }}
             axisBottom={{
-              tickSize: 0, tickPadding: 6,
-              tickValues: daysInRange.length > 30 ? Math.floor(daysInRange.length / 8) : 6,
+              tickSize: 0,
+              tickPadding: 6,
+              tickRotation: n > 14 ? -45 : 0,
+              format: (val) => {
+                const i = daysInRange.findIndex(d => d.day === val);
+                return i >= 0 && i % xTickInterval === 0 ? val : '';
+              },
             }}
             axisLeft={{
-              tickSize: 0, tickPadding: 6,
+              tickSize: 0,
+              tickPadding: 8,
               format: v => `€${v}`,
-              tickValues: 5,
+              tickValues: spendYTicks,
             }}
-            margin={{ top: 22, right: 22, bottom: 26, left: 50 }}
+            margin={{ top: 22, right: 22, bottom: n > 14 ? 40 : 26, left: 54 }}
             motionConfig="gentle"
             sliceTooltip={({ slice }) => (
               <div style={TOOLTIP_STYLE}>

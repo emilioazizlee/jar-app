@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
-import { nivoTheme } from '@/lib/nivoTheme';
+import { nivoTheme, intTickValues, intTickFormat } from '@/lib/nivoTheme';
 
 const QUICK_TAPS = [
   { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },
@@ -115,21 +115,22 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <StatCard title="THIS MONTH" value={totalJarsMonth} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>
           <div className="w-24 h-12">
-            <ResponsiveBar
-              data={chartData.slice(-14).map(d => ({ day: d.day, count: d.count }))}
-              keys={['count']}
-              indexBy="day"
-              theme={nivoTheme}
-              colors={PALETTE.green}
-              borderRadius={2}
-              padding={0.3}
-              enableLabel={false}
-              enableGridY={false}
-              axisBottom={null}
-              axisLeft={null}
-              isInteractive={false}
-              animate={false}
-            />
+                <ResponsiveBar
+                  data={chartData.slice(-14).map(d => ({ day: d.day, count: d.count }))}
+                  keys={['count']}
+                  indexBy="day"
+                  theme={nivoTheme}
+                  colors={PALETTE.green}
+                  borderRadius={2}
+                  padding={0.3}
+                  enableLabel={false}
+                  enableGridY={false}
+                  axisBottom={null}
+                  axisLeft={null}
+                  isInteractive={false}
+                  animate={false}
+                  valueFormat={intTickFormat}
+                />
           </div>
         </StatCard>
 

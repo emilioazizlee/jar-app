@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ITEM_TYPES, SPEND_CATEGORIES, getCategoryLabel } from '@/lib/constants';
+import { cleanLabel } from '@/lib/labelUtils';
 
 export default function RecentEntries({ items = [] }) {
   const recent = items.slice(0, 8);
@@ -41,11 +42,11 @@ export default function RecentEntries({ items = [] }) {
           >
             <span className="text-lg w-8 text-center">{getIcon(item)}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{item.title}</p>
+              <p className="text-sm font-medium truncate">{cleanLabel(item.title)}</p>
               <p className="font-mono text-[10px] text-muted-foreground">
                 {item.category
-                  ? getCategoryLabel(item.category === 'cigarettes_health' ? 'cigarettes' : item.category)
-                  : item.type.toUpperCase()} • {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}
+                  ? cleanLabel(item.category === 'cigarettes_health' ? 'cigarettes' : item.category)
+                  : cleanLabel(item.type)} • {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}
               </p>
             </div>
             {item.amount && (

@@ -35,6 +35,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const [order, setOrder] = useState(() => loadSidebarOrder());
   const [dragging, setDragging] = useState(null); // { section, index }
   const [dragOver, setDragOver] = useState(null); // { section, index }
+  const [crossSectionDrag, setCrossSectionDrag] = useState(false);
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['projects'],
@@ -52,8 +53,13 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
 
   const handleDragOver = useCallback((e, section, index) => {
     e.preventDefault();
-    if (dragging && dragging.section === section) {
+    if (!dragging) return;
+    if (dragging.section === section) {
       setDragOver({ section, index });
+      setCrossSectionDrag(false);
+    } else {
+      setCrossSectionDrag(true);
+      setDragOver(null);
     }
   }, [dragging]);
 
@@ -74,6 +80,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const handleDragEnd = useCallback(() => {
     setDragging(null);
     setDragOver(null);
+    setCrossSectionDrag(false);
   }, []);
 
   const SECTIONS = [
@@ -111,7 +118,25 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                   {section.label}
                 </p>
               )}
-              <div className="space-y-0.5">
+              <div
+                className="space-y-0.5 relative"
+                onDragOver={(e) => {
+                  if (dragging && dragging.section !== section.key) e.preventDefault();
+                }}
+                onDrop={(e) => {
+                  // Block cross-section drops
+                  if (dragging && dragging.section !== section.key) {
+                    e.preventDefault();
+                    setCrossSectionDrag(false);
+                  }
+                }}
+              >
+                {/* Cross-section drop blocker overlay */}
+                {crossSectionDrag && dragging && dragging.section !== section.key && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(193,18,31,0.15)', border: '1px solid rgba(193,18,31,0.4)', borderRadius: 8, zIndex: 10, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: 16 }}>🚫</span>
+                  </div>
+                )}
                 {order[section.key].map((path, index) => {
                   const item = ALL_ITEMS[path];
                   if (!item) return null;
@@ -126,12 +151,14 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                       onDragOver={(e) => handleDragOver(e, section.key, index)}
                       onDrop={(e) => handleDrop(e, section.key, index)}
                       onDragEnd={handleDragEnd}
+                      style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
                       className={`group relative transition-all ${isDragTarget ? 'translate-y-0.5 opacity-60' : ''}`}
                     >
                       <Link
                         to={path}
                         onClick={onMobileClose}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
+                        style={{ borderRadius: 8 }}
+                        className={`flex items-center gap-3 px-3 py-2 text-sm transition-all ${
                           isActive
                             ? 'bg-primary/10 text-primary'
                             : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
