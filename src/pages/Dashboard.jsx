@@ -16,7 +16,8 @@ import { Zap } from 'lucide-react';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
-import { nivoTheme, intTickValues, intTickFormat } from '@/lib/nivoTheme';
+import { nivoTheme } from '@/lib/nivoTheme';
+import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
 
 const QUICK_TAPS = [
   { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },

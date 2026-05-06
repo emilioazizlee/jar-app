@@ -90,7 +90,7 @@ function PaymentRow({ payment, onEdit }) {
           <span className="text-lg">{icon}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">{payment.title}</p>
+          <p className="text-sm font-medium" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{payment.title}</p>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <span className="font-mono text-[10px] text-muted-foreground">{payment.category || 'Other'}</span>
             {payment.deadline && (
