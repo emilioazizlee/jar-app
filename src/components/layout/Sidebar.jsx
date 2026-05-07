@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import DynIcon from '@/components/projects/DynIcon';
 import NewProjectModal from '@/components/projects/NewProjectModal';
+import ProjectContextMenu from '@/components/projects/ProjectContextMenu';
 import { loadSidebarOrder, saveSidebarOrder } from '@/lib/sidebarOrder';
 
 const ALL_ITEMS = {
@@ -208,21 +209,23 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
                     >
-                      <Link
-                        to={path}
-                        onClick={onMobileClose}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
-                          isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
-                        }`}
-                        style={isActive ? { color: project.color } : {}}
-                      >
-                        <DynIcon
-                          name={project.icon || 'FolderOpen'}
-                          className="w-4 h-4 shrink-0"
-                          style={{ color: isActive ? project.color : undefined }}
-                        />
-                        {!collapsed && <span className="truncate">{project.name}</span>}
-                      </Link>
+                      <ProjectContextMenu project={project} onMobileClose={onMobileClose}>
+                        <Link
+                          to={path}
+                          onClick={onMobileClose}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
+                            isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
+                          }`}
+                          style={isActive ? { color: project.color } : {}}
+                        >
+                          <DynIcon
+                            name={project.icon || 'FolderOpen'}
+                            className="w-4 h-4 shrink-0"
+                            style={{ color: isActive ? project.color : undefined }}
+                          />
+                          {!collapsed && <span className="truncate">{project.name}</span>}
+                        </Link>
+                      </ProjectContextMenu>
                     </motion.div>
                   );
                 })}

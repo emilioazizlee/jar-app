@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, ChevronRight, Loader2, Pencil } from 'lucide-react';
+import { Plus, Search, ChevronRight, Loader2, Pencil, Home } from 'lucide-react';
 import EditProjectModal from '@/components/projects/EditProjectModal';
+import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -69,8 +70,28 @@ export default function ProjectPage() {
     return <p className="text-center text-muted-foreground py-20 font-mono">Project not found.</p>;
   }
 
+  // Build breadcrumb trail
+  const parentProject = project?.parent_id
+    ? { id: project.parent_id, name: '...' } // projects array might have parent
+    : null;
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+        <Link to="/" className="hover:text-foreground transition-colors"><Home className="w-3 h-3" /></Link>
+        <ChevronRight className="w-3 h-3" />
+        <Link to="/tasks" className="hover:text-foreground transition-colors text-muted-foreground">Projects</Link>
+        {project?.parent_id && (
+          <>
+            <ChevronRight className="w-3 h-3" />
+            <Link to={`/project/${project.parent_id}`} className="hover:text-foreground transition-colors">Parent</Link>
+          </>
+        )}
+        <ChevronRight className="w-3 h-3" />
+        <span style={{ color: color }}>{project.name}</span>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">

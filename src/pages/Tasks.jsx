@@ -9,7 +9,8 @@ import { TASK_STATUSES, TASK_TYPES } from '@/lib/constants';
 import JarVisual from '@/components/jar/JarVisual';
 import TaskForm from '@/components/forms/TaskForm';
 import TaskCardMenu from '@/components/tasks/TaskCardMenu';
-import { Plus, ChevronRight } from 'lucide-react';
+import { Plus, ChevronRight, LayoutList, LayoutGrid } from 'lucide-react';
+import TasksBoardView from '@/components/tasks/TasksBoardView.jsx';
 import { format } from 'date-fns';
 import { getProjectName } from '@/lib/labelUtils';
 
@@ -26,8 +27,10 @@ export default function Tasks() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'board'
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
+  const [boardInitialStatus, setBoardInitialStatus] = useState('Planned');
 
   const { data: tasks = [] } = useQuery({
     queryKey: ['items', 'tasks'],
@@ -73,6 +76,23 @@ export default function Tasks() {
           <div className="hidden sm:block">
             <JarVisual fillPercent={jarFill} completedJars={completedJars} size="sm" label="completed" />
           </div>
+          {/* View toggle */}
+          <div className="flex bg-muted rounded-lg p-1 gap-1">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded transition-all ${viewMode === 'list' ? 'bg-card text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              title="List view"
+            >
+              <LayoutList className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('board')}
+              className={`p-1.5 rounded transition-all ${viewMode === 'board' ? 'bg-card text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              title="Board view"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -102,8 +122,17 @@ export default function Tasks() {
         </Select>
       </div>
 
+      {/* Board view */}
+      {viewMode === 'board' && (
+        <TasksBoardView
+          tasks={tasks}
+          projects={projects}
+          onAddTask={(status) => { setBoardInitialStatus(status); setShowForm(true); }}
+        />
+      )}
+
       {/* Task list */}
-      <div className="space-y-2">
+      {viewMode === 'list' && <div className="space-y-2">
         <AnimatePresence>
           {filtered.map((task, i) => (
             <motion.div
@@ -195,7 +224,8 @@ export default function Tasks() {
         {filtered.length === 0 && (
           <p className="text-center text-muted-foreground py-12 text-sm">No tasks found. Create your first task!</p>
         )}
-      </div>
+      </div>}
+
 
       {showForm && (
         <TaskForm

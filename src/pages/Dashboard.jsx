@@ -67,10 +67,10 @@ export default function Dashboard() {
   };
 
   // Subscription-only categories to exclude from spend breakdown
-  const SUBSCRIPTION_CATEGORIES = new Set([
+  const SUBSCRIPTION_CATEGORIES = useMemo(() => new Set([
     'streaming', 'entertainment', 'ai_productivity', 'ai & productivity',
     'saas', 'gaming', 'news', 'music', 'cloud', 'software',
-  ]);
+  ]), []);
 
   const categoryData = useMemo(() => {
     const counts = {};

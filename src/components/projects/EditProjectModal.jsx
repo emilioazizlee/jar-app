@@ -9,6 +9,7 @@ import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { ICON_OPTIONS, COLOR_OPTIONS } from '@/lib/projectTemplates';
 import DynIcon from './DynIcon';
+import StructurePicker from './StructurePicker';
 
 export default function EditProjectModal({ open, onClose, project, onSaved }) {
   const queryClient = useQueryClient();
@@ -18,6 +19,7 @@ export default function EditProjectModal({ open, onClose, project, onSaved }) {
     description: project?.description || '',
     icon: project?.icon || 'FolderOpen',
     color: project?.color || '#39ff14',
+    structure: project?.structure || 'A',
     work_types: project?.work_types ? project.work_types.map(wt => ({ ...wt })) : [],
     is_archived: project?.is_archived || false,
   });
@@ -47,6 +49,7 @@ export default function EditProjectModal({ open, onClose, project, onSaved }) {
       description: form.description,
       icon: form.icon,
       color: form.color,
+      structure: form.structure,
       work_types: form.work_types,
       is_archived: form.is_archived,
     });
@@ -112,6 +115,8 @@ export default function EditProjectModal({ open, onClose, project, onSaved }) {
               ))}
             </div>
           </div>
+
+          <StructurePicker value={form.structure || 'A'} onChange={v => update('structure', v)} />
 
           {/* Work types */}
           <div>

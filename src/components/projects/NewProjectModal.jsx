@@ -24,6 +24,7 @@ const ARCHETYPE_QUICK = [
   { name: 'Hobby', icon: 'Palette', color: '#e040fb', emoji: '🎨' },
 ];
 import DynIcon from './DynIcon';
+import StructurePicker from './StructurePicker';
 
 export default function NewProjectModal({ open, onClose, onCreated }) {
   const queryClient = useQueryClient();
@@ -34,6 +35,7 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
     description: '',
     icon: 'FolderOpen',
     color: '#39ff14',
+    structure: 'A',
     work_types: [],
   });
   const [newWTName, setNewWTName] = useState('');
@@ -44,6 +46,7 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
       description: tpl.description,
       icon: tpl.icon,
       color: tpl.color,
+      structure: tpl.structure || 'A',
       work_types: tpl.work_types.map(wt => ({ ...wt })),
     });
     setStep('configure');
@@ -73,6 +76,7 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
       description: project.description,
       icon: project.icon,
       color: project.color,
+      structure: project.structure || 'A',
       work_types: project.work_types,
       is_archived: false,
     });
@@ -199,6 +203,8 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
                   ))}
                 </div>
               </div>
+
+              <StructurePicker value={project.structure || 'A'} onChange={v => setProject(p => ({ ...p, structure: v }))} />
 
               {/* Work types */}
               <div>
