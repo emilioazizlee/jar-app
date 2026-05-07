@@ -45,7 +45,7 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
     // Create health record (dual-track)
     await base44.entities.Item.create({
       type: 'spend',
-      title: 'Cigarettes — Health',
+      title: 'Cigarettes',
       category: 'cigarettes_health',
       quantity: form.quantity,
       note: form.note || undefined,

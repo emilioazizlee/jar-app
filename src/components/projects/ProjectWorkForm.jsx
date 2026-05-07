@@ -10,10 +10,84 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
+
+const PRESET_COLORS = ['#abff4f', '#ffee32', '#0096c7', '#ff6d00', '#9d4edd', '#ffb3c6', '#c1121f', '#39ff14'];
+
+function DefineWorkTypesInline({ project, color, onDefined, onClose }) {
+  const queryClient = useQueryClient();
+  const [types, setTypes] = useState([{ label: '', color: color, short: '' }]);
+  const [saving, setSaving] = useState(false);
+
+  const addRow = () => setTypes(prev => [...prev, { label: '', color: PRESET_COLORS[prev.length % PRESET_COLORS.length], short: '' }]);
+  const removeRow = (i) => setTypes(prev => prev.filter((_, idx) => idx !== i));
+  const updateRow = (i, key, val) => setTypes(prev => prev.map((r, idx) => idx === i ? { ...r, [key]: val } : r));
+
+  const handleSave = async () => {
+    const valid = types.filter(t => t.label.trim());
+    if (!valid.length) return;
+    setSaving(true);
+    const newTypes = valid.map(t => ({
+      key: t.label.toLowerCase().replace(/\s+/g, '_'),
+      label: t.label.trim(),
+      color: t.color,
+      short: t.short.trim() || t.label.slice(0, 2).toUpperCase(),
+      fields: [],
+    }));
+    const existing = project.work_types || [];
+    await base44.entities.Project.update(project.id, { work_types: [...existing, ...newTypes] });
+    queryClient.invalidateQueries({ queryKey: ['project', project.id] });
+    setSaving(false);
+    onDefined(newTypes);
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Define the types of work for <strong>{project.name}</strong>. You can always add more later.</p>
+      <div className="space-y-2">
+        {types.map((t, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              type="color"
+              value={t.color}
+              onChange={e => updateRow(i, 'color', e.target.value)}
+              className="w-8 h-8 rounded cursor-pointer border-0 bg-transparent"
+            />
+            <Input
+              placeholder="Work type name (e.g. Coursework)"
+              value={t.label}
+              onChange={e => updateRow(i, 'label', e.target.value)}
+              className="bg-muted border-none text-sm flex-1"
+            />
+            <Input
+              placeholder="Short"
+              value={t.short}
+              onChange={e => updateRow(i, 'short', e.target.value.slice(0, 3))}
+              className="bg-muted border-none text-sm w-16 font-mono text-center"
+            />
+            {types.length > 1 && (
+              <button onClick={() => removeRow(i)} className="text-muted-foreground hover:text-red-400 transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      <button onClick={addRow} className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors">
+        <Plus className="w-3.5 h-3.5" /> Add another type
+      </button>
+      <div className="flex gap-2 pt-2">
+        <Button onClick={handleSave} disabled={saving || !types.some(t => t.label.trim())} className="flex-1 font-mono text-black" style={{ background: color }}>
+          {saving ? 'SAVING...' : 'SAVE & CONTINUE'}
+        </Button>
+        <Button variant="outline" onClick={onClose} className="font-mono">Cancel</Button>
+      </div>
+    </div>
+  );
+}
 
 const today = () => format(new Date(), 'yyyy-MM-dd');
 
@@ -48,7 +122,9 @@ export default function ProjectWorkForm({ open, onClose, onSaved, project }) {
   const [date, setDate] = useState(today());
   const [saving, setSaving] = useState(false);
 
-  const workTypes = project?.work_types || [];
+  const [localWorkTypes, setLocalWorkTypes] = useState(null);
+  const [showDefine, setShowDefine] = useState(false);
+  const workTypes = localWorkTypes || project?.work_types || [];
   const color = project?.color || '#39ff14';
 
   const setField = (key, val) => setFormData(p => ({ ...p, [key]: val }));
@@ -86,9 +162,21 @@ export default function ProjectWorkForm({ open, onClose, onSaved, project }) {
             <DialogHeader>
               <DialogTitle className="mono-header text-sm" style={{ color }}>ADD WORK</DialogTitle>
             </DialogHeader>
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              This project has no work types yet. Edit the project to add some.
-            </p>
+            {showDefine ? (
+              <DefineWorkTypesInline
+                project={project}
+                color={color}
+                onDefined={(newTypes) => { setLocalWorkTypes(newTypes); setShowDefine(false); }}
+                onClose={onClose}
+              />
+            ) : (
+              <div className="py-4 text-center space-y-4">
+                <p className="text-sm text-muted-foreground">This project has no work types yet.</p>
+                <Button onClick={() => setShowDefine(true)} className="font-mono text-black w-full" style={{ background: color }}>
+                  Define work types
+                </Button>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       );

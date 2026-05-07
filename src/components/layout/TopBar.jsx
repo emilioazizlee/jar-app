@@ -35,6 +35,7 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
           </motion.div>
         </div>
         <div className="flex items-center gap-3">
+          {/* Shortcuts button — desktop only (hidden on mobile/touch-only devices) */}
           <button
             onClick={onOpenShortcuts}
             className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"

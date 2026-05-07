@@ -118,25 +118,48 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
               ))}
             </div>
           ) : (
-            <div className="space-y-4 pb-2">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground font-mono">QUANTITY</Label>
+            <div className="space-y-5 pb-2">
+
+              {/* ── QUANTITY section ───────────────────────────────── */}
+              <div className="bg-muted/40 rounded-xl p-4 border border-border/60">
+                <Label className="text-xs text-muted-foreground font-mono block mb-2">QUANTITY <span className="text-muted-foreground/50">(how many)</span></Label>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => update('quantity', Math.max(1, (form.quantity || 1) - 1))}
+                    className="w-10 h-10 rounded-lg bg-muted border border-border font-mono text-lg hover:border-primary/40 transition-all flex items-center justify-center"
+                  >−</button>
                   <Input
-                    inputMode="decimal"
+                    inputMode="numeric"
                     type="text"
                     value={form.quantity}
                     onChange={e => {
                       const v = e.target.value.replace(/[^0-9]/g, '');
                       update('quantity', v === '' ? '' : Number(v));
                     }}
-                    className="bg-muted border-none mt-1 font-mono text-lg"
+                    className="flex-1 bg-muted border-none font-mono text-2xl text-center h-12"
                   />
+                  <button
+                    onClick={() => update('quantity', (form.quantity || 0) + 1)}
+                    className="w-10 h-10 rounded-lg bg-muted border border-border font-mono text-lg hover:border-primary/40 transition-all flex items-center justify-center"
+                  >+</button>
                 </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
+                <div className="flex gap-1.5 flex-wrap mt-2.5">
+                  {[1, 2, 3, 5, 10, 20].map(n => (
+                    <button
+                      key={n}
+                      onClick={() => update('quantity', n)}
+                      className={`px-3 py-1.5 rounded-lg border font-mono text-sm transition-all ${form.quantity === n ? 'bg-primary/20 border-primary/40 text-primary' : 'bg-muted border-border text-muted-foreground hover:text-foreground hover:border-primary/30'}`}
+                    >{n}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── PRICE section ──────────────────────────────────── */}
+              <div className="bg-muted/20 rounded-xl p-4 border border-border/40">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs text-muted-foreground font-mono">PRICE <span className="text-muted-foreground/50">(optional – cost in {form.currency})</span></Label>
                   <Select value={form.currency} onValueChange={v => update('currency', v)}>
-                    <SelectTrigger className="bg-muted border-none mt-1 font-mono">
+                    <SelectTrigger className="bg-muted border-none h-7 w-20 font-mono text-xs px-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -144,10 +167,6 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-
-              <div>
-                <Label className="text-xs text-muted-foreground font-mono">PRICE</Label>
                 <Input
                   inputMode="decimal"
                   type="text"
@@ -157,28 +176,20 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
                     const v = e.target.value.replace(/[^0-9.]/g, '');
                     update('amount', v);
                   }}
-                  className="bg-muted border-none mt-1 font-mono text-2xl h-14"
+                  className="bg-muted border-none font-mono text-2xl h-14"
                 />
-              </div>
-
-              {/* Quick amount chips — locked set */}
-              <div>
-                <div className="flex gap-1.5 flex-wrap">
+                <div className="flex gap-1.5 flex-wrap mt-2.5">
                   {QUICK_CHIPS_DEFAULT.map(amt => (
                     <button
                       key={amt}
                       onClick={() => update('amount', String(amt))}
-                      className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
-                    >
-                      {amt}
-                    </button>
+                      className={`px-3 py-1.5 rounded-lg border font-mono text-sm transition-all ${String(form.amount) === String(amt) ? 'bg-secondary/20 border-secondary/40 text-secondary' : 'bg-muted border-border text-muted-foreground hover:text-secondary hover:border-secondary/40'}`}
+                    >{amt}</button>
                   ))}
                   <button
                     onClick={() => setShowMoreChips(!showMoreChips)}
                     className="px-2 py-1.5 font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showMoreChips ? 'Less' : 'More'}
-                  </button>
+                  >{showMoreChips ? 'Less' : 'More'}</button>
                 </div>
                 {showMoreChips && (
                   <div className="flex gap-1.5 flex-wrap mt-1.5">
@@ -187,9 +198,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
                         key={amt}
                         onClick={() => update('amount', String(amt))}
                         className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
-                      >
-                        {amt}
-                      </button>
+                      >{amt}</button>
                     ))}
                   </div>
                 )}

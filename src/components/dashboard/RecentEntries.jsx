@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { ITEM_TYPES, SPEND_CATEGORIES, getCategoryLabel } from '@/lib/constants';
 import { cleanLabel, isUUID } from '@/lib/labelUtils';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { RotateCcw, Copy, Pencil, Trash2, ChevronDown, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,6 +14,30 @@ const LOAD_MORE = 20;
 
 export default function RecentEntries({ items = [] }) {
   const queryClient = useQueryClient();
+
+  // Load projects for UUID resolution
+  const { data: projects = [] } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => base44.entities.Project.list('-created_date', 200),
+    staleTime: 60000,
+  });
+
+  const projectMap = useMemo(() => {
+    const m = {};
+    projects.forEach(p => { m[p.id] = p.name; });
+    return m;
+  }, [projects]);
+
+  // Resolve a category string — handles "project:{uuid}" pattern
+  const resolveCategory = (cat) => {
+    if (!cat) return '';
+    if (cat.startsWith('project:')) {
+      const id = cat.replace('project:', '');
+      return projectMap[id] || '—';
+    }
+    if (isUUID(cat)) return '—';
+    return cleanLabel(cat);
+  };
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [expandedId, setExpandedId] = useState(null);
   const [editFields, setEditFields] = useState({});
@@ -193,8 +217,8 @@ export default function RecentEntries({ items = [] }) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{cleanLabel(item.title)}</p>
                   <p className="font-mono text-[10px] text-muted-foreground">
-                    {item.category && !isUUID(item.category)
-                      ? cleanLabel(item.category)
+                    {item.category
+                      ? (resolveCategory(item.category) || cleanLabel(item.type))
                       : cleanLabel(item.type)}
                     {' · '}
                     {item.date ? format(new Date(item.date), 'MMM d') : format(new Date(item.created_date), 'MMM d')}
@@ -278,12 +302,31 @@ export default function RecentEntries({ items = [] }) {
                           placeholder="Add note..."
                         />
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <button
                           onClick={() => handleSaveEdit(item)}
                           className="flex-1 py-2 rounded-lg bg-primary text-primary-foreground font-mono text-xs hover:bg-primary/90 transition-colors"
                         >
                           Save
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); handleRepeat(item); setExpandedId(null); }}
+                          className="px-3 py-2 rounded-lg bg-muted font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
+                          title="Repeat today"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 inline mr-1" />Repeat
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); handleDuplicate(item); setExpandedId(null); }}
+                          className="px-3 py-2 rounded-lg bg-muted font-mono text-xs text-muted-foreground hover:text-blue-400 transition-colors"
+                        >
+                          <Copy className="w-3.5 h-3.5 inline mr-1" />Dupe
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); handleDelete(item); }}
+                          className="px-3 py-2 rounded-lg bg-muted font-mono text-xs text-muted-foreground hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 inline mr-1" />Delete
                         </button>
                         <button
                           onClick={() => setExpandedId(null)}

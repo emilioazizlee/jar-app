@@ -73,8 +73,8 @@ export default function JarCenterpiece({
   const isOverGoal = fillPercent > 100;
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      {/* Today count */}
+    <div className="flex flex-col items-center gap-2">
+      {/* Today count — sits ABOVE the jar */}
       <motion.div
         key={todayCount}
         initial={{ scale: 1.2 }}
@@ -91,19 +91,6 @@ export default function JarCenterpiece({
         >
           {todayCount}
         </span>
-        {goalLabel ? (
-          <span className="font-mono text-[11px] text-muted-foreground mt-1">{goalLabel}</span>
-        ) : null}
-        {isOverGoal && overGoalBy > 0 && (
-          <motion.span
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="font-mono text-xs mt-1"
-            style={{ color: '#c1121f' }}
-          >
-            {overGoalBy} above today's limit
-          </motion.span>
-        )}
       </motion.div>
 
       {/* Jar SVG */}
@@ -255,6 +242,23 @@ export default function JarCenterpiece({
               {Math.round(cappedFill)}%
             </span>
           </div>
+        )}
+      </div>
+
+      {/* Goal label + over-limit warning — sit BELOW the jar with 16px spacing */}
+      <div className="flex flex-col items-center gap-1 mt-4">
+        {goalLabel ? (
+          <span className="font-mono text-[11px] text-muted-foreground">{goalLabel}</span>
+        ) : null}
+        {isOverGoal && overGoalBy > 0 && (
+          <motion.span
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-mono text-xs"
+            style={{ color: '#c1121f' }}
+          >
+            {overGoalBy} above today's limit
+          </motion.span>
         )}
       </div>
     </div>

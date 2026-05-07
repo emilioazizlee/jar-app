@@ -17,14 +17,17 @@ const OVERRIDES = {
 
 export function cleanLabel(raw) {
   if (!raw) return '';
-  const key = String(raw).toLowerCase();
+  const s = String(raw);
+  // Strip internal "project:" prefix — show nothing (caller resolves via getProjectName)
+  if (s.startsWith('project:')) return '—';
+  const key = s.toLowerCase();
   // Direct override
   if (OVERRIDES[key]) return OVERRIDES[key];
   // Strip _health suffix first, then check overrides again
   const stripped = key.replace(/_health$/, '');
   if (OVERRIDES[stripped]) return OVERRIDES[stripped];
   // If it looks like a UUID (contains hex + dashes, long), return empty string
-  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(raw))) return '';
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s)) return '';
   // Title-case remaining
   return stripped.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }

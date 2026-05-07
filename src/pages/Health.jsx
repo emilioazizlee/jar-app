@@ -94,8 +94,8 @@ export default function Health() {
   return (
     <div className="max-w-2xl mx-auto space-y-4 md:space-y-6 pb-24">
       <div>
-        <h1 className="mono-header text-lg md:text-xl" style={{ color: COLOR }}>HEALTH — SMOKE TRACKER</h1>
-        <p className="text-sm text-muted-foreground mt-1">Dual-tracked from Spends — health impact view</p>
+        <h1 className="mono-header text-lg md:text-xl" style={{ color: COLOR }}>SMOKE TRACKER</h1>
+        <p className="text-sm text-muted-foreground mt-1">Track your daily smoking and watch the health impact.</p>
       </div>
 
       {/* JAR CENTERPIECE */}

@@ -26,6 +26,13 @@ function SubscriptionRow({ sub }) {
   const currSym = sub.currency === 'EUR' ? '€' : sub.currency === 'USD' ? '$' : sub.currency || '€';
   const isFav = sub.tags?.includes('__favorite__');
 
+  // description holds internal metadata (domain, etc) — parse it for structured data
+  const descMeta = (() => { try { return JSON.parse(sub.description || '{}'); } catch { return {}; } })();
+  // note is user-facing text only — never JSON
+  const userNote = (() => {
+    if (!sub.note) return '';
+    try { JSON.parse(sub.note); return ''; } catch { return sub.note; }
+  })();
   const note = (() => { try { return JSON.parse(sub.note || '{}'); } catch { return {}; } })();
 
   const toggleFav = async (e) => {
@@ -96,35 +103,35 @@ function SubscriptionRow({ sub }) {
                     <p className="text-sm font-mono">{format(new Date(sub.next_renewal), 'MMM d, yyyy')}</p>
                   </div>
                 )}
-                {note.payment_method && (
+                {(note.payment_method || descMeta.payment_method) && (
                   <div>
                     <p className="font-mono text-[10px] text-muted-foreground mb-1">PAYMENT METHOD</p>
-                    <p className="text-sm">{note.payment_method}</p>
+                    <p className="text-sm">{note.payment_method || descMeta.payment_method}</p>
                   </div>
                 )}
-                {note.website && (
+                {(note.website || descMeta.website) && (
                   <div>
                     <p className="font-mono text-[10px] text-muted-foreground mb-1">WEBSITE</p>
-                    <a href={note.website} target="_blank" rel="noopener noreferrer"
+                    <a href={note.website || descMeta.website} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs text-primary hover:underline">
-                      <ExternalLink className="w-3 h-3" /> {note.website}
+                      <ExternalLink className="w-3 h-3" /> {note.website || descMeta.website}
                     </a>
                   </div>
                 )}
-                {note.cancel_url && (
+                {(note.cancel_url || descMeta.cancel_url) && (
                   <div>
                     <p className="font-mono text-[10px] text-muted-foreground mb-1">CANCEL LINK</p>
-                    <a href={note.cancel_url} target="_blank" rel="noopener noreferrer"
+                    <a href={note.cancel_url || descMeta.cancel_url} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs text-destructive hover:underline">
                       <ExternalLink className="w-3 h-3" /> Cancel Subscription
                     </a>
                   </div>
                 )}
               </div>
-              {sub.description && (
+              {userNote && (
                 <div>
                   <p className="font-mono text-[10px] text-muted-foreground mb-1">NOTES</p>
-                  <p className="text-sm text-muted-foreground">{sub.description}</p>
+                  <p className="text-sm text-muted-foreground">{userNote}</p>
                 </div>
               )}
             </div>

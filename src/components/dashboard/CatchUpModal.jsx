@@ -87,8 +87,11 @@ function parseLine(line, defaultDate) {
 
 function parseText(text) {
   const today = format(new Date(), 'yyyy-MM-dd');
-  // Split on commas and newlines, but not inside parentheses
-  const segments = text.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+  // Split on commas, newlines, AND the conjunction "and" (with word boundaries)
+  const segments = text
+    .split(/[,\n]+|\s+and\s+/i)
+    .map(s => s.trim())
+    .filter(Boolean);
   return segments.map(s => parseLine(s, today)).filter(Boolean);
 }
 
