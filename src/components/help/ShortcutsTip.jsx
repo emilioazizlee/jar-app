@@ -10,9 +10,10 @@ export default function ShortcutsTip() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Only show on desktop (width >= 768) — mobile has no keyboard shortcuts
-    const isMobile = window.innerWidth < 768;
-    if (!isMobile && !localStorage.getItem(STORAGE_KEY)) {
+    // Only show on true desktop with keyboard (width >= 1024 AND pointer:fine)
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    const isSmallScreen = window.innerWidth < 1024;
+    if (!isTouchDevice && !isSmallScreen && !localStorage.getItem(STORAGE_KEY)) {
       const t = setTimeout(() => setVisible(true), 1200);
       return () => clearTimeout(t);
     }

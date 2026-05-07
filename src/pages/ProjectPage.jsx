@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, ChevronRight, Loader2 } from 'lucide-react';
+import { Plus, Search, ChevronRight, Loader2, Pencil } from 'lucide-react';
+import EditProjectModal from '@/components/projects/EditProjectModal';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ export default function ProjectPage() {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('all');
 
@@ -81,13 +83,20 @@ export default function ProjectPage() {
             <p className="text-xs text-muted-foreground mt-0.5">{items.length} work entries</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <JarVisual
             fillPercent={(items.length % 10) * 10}
             completedJars={Math.floor(items.length / 10)}
             size="sm"
             color={color}
           />
+          <button
+            onClick={() => setShowEdit(true)}
+            className="p-2 rounded-lg bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors"
+            title="Edit project"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
           <motion.button
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={() => setShowForm(true)}
@@ -206,6 +215,18 @@ export default function ProjectPage() {
             queryClient.invalidateQueries({ queryKey: ['items'] });
           }}
           project={project}
+        />
+      )}
+
+      {showEdit && (
+        <EditProjectModal
+          open={showEdit}
+          onClose={() => setShowEdit(false)}
+          project={project}
+          onSaved={() => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+            queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+          }}
         />
       )}
     </div>

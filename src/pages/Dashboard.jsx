@@ -66,15 +66,23 @@ export default function Dashboard() {
     return raw.toLowerCase();
   };
 
+  // Subscription-only categories to exclude from spend breakdown
+  const SUBSCRIPTION_CATEGORIES = new Set([
+    'streaming', 'entertainment', 'ai_productivity', 'ai & productivity',
+    'saas', 'gaming', 'news', 'music', 'cloud', 'software',
+  ]);
+
   const categoryData = useMemo(() => {
     const counts = {};
     const keyMap = {};
-    todayItems.forEach(i => {
-      const label = normalizeCategory(i.category || i.type);
-      const key = normalizeCategoryKey(i.category || i.type);
-      counts[label] = (counts[label] || 0) + 1;
-      keyMap[label] = key;
-    });
+    todayItems
+      .filter(i => i.type !== 'subscription' && !SUBSCRIPTION_CATEGORIES.has((i.category || '').toLowerCase()))
+      .forEach(i => {
+        const label = normalizeCategory(i.category || i.type);
+        const key = normalizeCategoryKey(i.category || i.type);
+        counts[label] = (counts[label] || 0) + 1;
+        keyMap[label] = key;
+      });
     return Object.entries(counts).map(([name, value]) => ({ name, value, key: keyMap[name] }));
   }, [todayItems]);
 

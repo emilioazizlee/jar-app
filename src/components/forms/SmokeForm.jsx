@@ -10,58 +10,57 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CURRENCIES } from '@/lib/constants';
 import { format } from 'date-fns';
 
-// Dual-tracking form: creates both a spend + a health record for Cigarettes
-export default function SmokeForm({ open, onClose, onSaved, category }) {
+const PACK_SIZES = [10, 20, 25, 30];
+
+export default function SmokeForm({ open, onClose, onSaved }) {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
+  const [isPackPurchase, setIsPackPurchase] = useState(false);
 
-  const [form, setForm] = useState({
-    quantity: 1,
-    amount: '',
-    currency: 'EUR',
-    note: '',
-  });
+  // Smoke event state
+  const [smokeQty, setSmokeQty] = useState(1);
+  const [smokeNote, setSmokeNote] = useState('');
 
-  const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  // Pack purchase state
+  const [packSize, setPackSize] = useState(20);
+  const [packPrice, setPackPrice] = useState('');
+  const [packCurrency, setPackCurrency] = useState('EUR');
+  const [packNote, setPackNote] = useState('');
 
-  const quickQty = [1, 2, 3, 5, 10];
+  const quickSmokeQty = [1, 2, 3, 5, 10];
 
   const handleSave = async () => {
     setSaving(true);
     const today = format(new Date(), 'yyyy-MM-dd');
 
-    // Create spend record
-    const spendItem = await base44.entities.Item.create({
-      type: 'spend',
-      title: 'Cigarettes',
-      category: 'cigarettes',
-      quantity: form.quantity,
-      amount: form.amount ? Number(form.amount) : undefined,
-      currency: form.currency,
-      note: form.note || undefined,
-      date: today,
-    });
-
-    // Create health record (dual-track)
-    await base44.entities.Item.create({
-      type: 'spend',
-      title: 'Cigarettes',
-      category: 'cigarettes_health',
-      quantity: form.quantity,
-      note: form.note || undefined,
-      date: today,
-    });
-
-    // Link them
-    await base44.entities.Link.create({
-      from_item_id: spendItem.id,
-      to_item_id: spendItem.id, // self-reference placeholder; real link created below
-      relationship: 'dual_track',
-    });
+    if (isPackPurchase) {
+      // TYPE B: Pack purchase — counts toward Finance + Daily Spend
+      await base44.entities.Item.create({
+        type: 'spend',
+        title: `Pack of ${packSize}`,
+        category: 'cigarettes',
+        quantity: packSize,
+        amount: packPrice ? Number(packPrice) : undefined,
+        currency: packCurrency,
+        note: packNote || undefined,
+        date: today,
+        // Store pack metadata in description for inventory tracking
+        description: JSON.stringify({ pack_purchase: true, pack_size: packSize }),
+      });
+    } else {
+      // TYPE A: Smoke event — health tracking ONLY, no finance impact
+      await base44.entities.Item.create({
+        type: 'spend',
+        title: 'Smoked',
+        category: 'cigarettes_health',
+        quantity: smokeQty,
+        note: smokeNote || undefined,
+        date: today,
+        description: JSON.stringify({ smoke_event: true }),
+      });
+    }
 
     queryClient.invalidateQueries({ queryKey: ['items'] });
-    queryClient.invalidateQueries({ queryKey: ['items-spends'] });
-    queryClient.invalidateQueries({ queryKey: ['items-month'] });
     queryClient.invalidateQueries({ queryKey: ['items-smoke'] });
     setSaving(false);
     onSaved();
@@ -70,89 +69,135 @@ export default function SmokeForm({ open, onClose, onSaved, category }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="bg-card border-border max-w-sm w-full p-0 gap-0 flex flex-col rounded-none sm:rounded-xl h-full sm:h-auto max-h-[100dvh] sm:max-h-[85vh] overflow-hidden">
-        {/* Sticky header */}
         <DialogHeader className="px-5 pt-5 pb-3 border-b border-border shrink-0">
           <DialogTitle className="mono-header text-sm text-secondary flex items-center gap-2">
             🚬 LOG CIGARETTES
           </DialogTitle>
         </DialogHeader>
 
-        {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 pb-6 overscroll-contain">
-          <div className="text-xs text-muted-foreground font-mono bg-muted/40 px-3 py-2 rounded-lg">
-            ↗ Tracks as <span className="text-destructive">Health</span> + <span className="text-secondary">Spend</span> simultaneously
+        {/* Mode toggle */}
+        <div className="px-5 pt-4 shrink-0">
+          <div className="flex bg-muted rounded-xl p-1 gap-1">
+            <button
+              onClick={() => setIsPackPurchase(false)}
+              className={`flex-1 py-2 rounded-lg font-mono text-xs transition-all ${!isPackPurchase ? 'bg-card text-secondary border border-secondary/30' : 'text-muted-foreground'}`}
+            >
+              🚬 I smoked
+            </button>
+            <button
+              onClick={() => setIsPackPurchase(true)}
+              className={`flex-1 py-2 rounded-lg font-mono text-xs transition-all ${isPackPurchase ? 'bg-card text-primary border border-primary/30' : 'text-muted-foreground'}`}
+            >
+              📦 I bought a pack
+            </button>
           </div>
-
-          <div>
-            <Label className="text-xs text-muted-foreground font-mono">QUANTITY</Label>
-            <div className="flex gap-2 mt-2">
-              {quickQty.map(q => (
-                <button
-                  key={q}
-                  onClick={() => update('quantity', q)}
-                  className={`flex-1 py-2 rounded-lg font-mono text-sm border transition-all ${form.quantity === q ? 'bg-secondary/20 border-secondary text-secondary' : 'bg-muted border-border text-muted-foreground hover:border-secondary/40'}`}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-            <Input
-              inputMode="decimal"
-              type="text"
-              value={form.quantity}
-              onChange={e => {
-                const v = e.target.value.replace(/[^0-9]/g, '');
-                update('quantity', v === '' ? '' : Number(v));
-              }}
-              className="bg-muted border-none mt-2 font-mono"
-            />
-          </div>
-
-          {/* Quick amount chips */}
-          <div>
-            <Label className="text-xs text-muted-foreground font-mono">PRICE (optional)</Label>
-            <Input
-              inputMode="decimal"
-              type="text"
-              placeholder="0.00"
-              value={form.amount}
-              onChange={e => {
-                const v = e.target.value.replace(/[^0-9.]/g, '');
-                update('amount', v);
-              }}
-              className="bg-muted border-none mt-1 font-mono text-2xl h-14"
-            />
-            <div className="flex gap-1.5 flex-wrap mt-2">
-              {[0.50, 1, 2, 5, 10, 20].map(amt => (
-                <button
-                  key={amt}
-                  onClick={() => update('amount', String(amt))}
-                  className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-secondary hover:border-secondary/40 transition-all"
-                >
-                  {amt}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
-            <Select value={form.currency} onValueChange={v => update('currency', v)}>
-              <SelectTrigger className="bg-muted border-none mt-1 font-mono"><SelectValue /></SelectTrigger>
-              <SelectContent>{CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
-            <Textarea value={form.note} onChange={e => update('note', e.target.value)} className="bg-muted border-none mt-1" rows={2} />
-          </div>
+          <p className="text-[10px] font-mono text-muted-foreground mt-2 text-center">
+            {isPackPurchase
+              ? '💳 Counts toward finance & daily spend'
+              : '💊 Tracks health & habit only — no spend impact'}
+          </p>
         </div>
 
-        {/* Sticky footer */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 pb-6 overscroll-contain">
+          {!isPackPurchase ? (
+            /* TYPE A: Smoke event */
+            <>
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">HOW MANY CIGARETTES?</Label>
+                <div className="flex gap-2 mt-2">
+                  {quickSmokeQty.map(q => (
+                    <button
+                      key={q}
+                      onClick={() => setSmokeQty(q)}
+                      className={`flex-1 py-2.5 rounded-lg font-mono text-sm border transition-all ${smokeQty === q ? 'bg-secondary/20 border-secondary text-secondary' : 'bg-muted border-border text-muted-foreground hover:border-secondary/40'}`}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+                <Input
+                  inputMode="numeric"
+                  type="text"
+                  value={smokeQty}
+                  onChange={e => {
+                    const v = e.target.value.replace(/[^0-9]/g, '');
+                    setSmokeQty(v === '' ? '' : Number(v));
+                  }}
+                  className="bg-muted border-none mt-2 font-mono text-center text-2xl h-14"
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
+                <Textarea value={smokeNote} onChange={e => setSmokeNote(e.target.value)} className="bg-muted border-none mt-1" rows={2} placeholder="e.g. after lunch, stress..." />
+              </div>
+            </>
+          ) : (
+            /* TYPE B: Pack purchase */
+            <>
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">PACK SIZE</Label>
+                <div className="flex gap-2 mt-2">
+                  {PACK_SIZES.map(s => (
+                    <button
+                      key={s}
+                      onClick={() => setPackSize(s)}
+                      className={`flex-1 py-2.5 rounded-lg font-mono text-sm border transition-all ${packSize === s ? 'bg-primary/20 border-primary text-primary' : 'bg-muted border-border text-muted-foreground hover:border-primary/40'}`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground font-mono mt-1">cigarettes per pack</p>
+              </div>
+
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">PRICE <span className="text-destructive">*</span></Label>
+                <Input
+                  inputMode="decimal"
+                  type="text"
+                  placeholder="0.00"
+                  value={packPrice}
+                  onChange={e => setPackPrice(e.target.value.replace(/[^0-9.]/g, ''))}
+                  className="bg-muted border-none mt-1 font-mono text-2xl h-14"
+                />
+                <div className="flex gap-1.5 flex-wrap mt-2">
+                  {[3, 4, 5, 6, 7, 8].map(amt => (
+                    <button
+                      key={amt}
+                      onClick={() => setPackPrice(String(amt))}
+                      className="px-3 py-1.5 rounded-lg bg-muted border border-border font-mono text-sm text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
+                    >
+                      {amt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">CURRENCY</Label>
+                <Select value={packCurrency} onValueChange={setPackCurrency}>
+                  <SelectTrigger className="bg-muted border-none mt-1 font-mono"><SelectValue /></SelectTrigger>
+                  <SelectContent>{CURRENCIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">NOTE (optional)</Label>
+                <Textarea value={packNote} onChange={e => setPackNote(e.target.value)} className="bg-muted border-none mt-1" rows={2} placeholder="e.g. Marlboro, corner shop..." />
+              </div>
+            </>
+          )}
+        </div>
+
         <div className="px-5 pt-3 pb-5 border-t border-border shrink-0 bg-card">
-          <Button onClick={handleSave} disabled={saving} className="w-full bg-secondary text-secondary-foreground font-mono">
-            {saving ? 'SAVING...' : 'LOG CIGARETTES'}
+          <Button
+            onClick={handleSave}
+            disabled={saving || (isPackPurchase && !packPrice)}
+            className="w-full font-mono"
+            style={{ background: isPackPurchase ? 'hsl(var(--primary))' : 'hsl(var(--secondary))', color: '#0a0a0a' }}
+          >
+            {saving ? 'SAVING...' : isPackPurchase ? `LOG PACK OF ${packSize}` : `LOG ${smokeQty} CIGARETTE${smokeQty !== 1 ? 'S' : ''}`}
           </Button>
         </div>
       </DialogContent>
