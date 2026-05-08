@@ -99,12 +99,18 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
         {/* Logo */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-sidebar-border flex-shrink-0">
           {!collapsed && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
-              <span className="font-mono text-xl font-bold text-primary tracking-widest">JAR</span>
-              <span className="text-xs text-muted-foreground font-mono">Fill your life.</span>
-            </motion.div>
+            <Link to="/" onClick={onMobileClose} className="flex items-center gap-2 hover:opacity-80 transition-opacity active:opacity-60">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
+                <span className="font-mono text-xl font-bold text-primary tracking-widest">JAR</span>
+                <span className="text-xs text-muted-foreground font-mono">Fill your life.</span>
+              </motion.div>
+            </Link>
           )}
-          {collapsed && <span className="font-mono text-xl font-bold text-primary mx-auto">J</span>}
+          {collapsed && (
+            <Link to="/" onClick={onMobileClose} className="mx-auto hover:opacity-80 transition-opacity">
+              <span className="font-mono text-xl font-bold text-primary">J</span>
+            </Link>
+          )}
           <button onClick={onToggle} className="p-1 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground">
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
@@ -185,10 +191,10 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                 <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">PROJECTS</p>
                 <button
                   onClick={() => setShowNewProject(true)}
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="w-7 h-7 rounded-full flex items-center justify-center bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors text-primary"
                   title="New Project"
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
             )}

@@ -7,10 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, X, FolderOpen } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { TASK_TYPES, TASK_STATUSES } from '@/lib/constants';
 import { format } from 'date-fns';
 import StepSequencer from '@/components/tasks/StepSequencer';
@@ -25,10 +25,21 @@ import {
   getDefaultPriorityForCategory,
 } from '@/lib/learningDB';
 
-export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
+export default function TaskForm({ open, onClose, onSaved, initialCategory, initialProjectId }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId || '');
+  const [projectSearch, setProjectSearch] = useState('');
+  const [showProjectDropdown, setShowProjectDropdown] = useState(false);
+
+  const { data: projects = [] } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => base44.entities.Project.list('name', 50).then(r => r.filter(p => !p.is_archived)),
+    initialData: [],
+  });
+
+  const selectedProject = projects.find(p => p.id === selectedProjectId);
   const [templateSuggestion, setTemplateSuggestion] = useState(null);
   const [dismissedTemplate, setDismissedTemplate] = useState(false);
   const [form, setForm] = useState(() => ({
@@ -112,6 +123,10 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
     if (form.tags.length) recordMultipleValues('task_tag', form.tags);
     if (form.steps.length > 1) saveStepTemplate(form.title, form.category, form.steps);
 
+    const tagsWithProject = [...(form.tags || [])];
+    if (selectedProjectId) {
+      tagsWithProject.push(`project:${selectedProjectId}`);
+    }
     await base44.entities.Item.create({
       type: 'task',
       title: form.title,
@@ -127,7 +142,7 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
       for_whom: form.for_whom,
       assigned_by: form.assigned_by,
       expected_output: form.expected_output,
-      tags: form.tags.length ? form.tags : undefined,
+      tags: tagsWithProject.length ? tagsWithProject : undefined,
       subtasks: form.subtasks.length ? form.subtasks : undefined,
       description: form.steps.length ? JSON.stringify({ steps: form.steps }) : form.description,
     });
@@ -191,6 +206,63 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory }) {
               className="bg-muted border-none text-lg font-medium"
               autoFocus
             />
+          </div>
+
+          {/* Project selector */}
+          <div className="relative">
+            {selectedProject ? (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-muted/40">
+                <FolderOpen className="w-4 h-4 shrink-0" style={{ color: selectedProject.color }} />
+                <span className="text-sm font-mono flex-1" style={{ color: selectedProject.color }}>{selectedProject.name}</span>
+                <button
+                  onClick={() => setSelectedProjectId('')}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                ><X className="w-3.5 h-3.5" /></button>
+              </div>
+            ) : (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowProjectDropdown(v => !v)}
+                  className="flex items-center gap-2 w-full px-3 py-2 rounded-xl border border-dashed border-border/60 bg-muted/20 text-muted-foreground hover:text-foreground hover:border-border transition-all text-sm font-mono"
+                >
+                  <FolderOpen className="w-4 h-4" />
+                  <span>Assign to project...</span>
+                </button>
+                {showProjectDropdown && (
+                  <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-xl shadow-xl overflow-hidden">
+                    <input
+                      value={projectSearch}
+                      onChange={e => setProjectSearch(e.target.value)}
+                      placeholder="Search projects..."
+                      className="w-full px-3 py-2 bg-muted text-sm outline-none font-mono border-b border-border"
+                      autoFocus
+                    />
+                    <div className="max-h-48 overflow-y-auto">
+                      <button
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-accent transition-colors font-mono"
+                        onClick={() => { setSelectedProjectId(''); setShowProjectDropdown(false); }}
+                      >
+                        No project (standalone)
+                      </button>
+                      {projects
+                        .filter(p => p.name.toLowerCase().includes(projectSearch.toLowerCase()))
+                        .map(p => (
+                          <button
+                            key={p.id}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors"
+                            onClick={() => { setSelectedProjectId(p.id); setShowProjectDropdown(false); setProjectSearch(''); }}
+                          >
+                            <FolderOpen className="w-4 h-4 shrink-0" style={{ color: p.color }} />
+                            <span style={{ color: p.color }}>{p.name}</span>
+                          </button>
+                        ))
+                      }
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Step template suggestion */}

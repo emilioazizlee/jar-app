@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { resetSidebarOrder } from '@/lib/sidebarOrder';
+import { useSettings } from '@/lib/settingsContext';
+import { toast } from 'sonner';
 import {
   User, Shield, Globe, DollarSign, Clock, Languages, Sun, AlignJustify,
   Circle, List, Moon, Database, Download, Upload, FileText, Trash2,
@@ -165,10 +167,8 @@ function Toggle({ value, onChange, options }) {
 }
 
 export default function Settings() {
+  const { prefs, setPref, saveAll, hasUnsaved } = useSettings();
   const [user, setUser] = useState(null);
-  const [prefs, setPrefs] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('jar_prefs') || '{}'); } catch { return {}; }
-  });
   const [sidebarResetDone, setSidebarResetDone] = useState(false);
   const [exportDone, setExportDone] = useState(false);
   const [csvExportDone, setCsvExportDone] = useState(false);
@@ -187,9 +187,12 @@ export default function Settings() {
   }, []);
 
   const savePref = (key, val) => {
-    const next = { ...prefs, [key]: val };
-    setPrefs(next);
-    localStorage.setItem('jar_prefs', JSON.stringify(next));
+    setPref(key, val);
+  };
+
+  const handleSaveAll = () => {
+    saveAll();
+    toast.success('Settings saved');
   };
 
   const handleSidebarReset = () => {
@@ -214,8 +217,15 @@ export default function Settings() {
   const exportFilename = `jar_export_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
 
   return (
-    <div className="max-w-2xl mx-auto pb-16">
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, color: '#7a7a7a', marginBottom: 20 }}>SETTINGS</p>
+    <div className="max-w-2xl mx-auto pb-32">
+      <div className="flex items-center justify-between mb-5">
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, color: '#7a7a7a' }}>SETTINGS</p>
+        {hasUnsaved && (
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#ffee32', border: '1px solid rgba(255,238,50,0.3)', borderRadius: 6, padding: '3px 8px' }}>
+            UNSAVED CHANGES
+          </span>
+        )}
+      </div>
 
       <ProfileHeader user={user} items={allItems} />
 
@@ -362,6 +372,22 @@ export default function Settings() {
       {showBulkImport && <BulkTextImportModal onClose={() => setShowBulkImport(false)} />}
       {showCSVImport && <CSVImportModal onClose={() => setShowCSVImport(false)} />}
       {showClearData && <ClearDataModal onClose={() => setShowClearData(false)} />}
+
+      {/* Sticky Save button */}
+      {hasUnsaved && (
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100, display: 'flex', gap: 8 }}>
+          <button
+            onClick={handleSaveAll}
+            style={{
+              background: '#abff4f', color: '#0a0a0a', fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 13, fontWeight: 700, padding: '12px 32px', borderRadius: 12,
+              border: 'none', cursor: 'pointer', boxShadow: '0 0 24px rgba(171,255,79,0.4)',
+            }}
+          >
+            SAVE CHANGES
+          </button>
+        </div>
+      )}
     </div>
   );
 }

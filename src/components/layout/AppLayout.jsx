@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import BottomNav from './BottomNav';
@@ -38,8 +38,21 @@ export default function AppLayout() {
   const [addOpen, setAddOpen] = useState(false);
   const searchRef = useRef(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => { autoSeedProjects(queryClient); }, []);
+
+  // Cmd+Shift+H → home/dashboard
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'H') {
+        e.preventDefault();
+        navigate('/');
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [navigate]);
 
   useKeyboardShortcuts({
     onOpenAdd: useCallback(() => setAddOpen(true), []),
