@@ -227,6 +227,7 @@ export default function Settings() {
             {t('set.unsavedChanges')}
           </span>
         )}
+
       </div>
 
       <ProfileHeader user={user} items={allItems} />
