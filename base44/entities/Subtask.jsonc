@@ -1,0 +1,26 @@
+{
+  "name": "Subtask",
+  "type": "object",
+  "properties": {
+    "item_id": {
+      "type": "string",
+      "description": "Parent Item ID"
+    },
+    "text": {
+      "type": "string",
+      "description": "Subtask text"
+    },
+    "done": {
+      "type": "boolean",
+      "description": "Completion status"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "item_id",
+    "text"
+  ]
+}

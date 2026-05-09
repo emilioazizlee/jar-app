@@ -1,0 +1,48 @@
+{
+  "name": "ShopItem",
+  "type": "object",
+  "properties": {
+    "shop_id": {
+      "type": "string",
+      "description": "GroceryShop ID"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "GroceryProduct ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Quantity purchased"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit"
+    },
+    "price_per_unit": {
+      "type": "number",
+      "description": "Price per unit"
+    },
+    "subtotal": {
+      "type": "number",
+      "description": "Line item total"
+    },
+    "category": {
+      "type": "string",
+      "description": "Product category"
+    }
+  },
+  "required": [
+    "shop_id",
+    "name",
+    "quantity",
+    "unit"
+  ]
+}

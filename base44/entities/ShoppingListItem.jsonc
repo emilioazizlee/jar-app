@@ -6,14 +6,6 @@
       "type": "string",
       "description": "GroceryProduct ID"
     },
-    "name": {
-      "type": "string",
-      "description": "Item name"
-    },
-    "brand": {
-      "type": "string",
-      "description": "Brand"
-    },
     "quantity": {
       "type": "number",
       "description": "Quantity needed"
@@ -59,7 +51,7 @@
     }
   },
   "required": [
-    "name",
+    "product_id",
     "quantity",
     "unit"
   ]

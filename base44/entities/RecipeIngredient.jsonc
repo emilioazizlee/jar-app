@@ -1,0 +1,36 @@
+{
+  "name": "RecipeIngredient",
+  "type": "object",
+  "properties": {
+    "recipe_id": {
+      "type": "string",
+      "description": "Recipe ID"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "GroceryProduct ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Ingredient name"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Amount needed"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of measurement"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "recipe_id",
+    "name",
+    "quantity",
+    "unit"
+  ]
+}

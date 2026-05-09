@@ -1,0 +1,33 @@
+{
+  "name": "PriceHistory",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "GroceryProduct ID"
+    },
+    "store": {
+      "type": "string",
+      "description": "Store name"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price per unit"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Purchase date"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of measurement"
+    }
+  },
+  "required": [
+    "product_id",
+    "store",
+    "price",
+    "date"
+  ]
+}
