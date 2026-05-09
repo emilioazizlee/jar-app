@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
   Calendar, CheckSquare, Apple, Heart, Settings, ShoppingBasket,
@@ -14,22 +15,38 @@ import NewProjectModal from '@/components/projects/NewProjectModal';
 import ProjectContextMenu from '@/components/projects/ProjectContextMenu';
 import { loadSidebarOrder, saveSidebarOrder } from '@/lib/sidebarOrder';
 
-const ALL_ITEMS = {
-  '/': { icon: LayoutDashboard, label: 'Dashboard' },
-  '/spends': { icon: DollarSign, label: 'Daily Spends' },
-  '/subscriptions': { icon: RefreshCw, label: 'Subscriptions' },
-  '/payments': { icon: CreditCard, label: 'Payments' },
-  '/finance': { icon: Wallet, label: 'Finance' },
-  '/insights': { icon: BarChart3, label: 'Insights' },
-  '/calendar': { icon: Calendar, label: 'Calendar' },
-  '/tasks': { icon: CheckSquare, label: 'Tasks' },
-  '/diet': { icon: Apple, label: 'Diet' },
-  '/groceries': { icon: ShoppingBasket, label: 'Groceries' },
-  '/health': { icon: Heart, label: 'Health' },
-  '/leisure': { icon: Martini, label: 'Leisure' },
+const NAV_KEYS = {
+  '/': 'nav.dashboard',
+  '/spends': 'nav.dailySpends',
+  '/subscriptions': 'nav.subscriptions',
+  '/payments': 'nav.payments',
+  '/finance': 'nav.finance',
+  '/insights': 'nav.insights',
+  '/calendar': 'nav.calendar',
+  '/tasks': 'nav.tasks',
+  '/diet': 'nav.diet',
+  '/groceries': 'nav.groceries',
+  '/health': 'nav.health',
+  '/leisure': 'nav.leisure',
+};
+
+const NAV_ICONS = {
+  '/': LayoutDashboard,
+  '/spends': DollarSign,
+  '/subscriptions': RefreshCw,
+  '/payments': CreditCard,
+  '/finance': Wallet,
+  '/insights': BarChart3,
+  '/calendar': Calendar,
+  '/tasks': CheckSquare,
+  '/diet': Apple,
+  '/groceries': ShoppingBasket,
+  '/health': Heart,
+  '/leisure': Martini,
 };
 
 export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [showNewProject, setShowNewProject] = useState(false);
@@ -85,8 +102,8 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   }, []);
 
   const SECTIONS = [
-    { label: 'TRACKING', key: 'TRACKING' },
-    { label: 'LIFE', key: 'LIFE' },
+    { label: t('nav.tracking'), key: 'TRACKING' },
+    { label: t('nav.life'), key: 'LIFE' },
   ];
 
   return (
@@ -145,10 +162,9 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                   </div>
                 )}
                 {order[section.key].map((path, index) => {
-                  const item = ALL_ITEMS[path];
-                  if (!item) return null;
+                  const Icon = NAV_ICONS[path];
+                  if (!Icon) return null;
                   const isActive = location.pathname === path;
-                  const Icon = item.icon;
                   const isDragTarget = dragOver?.section === section.key && dragOver?.index === index;
                   return (
                     <div
@@ -172,7 +188,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                         }`}
                       >
                         <Icon className="w-4 h-4 shrink-0" />
-                        {!collapsed && <span className="flex-1">{item.label}</span>}
+                        {!collapsed && <span className="flex-1">{t(NAV_KEYS[path] || path)}</span>}
                         {!collapsed && (
                           <GripVertical className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-40 cursor-grab transition-opacity" />
                         )}
@@ -188,7 +204,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
           <div>
             {!collapsed && (
               <div className="flex items-center justify-between px-3 mb-2">
-                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">PROJECTS</p>
+                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">{t('proj.projects')}</p>
                 <button
                   onClick={() => setShowNewProject(true)}
                   className="w-7 h-7 rounded-full flex items-center justify-center bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors text-primary"
@@ -261,17 +277,17 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
         {/* Bottom fixed links */}
         <div className="px-2 pb-4 border-t border-sidebar-border pt-2 flex-shrink-0 space-y-0.5">
           {[
-            { path: '/favorites', Icon: Star, label: 'Favorites' },
-            { path: '/settings', Icon: Settings, label: 'Settings' },
-            { path: '/help', Icon: HelpCircle, label: 'Help' },
-          ].map(({ path, Icon, label }) => (
+            { path: '/favorites', Icon: Star, labelKey: 'nav.favorites' },
+            { path: '/settings', Icon: Settings, labelKey: 'nav.settings' },
+            { path: '/help', Icon: HelpCircle, labelKey: 'nav.help' },
+          ].map(({ path, Icon, labelKey }) => (
             <Link
               key={path}
               to={path}
               className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
             >
               <Icon className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>{label}</span>}
+              {!collapsed && <span>{t(labelKey)}</span>}
             </Link>
           ))}
         </div>

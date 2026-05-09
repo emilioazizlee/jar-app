@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { resetSidebarOrder } from '@/lib/sidebarOrder';
 import { useSettings } from '@/lib/settingsContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import i18n from '@/i18n';
 import {
   User, Shield, Globe, DollarSign, Clock, Languages, Sun, AlignJustify,
   Circle, List, Moon, Database, Download, Upload, FileText, Trash2,
@@ -65,36 +67,26 @@ function SettingsRow({ icon: Icon, title, subtitle, control, last, onClick, dang
 }
 
 const LANGUAGES = [
-  { value: 'English', label: 'English', available: true },
-  { value: 'Russian', label: 'Русский — Coming soon', available: false },
-  { value: 'Azerbaijani', label: 'Azərbaycanca — Coming soon', available: false },
-  { value: 'Spanish', label: 'Español — Coming soon', available: false },
-  { value: 'French', label: 'Français — Coming soon', available: false },
-  { value: 'Turkish', label: 'Türkçe — Coming soon', available: false },
-  { value: 'German', label: 'Deutsch — Coming soon', available: false },
+  { code: 'en', label: 'English' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'az', label: 'Azərbaycanca' },
+  { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'de', label: 'Deutsch' },
 ];
 
 function LanguageSelect({ value, onChange }) {
-  const handleChange = (e) => {
-    const selected = LANGUAGES.find(l => l.value === e.target.value);
-    if (selected && !selected.available) {
-      // show toast via simple alert approach; toast isn't imported here
-      // We'll use a custom inline banner approach
-      return;
-    }
-    onChange(e.target.value);
-  };
-
   return (
     <div className="relative">
       <select
         value={value}
-        onChange={handleChange}
+        onChange={e => onChange(e.target.value)}
         style={{ borderRadius: 8, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
         onClick={e => e.stopPropagation()}
       >
         {LANGUAGES.map(l => (
-          <option key={l.value} value={l.value} disabled={!l.available} style={{ color: l.available ? '#fff' : '#5a5a5a' }}>
+          <option key={l.code} value={l.code}>
             {l.label}
           </option>
         ))}
@@ -167,6 +159,7 @@ function Toggle({ value, onChange, options }) {
 }
 
 export default function Settings() {
+  const { t } = useTranslation();
   const { prefs, setPref, saveAll, hasUnsaved } = useSettings();
   const [user, setUser] = useState(null);
   const [sidebarResetDone, setSidebarResetDone] = useState(false);
@@ -184,10 +177,19 @@ export default function Settings() {
 
   useEffect(() => {
     base44.auth.me().then(u => { if (u) setUser(u); }).catch(() => {});
+    // Sync stored language into prefs if not already set
+    const storedLang = localStorage.getItem('jar_language') || localStorage.getItem('i18nextLng');
+    if (storedLang && !prefs.language) {
+      setPref('language', storedLang);
+    }
   }, []);
 
   const savePref = (key, val) => {
     setPref(key, val);
+    if (key === 'language') {
+      i18n.changeLanguage(val);
+      localStorage.setItem('jar_language', val);
+    }
   };
 
   const handleSaveAll = () => {
@@ -219,10 +221,10 @@ export default function Settings() {
   return (
     <div className="max-w-2xl mx-auto pb-32">
       <div className="flex items-center justify-between mb-5">
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, color: '#7a7a7a' }}>SETTINGS</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, color: '#7a7a7a' }}>{t('set.settings')}</p>
         {hasUnsaved && (
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#ffee32', border: '1px solid rgba(255,238,50,0.3)', borderRadius: 6, padding: '3px 8px' }}>
-            UNSAVED CHANGES
+            {t('set.unsavedChanges')}
           </span>
         )}
       </div>
@@ -230,60 +232,60 @@ export default function Settings() {
       <ProfileHeader user={user} items={allItems} />
 
       {/* ACCOUNT */}
-      <SectionLabel>ACCOUNT</SectionLabel>
+      <SectionLabel>{t('set.account')}</SectionLabel>
       <SectionCard>
-        <SettingsRow icon={User} title="Profile" subtitle="Edit name, email, avatar" control={<ChevronRight size={16} color="#555" />} />
-        <SettingsRow icon={Shield} title="Account Security" subtitle="Password, two-factor auth" control={<ComingSoon />} />
+        <SettingsRow icon={User} title={t('set.profile')} subtitle="Edit name, email, avatar" control={<ChevronRight size={16} color="#555" />} />
+        <SettingsRow icon={Shield} title={t('set.accountSecurity')} subtitle="Password, two-factor auth" control={<ComingSoon />} />
         <SettingsRow
-          icon={Globe} title="Country"
-          subtitle={prefs.country || 'Auto-detect'}
+          icon={Globe} title={t('set.country')}
+          subtitle={prefs.country || t('set.autoDetect')}
           control={<InlineSelect value={prefs.country || 'Auto-detect'} onChange={v => savePref('country', v)} options={COUNTRIES} />}
         />
         <SettingsRow
-          icon={DollarSign} title="Currency"
-          subtitle="Default display currency"
+          icon={DollarSign} title={t('set.currency') || 'Currency'}
+          subtitle={t('set.defaultCurrency')}
           control={<InlineSelect value={prefs.currency || 'EUR'} onChange={v => savePref('currency', v)} options={CURRENCIES} />}
         />
         <SettingsRow
-          icon={Clock} title="Time zone"
-          subtitle={prefs.timezone || 'Auto-detect'}
+          icon={Clock} title={t('set.timeZone')}
+          subtitle={prefs.timezone || t('set.autoDetect')}
           control={<InlineSelect value={prefs.timezone || 'Auto-detect'} onChange={v => savePref('timezone', v)} options={TIMEZONES} />}
           last
         />
       </SectionCard>
 
       {/* PREFERENCES */}
-      <SectionLabel>PREFERENCES</SectionLabel>
+      <SectionLabel>{t('set.preferences')}</SectionLabel>
       <SectionCard>
         <SettingsRow
-          icon={List} title="Manage step templates"
-          subtitle="Saved task templates"
+          icon={List} title={t('set.manageStepTemplates')}
+          subtitle={t('set.savedTaskTemplates')}
           control={<ActionBtn onClick={() => window.location.href = '/settings/templates'}>Manage</ActionBtn>}
         />
         <SettingsRow
-          icon={Languages} title="Language"
-          control={<LanguageSelect value={prefs.language || 'English'} onChange={v => savePref('language', v)} />}
+          icon={Languages} title={t('set.language')}
+          control={<LanguageSelect value={prefs.language || i18n.language || 'en'} onChange={v => savePref('language', v)} />}
         />
         <SettingsRow
-          icon={Moon} title="Theme"
-          subtitle="Dark only"
+          icon={Moon} title={t('set.theme')}
+          subtitle={t('set.darkOnly')}
           control={<ComingSoon />}
         />
         <SettingsRow
-          icon={AlignJustify} title="Density"
+          icon={AlignJustify} title={t('set.density')}
           subtitle="Card padding & row height"
           control={<Toggle value={prefs.density || 'Comfortable'} onChange={v => savePref('density', v)} options={['Compact','Comfortable']} />}
         />
         <SettingsRow
-          icon={Circle} title="Border radius"
+          icon={Circle} title={t('set.borderRadius')}
           control={<Toggle value={prefs.radius || 'Rounded'} onChange={v => savePref('radius', v)} options={['Sharp','Rounded','Pill']} />}
         />
         <SettingsRow
-          icon={List} title="Sidebar order"
+          icon={List} title={t('set.sidebarReset') || 'Sidebar order'}
           control={<ActionBtn onClick={handleSidebarReset} done={sidebarResetDone}>{sidebarResetDone ? '✓ Reset done' : 'Reset to default'}</ActionBtn>}
         />
         <SettingsRow
-          icon={Moon} title="Bedtime mode trigger"
+          icon={Moon} title={t('set.bedtimeMode') || 'Bedtime mode trigger'}
           subtitle="Auto-activates at this time"
           control={
             <input
@@ -296,37 +298,37 @@ export default function Settings() {
           }
         />
         <SettingsRow
-          icon={Smartphone} title="One-handed mode"
+          icon={Smartphone} title={t('set.oneHandedMode')}
           control={<Toggle value={prefs.oneHand || 'Off'} onChange={v => savePref('oneHand', v)} options={['Off','Left','Right']} />}
           last
         />
       </SectionCard>
 
       {/* DATA */}
-      <SectionLabel>DATA</SectionLabel>
+      <SectionLabel>{t('set.data')}</SectionLabel>
       <SectionCard>
         <SettingsRow
-          icon={Download} title="Export all data as JSON"
+          icon={Download} title={t('set.exportJson')}
           subtitle={exportFilename + '.json'}
           control={<ActionBtn onClick={handleExportJSON} done={exportDone}>{exportDone ? '✓ Exported' : 'Export JSON'}</ActionBtn>}
         />
         <SettingsRow
-          icon={FileText} title="Export to CSV"
+          icon={FileText} title={t('set.exportCsv')}
           subtitle="Flat entry data"
           control={<ActionBtn onClick={handleExportCSV} done={csvExportDone}>{csvExportDone ? '✓ Exported' : 'Export CSV'}</ActionBtn>}
         />
         <SettingsRow
-          icon={Upload} title="Import data"
+          icon={Upload} title={t('set.importData')}
           subtitle="JSON or CSV file"
           control={<ActionBtn onClick={() => setShowCSVImport(true)}>Import</ActionBtn>}
         />
         <SettingsRow
-          icon={FileCode} title="Bulk text import"
+          icon={FileCode} title={t('set.bulkTextImport')}
           subtitle="Paste freeform text, JAR parses it"
           control={<ActionBtn onClick={() => setShowBulkImport(true)}>Open</ActionBtn>}
         />
         <SettingsRow
-          icon={Trash2} title="Clear all data"
+          icon={Trash2} title={t('set.clearAllData')}
           subtitle="Permanently delete everything"
           control={<ActionBtn danger onClick={() => setShowClearData(true)}>Clear all</ActionBtn>}
           last
@@ -335,18 +337,18 @@ export default function Settings() {
       </SectionCard>
 
       {/* PRIVACY */}
-      <SectionLabel>PRIVACY</SectionLabel>
+      <SectionLabel>{t('set.privacy')}</SectionLabel>
       <SectionCard>
-        <SettingsRow icon={Lock} title="Biometric lock" control={<ComingSoon />} />
-        <SettingsRow icon={Eye} title="Hide sensitive entries from Recent" control={<ComingSoon />} />
-        <SettingsRow icon={EyeOff} title="Family-safe mode" control={<ComingSoon />} last />
+        <SettingsRow icon={Lock} title={t('set.biometricLock')} control={<ComingSoon />} />
+        <SettingsRow icon={Eye} title={t('set.hideEntries')} control={<ComingSoon />} />
+        <SettingsRow icon={EyeOff} title={t('set.familySafe')} control={<ComingSoon />} last />
       </SectionCard>
 
       {/* DIRECTORY */}
       <SectionLabel>DIRECTORY</SectionLabel>
       <SectionCard>
         <SettingsRow
-          icon={AlignJustify} title="My Brands Directory"
+          icon={AlignJustify} title={t('set.myBrands')}
           subtitle="Manage known brands, domains, and logos"
           control={<ActionBtn onClick={() => window.location.href = '/settings/brands'}>View directory</ActionBtn>}
           last
@@ -354,18 +356,18 @@ export default function Settings() {
       </SectionCard>
 
       {/* CRISIS RESOURCES */}
-      <SectionLabel>CRISIS RESOURCES</SectionLabel>
+      <SectionLabel>{t('set.crisisResources')}</SectionLabel>
       <CrisisResources country={prefs.country || 'Auto-detect'} />
 
       {/* ABOUT */}
-      <SectionLabel>ABOUT</SectionLabel>
+      <SectionLabel>{t('set.about')}</SectionLabel>
       <SectionCard>
         <SettingsRow icon={Info} title="App" subtitle="JAR — Fill your life." control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>v1.0.0</span>} />
-        <SettingsRow icon={Info} title="Build date" control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>2026-05-06</span>} />
-        <SettingsRow icon={Info} title="Credits" subtitle="Built with Base44 · Nivo · Framer Motion · PapaParse" control={null} />
-        <SettingsRow icon={Mail} title="Send feedback" control={<a href="mailto:feedback@jar.app" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#abff4f' }}>feedback@jar.app</a>} />
-        <SettingsRow icon={ScrollText} title="Privacy Policy" control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>#</span>} />
-        <SettingsRow icon={ScrollText} title="Terms of Service" control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>#</span>} last />
+        <SettingsRow icon={Info} title={t('set.buildDate')} control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>2026-05-06</span>} />
+        <SettingsRow icon={Info} title={t('set.credits')} subtitle="Built with Base44 · Nivo · Framer Motion · PapaParse" control={null} />
+        <SettingsRow icon={Mail} title={t('set.sendFeedback')} control={<a href="mailto:feedback@jar.app" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#abff4f' }}>feedback@jar.app</a>} />
+        <SettingsRow icon={ScrollText} title={t('set.privacyPolicy')} control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>#</span>} />
+        <SettingsRow icon={ScrollText} title={t('set.terms')} control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>#</span>} last />
       </SectionCard>
 
       {/* Modals */}
@@ -384,7 +386,7 @@ export default function Settings() {
               border: 'none', cursor: 'pointer', boxShadow: '0 0 24px rgba(171,255,79,0.4)',
             }}
           >
-            SAVE CHANGES
+            {t('set.saveChanges')}
           </button>
         </div>
       )}
