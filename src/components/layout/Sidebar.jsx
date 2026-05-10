@@ -251,7 +251,6 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
           <div>
             {!collapsed && (
               <div className="flex items-center justify-between px-3 mb-2">
-                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">{t('proj.projects')}</p>
                 <button
                   onClick={() => setShowNewProject(true)}
                   className="w-7 h-7 rounded-full flex items-center justify-center bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors text-primary"
