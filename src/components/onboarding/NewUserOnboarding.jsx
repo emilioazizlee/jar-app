@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useSettings } from '@/lib/settingsContext';
+import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
 import StarterPackStep from './StarterPackStep';
 import FeatureTourStep from './FeatureTourStep';
@@ -18,6 +19,18 @@ const COUNTRY_CURRENCY = {
   Russia: 'RUB',
   Turkey: 'TRY',
   Other: 'EUR',
+};
+
+const COUNTRY_TIMEZONE = {
+  Azerbaijan: 'Asia/Baku',
+  Spain: 'Europe/Madrid',
+  France: 'Europe/Paris',
+  Germany: 'Europe/Berlin',
+  USA: 'America/New_York',
+  UK: 'Europe/London',
+  Russia: 'Europe/Moscow',
+  Turkey: 'Europe/Istanbul',
+  Other: 'Auto-detect',
 };
 
 const COUNTRIES = Object.keys(COUNTRY_CURRENCY);
@@ -59,7 +72,14 @@ export default function NewUserOnboarding({ user, onDone }) {
   const updateProfile = (key, val) => {
     setProfile(p => {
       const next = { ...p, [key]: val };
-      if (key === 'country') next.currency = COUNTRY_CURRENCY[val] || 'EUR';
+      if (key === 'country') {
+        next.currency = COUNTRY_CURRENCY[val] || 'EUR';
+        next.timezone = COUNTRY_TIMEZONE[val] || 'Auto-detect';
+      }
+      if (key === 'language') {
+        i18n.changeLanguage(val);
+        localStorage.setItem('jar_language', val);
+      }
       return next;
     });
   };
@@ -141,6 +161,8 @@ export default function NewUserOnboarding({ user, onDone }) {
 }
 
 function WelcomeStep({ onNext, userName }) {
+  const { t } = useTranslation();
+  const firstName = userName ? userName.split(' ')[0] : '';
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}
@@ -149,7 +171,7 @@ function WelcomeStep({ onNext, userName }) {
       <div className="space-y-4">
         <div className="text-7xl">🫙</div>
         <h1 className="font-mono text-3xl font-bold text-primary tracking-wider">
-          Welcome{userName ? `, ${userName.split(' ')[0]}` : ''} to JAR
+          {t('onboarding.welcome')}{firstName ? `, ${firstName}` : ''} {t('onboarding.toJar')}
         </h1>
         <p className="font-mono text-lg text-foreground">Fill Your Life.</p>
         <div className="text-left bg-card border border-border rounded-2xl p-6 space-y-3">
