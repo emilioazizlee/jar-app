@@ -1,0 +1,43 @@
+{
+  "name": "BudgetLimit",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "description": "Spend / leisure category to track"
+    },
+    "limit_amount": {
+      "type": "number",
+      "description": "Maximum allowed spend"
+    },
+    "period": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "description": "Budget period"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "description": "Currency"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User email / id"
+    }
+  },
+  "required": [
+    "category",
+    "limit_amount",
+    "period",
+    "currency"
+  ]
+}

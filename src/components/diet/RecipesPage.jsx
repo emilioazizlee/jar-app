@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, Heart, Clock, Users, ShoppingCart, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Plus, Heart, Clock, Users, ShoppingCart, ChevronDown, ChevronUp, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Drink', 'Dessert'];
 const UNITS = ['g', 'ml', 'pcs', 'serving', 'cup', 'tbsp', 'tsp'];
 
-function RecipeCard({ recipe, onDelete, onToggleFav, onAddToShoppingList }) {
+function RecipeCard({ recipe, onDelete, onToggleFav, onAddToShoppingList, isAddingToList }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -79,8 +80,9 @@ function RecipeCard({ recipe, onDelete, onToggleFav, onAddToShoppingList }) {
                 <button onClick={() => onToggleFav(recipe)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${recipe.is_favorite ? 'bg-destructive/20 text-destructive' : 'bg-muted text-muted-foreground'}`}>
                   <Heart className="w-3 h-3" />{recipe.is_favorite ? 'Unfav' : 'Favorite'}
                 </button>
-                <button onClick={() => onAddToShoppingList(recipe)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/20 text-secondary text-xs font-mono hover:bg-secondary/30 transition-colors">
-                  <ShoppingCart className="w-3 h-3" />Add to Shopping List
+                <button onClick={() => onAddToShoppingList(recipe)} disabled={isAddingToList} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/20 text-secondary text-xs font-mono hover:bg-secondary/30 transition-colors disabled:opacity-50">
+                  {isAddingToList ? <Loader2 className="w-3 h-3 animate-spin" /> : <ShoppingCart className="w-3 h-3" />}
+                  {isAddingToList ? 'Adding...' : 'Add to Shopping List'}
                 </button>
                 <button onClick={() => onDelete(recipe.id)} className="ml-auto text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-lg hover:bg-destructive/10">
                   <Trash2 className="w-3.5 h-3.5" />
@@ -177,13 +179,15 @@ export default function RecipesPage() {
     qc.invalidateQueries({ queryKey: ['recipes'] });
   };
 
+  const [addingToList, setAddingToList] = useState(null);
+
   const addToShoppingList = async (recipe) => {
-    for (const ing of (recipe.ingredients || [])) {
-      if (!ing.name.trim()) continue;
-      await base44.entities.ShoppingListItem.create({ name: ing.name, quantity: ing.quantity || 1, unit: ing.unit || 'g', source: 'recipe', recipe_id: recipe.id, is_checked: false });
-    }
+    setAddingToList(recipe.id);
+    const res = await base44.functions.invoke('recipeToShoppingList', { recipe_id: recipe.id });
+    const { added = 0, skipped = 0 } = res.data || {};
     qc.invalidateQueries({ queryKey: ['shopping-list'] });
-    alert(`Added ${recipe.ingredients?.length || 0} ingredients to Shopping List!`);
+    setAddingToList(null);
+    toast(`Added ${added} items to shopping list${skipped ? ` (${skipped} already in pantry)` : ''}`);
   };
 
   return (
@@ -202,7 +206,7 @@ export default function RecipesPage() {
       {sortedRecipes.length === 0 && !adding ? (
         <div className="text-center py-16 text-muted-foreground font-mono text-sm">No recipes yet. Add your first!</div>
       ) : (
-        <div className="space-y-3">{sortedRecipes.map(r => <RecipeCard key={r.id} recipe={r} onDelete={deleteRecipe} onToggleFav={toggleFav} onAddToShoppingList={addToShoppingList} />)}</div>
+        <div className="space-y-3">{sortedRecipes.map(r => <RecipeCard key={r.id} recipe={r} onDelete={deleteRecipe} onToggleFav={toggleFav} onAddToShoppingList={addToShoppingList} isAddingToList={addingToList === r.id} />)}</div>
       )}
     </div>
   );

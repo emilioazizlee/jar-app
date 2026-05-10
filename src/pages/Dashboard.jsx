@@ -16,6 +16,8 @@ import { Zap } from 'lucide-react';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import WelcomeBanner from '@/components/onboarding/WelcomeBanner';
 import { nivoTheme } from '@/lib/nivoTheme';
 import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
 
@@ -29,14 +31,16 @@ const QUICK_TAPS = [
 ];
 
 export default function Dashboard() {
+  const { user } = useCurrentUser();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [spendCategory, setSpendCategory] = useState(null);
   const [customOpen, setCustomOpen] = useState(false);
   const [catchUpOpen, setCatchUpOpen] = useState(false);
 
   const { data: allItems = [] } = useQuery({
-    queryKey: ['items'],
-    queryFn: () => base44.entities.Item.list('-created_date', 500),
+    queryKey: ['items', user?.email],
+    queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 500) : [],
+    enabled: !!user,
     initialData: [],
   });
 
@@ -124,6 +128,9 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-3 md:space-y-4">
+      {/* Welcome banner for new users */}
+      {allItems.length === 0 && user && <WelcomeBanner userName={user.full_name} />}
+
       {/* Top row - Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <StatCard title="THIS MONTH" value={totalJarsMonth} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>

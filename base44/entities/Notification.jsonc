@@ -1,0 +1,43 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "price_alert",
+        "staple_reminder",
+        "budget_warning",
+        "pantry_low"
+      ],
+      "description": "Notification type"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Full message"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether notification has been read"
+    },
+    "action_url": {
+      "type": "string",
+      "description": "Optional route to navigate to"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User email / id"
+    }
+  },
+  "required": [
+    "type",
+    "title",
+    "message",
+    "user_id"
+  ]
+}

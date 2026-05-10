@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Keyboard, Menu } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
+import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const isMac = typeof navigator !== 'undefined' && navigator.platform.startsWith('Mac');
 const modKey = isMac ? '⌘' : 'Ctrl';
@@ -35,6 +36,7 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
           </motion.div>
         </div>
         <div className="flex items-center gap-3">
+          <NotificationCenter />
           {/* Shortcuts button — desktop only (hidden on mobile/touch-only devices) */}
           <button
             onClick={onOpenShortcuts}
@@ -61,11 +63,14 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
 
         <span className="font-mono text-lg font-bold text-primary tracking-widest">JAR</span>
 
+        <div className="flex items-center gap-2">
+          <NotificationCenter />
         <div className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
           <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span className="font-mono text-[10px] text-primary font-semibold">
             <CountUp value={totalJars} /> JARS
           </span>
+        </div>
         </div>
       </div>
     </header>

@@ -183,8 +183,12 @@ export default function TodayPage() {
   };
 
   const addLog = async (data) => {
-    await base44.entities.DietLog.create(data);
+    const created = await base44.entities.DietLog.create(data);
     qc.invalidateQueries({ queryKey: ['diet-logs', today] });
+    // Trigger pantry decrement in background if product is linked
+    if (created?.id && data.product_id) {
+      base44.functions.invoke('pantryDecrement', { diet_log_id: created.id }).catch(() => {});
+    }
   };
 
   const slotLogs = (slot) => logs.filter(l => l.meal_slot === slot);

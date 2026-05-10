@@ -13,6 +13,7 @@ import { Plus, ChevronRight, LayoutList, LayoutGrid } from 'lucide-react';
 import TasksBoardView from '@/components/tasks/TasksBoardView.jsx';
 import { format } from 'date-fns';
 import { getProjectName } from '@/lib/labelUtils';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const STATUS_COLORS = {
   'Idea': '#7a7a7a',
@@ -24,6 +25,7 @@ const STATUS_COLORS = {
 };
 
 export default function Tasks() {
+  const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
@@ -33,14 +35,16 @@ export default function Tasks() {
   const [boardInitialStatus, setBoardInitialStatus] = useState('Planned');
 
   const { data: tasks = [] } = useQuery({
-    queryKey: ['items', 'tasks'],
-    queryFn: () => base44.entities.Item.filter({ type: 'task' }, '-created_date', 200),
+    queryKey: ['items', 'tasks', user?.email],
+    queryFn: () => user ? base44.entities.Item.filter({ type: 'task', created_by: user.email }, '-created_date', 200) : [],
+    enabled: !!user,
     initialData: [],
   });
 
   const { data: projects = [] } = useQuery({
-    queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list('name', 50),
+    queryKey: ['projects', user?.email],
+    queryFn: () => user ? base44.entities.Project.filter({ created_by: user.email }, 'name', 50) : [],
+    enabled: !!user,
     initialData: [],
   });
 

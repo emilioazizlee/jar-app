@@ -7,17 +7,20 @@ import { Search, Filter, ArrowLeft } from 'lucide-react';
 import { cleanLabel } from '@/lib/labelUtils';
 import { SPEND_CATEGORIES, ITEM_TYPES } from '@/lib/constants';
 import { Link } from 'react-router-dom';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const PAGE_SIZE = 30;
 
 export default function Entries() {
+  const { user } = useCurrentUser();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const { data: allItems = [] } = useQuery({
-    queryKey: ['items'],
-    queryFn: () => base44.entities.Item.list('-created_date', 9999),
+    queryKey: ['items', 'all', user?.email],
+    queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 9999) : [],
+    enabled: !!user,
     initialData: [],
   });
 

@@ -7,15 +7,18 @@ import SpendForm from '@/components/forms/SpendForm';
 import JarVisual from '@/components/jar/JarVisual';
 import { format, isSameDay, subDays, startOfMonth } from 'date-fns';
 import { Plus, RotateCcw } from 'lucide-react';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Spends() {
+  const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [selectedCat, setSelectedCat] = useState(null);
 
   const { data: spends = [] } = useQuery({
-    queryKey: ['items-spends'],
-    queryFn: () => base44.entities.Item.filter({ type: 'spend' }, '-created_date', 500),
+    queryKey: ['items-spends', user?.email],
+    queryFn: () => user ? base44.entities.Item.filter({ type: 'spend', created_by: user.email }, '-created_date', 500) : [],
+    enabled: !!user,
     initialData: [],
   });
 

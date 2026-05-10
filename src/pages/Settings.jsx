@@ -344,6 +344,17 @@ export default function Settings() {
         <SettingsRow icon={EyeOff} title={t('set.familySafe')} control={<ComingSoon />} last />
       </SectionCard>
 
+      {/* BUDGETS */}
+      <SectionLabel>{t('set.budgets') || 'Budgets'}</SectionLabel>
+      <SectionCard>
+        <SettingsRow
+          icon={DollarSign} title="Budget Limits"
+          subtitle="Set spend limits and get warnings"
+          control={<ActionBtn onClick={() => window.location.href = '/settings/budgets'}>Manage</ActionBtn>}
+          last
+        />
+      </SectionCard>
+
       {/* DIRECTORY */}
       <SectionLabel>DIRECTORY</SectionLabel>
       <SectionCard>

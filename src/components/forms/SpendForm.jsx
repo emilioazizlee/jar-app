@@ -67,6 +67,14 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });
     queryClient.invalidateQueries({ queryKey: ['items-spends'] });
+    // Trigger budget check in background
+    if (form.amount) {
+      base44.functions.invoke('checkBudget', {
+        category,
+        amount: Number(form.amount),
+        currency: form.currency,
+      }).catch(() => {});
+    }
     setSaving(false);
     onSaved();
   };

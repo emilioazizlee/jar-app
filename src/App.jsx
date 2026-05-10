@@ -30,6 +30,7 @@ import TaskDetail from './pages/TaskDetail';
 import Entries from './pages/Entries';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import BudgetLimits from './pages/BudgetLimits';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -79,6 +80,7 @@ const AuthenticatedApp = () => {
         <Route path="/entries" element={<Entries />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/settings/budgets" element={<BudgetLimits />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
