@@ -11,7 +11,7 @@ import {
   Circle, List, Moon, Database, Download, Upload, FileText, Trash2,
   Lock, Eye, EyeOff, Heart, Phone, Info, Mail, FileCode, ScrollText,
   ChevronRight, CheckCircle2, AlertTriangle, Smartphone, Zap, BarChart2,
-  Calendar, Cloud, RefreshCw
+  Calendar, Cloud, RefreshCw, Tag, Sliders, LayoutGrid
 } from 'lucide-react';
 import { usePremium } from '@/hooks/usePremium';
 import PremiumBadge from '@/components/premium/PremiumBadge';
@@ -382,6 +382,14 @@ export default function Settings() {
         <SettingsRow icon={RefreshCw} title="Multi-Currency" subtitle="Live FX rates and converted totals" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/currency'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} />
         <SettingsRow icon={Cloud} title="Cloud Sync" subtitle="Multi-device auto-sync every 5 minutes" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/sync'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} />
         <SettingsRow icon={FileText} title="Accountant Export" subtitle="Tax-ready CSV/PDF with business flags" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/export'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} last />
+      </SectionCard>
+
+      {/* OPEN ARCHITECTURE */}
+      <SectionLabel>OPEN ARCHITECTURE</SectionLabel>
+      <SectionCard>
+        <SettingsRow icon={Tag} title="Category Manager" subtitle="Customize categories for grocery, leisure, tasks, recipes" control={<ActionBtn onClick={() => window.location.href = '/settings/categories'}>Manage</ActionBtn>} />
+        <SettingsRow icon={Sliders} title="Custom Fields" subtitle="Add your own fields to any entity" control={<ActionBtn onClick={() => window.location.href = '/settings/custom-fields'}>Manage</ActionBtn>} />
+        <SettingsRow icon={LayoutGrid} title="Component Marketplace" subtitle="Add widgets and charts to your dashboard" control={<ActionBtn onClick={() => window.location.href = '/marketplace'}>Browse</ActionBtn>} last />
       </SectionCard>
 
       {/* BUDGETS */}

@@ -32,6 +32,9 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import BudgetLimits from './pages/BudgetLimits';
 import PlannerVisual from './pages/PlannerVisual';
+import CategoryManager from './pages/CategoryManager';
+import CustomFieldsManager from './pages/CustomFieldsManager';
+import ComponentMarketplace from './pages/ComponentMarketplace';
 import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import CurrencyRates from './pages/CurrencyRates';
 import CloudSync from './pages/CloudSync';
@@ -91,6 +94,9 @@ const AuthenticatedApp = () => {
         <Route path="/premium/currency" element={<CurrencyRates />} />
         <Route path="/premium/sync" element={<CloudSync />} />
         <Route path="/premium/export" element={<AccountantExport />} />
+        <Route path="/settings/categories" element={<CategoryManager />} />
+        <Route path="/settings/custom-fields" element={<CustomFieldsManager />} />
+        <Route path="/marketplace" element={<ComponentMarketplace />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

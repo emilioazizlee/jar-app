@@ -1,0 +1,35 @@
+{
+  "name": "CustomIcon",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User email"
+    },
+    "name": {
+      "type": "string",
+      "description": "Icon name"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Uploaded image URL"
+    },
+    "file_size": {
+      "type": "number",
+      "description": "File size in bytes"
+    },
+    "width": {
+      "type": "number",
+      "description": "Image width px"
+    },
+    "height": {
+      "type": "number",
+      "description": "Image height px"
+    }
+  },
+  "required": [
+    "user_id",
+    "name",
+    "file_url"
+  ]
+}

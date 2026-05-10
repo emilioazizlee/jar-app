@@ -8,15 +8,15 @@
     },
     "category": {
       "type": "string",
-      "enum": [
-        "Breakfast",
-        "Lunch",
-        "Dinner",
-        "Snack",
-        "Drink",
-        "Dessert"
-      ],
-      "description": "Meal category"
+      "description": "Meal category (free text or from CustomCategory)"
+    },
+    "category_id": {
+      "type": "string",
+      "description": "CustomCategory ID reference"
+    },
+    "custom_fields": {
+      "type": "object",
+      "description": "User-defined field values"
     },
     "ingredients": {
       "type": "array",

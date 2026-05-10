@@ -8,25 +8,15 @@
     },
     "sub_tag": {
       "type": "string",
-      "enum": [
-        "Cinema",
-        "Concerts",
-        "Gaming",
-        "Dining",
-        "Dating",
-        "Drinks & Bars",
-        "Hobbies",
-        "Streaming Events",
-        "Travel",
-        "Grooming",
-        "Books",
-        "Custom"
-      ],
-      "description": "Leisure sub-tag"
+      "description": "Leisure category (free text or from CustomCategory)"
     },
-    "custom_sub_tag": {
+    "category_id": {
       "type": "string",
-      "description": "Custom sub-tag if sub_tag = Custom"
+      "description": "CustomCategory ID reference"
+    },
+    "custom_fields": {
+      "type": "object",
+      "description": "User-defined field values"
     },
     "amount": {
       "type": "number",
@@ -72,7 +62,7 @@
     },
     "mood": {
       "type": "string",
-      "description": "Mood at time (optional, pulled from Health)"
+      "description": "Mood at time"
     },
     "notes": {
       "type": "string",
@@ -93,7 +83,6 @@
   },
   "required": [
     "item",
-    "sub_tag",
     "date"
   ]
 }

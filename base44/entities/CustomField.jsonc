@@ -1,0 +1,66 @@
+{
+  "name": "CustomField",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User email"
+    },
+    "entity_name": {
+      "type": "string",
+      "enum": [
+        "GroceryProduct",
+        "Recipe",
+        "Item",
+        "LeisureEntry"
+      ],
+      "description": "Which entity this field extends"
+    },
+    "field_key": {
+      "type": "string",
+      "description": "Unique identifier e.g. halal_certified"
+    },
+    "field_label": {
+      "type": "string",
+      "description": "Display name e.g. Halal Certified"
+    },
+    "field_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "number",
+        "boolean",
+        "date",
+        "select"
+      ],
+      "description": "Field data type"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Options for select type"
+    },
+    "default_value": {
+      "type": "string",
+      "description": "Default value"
+    },
+    "is_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether field is required"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "user_id",
+    "entity_name",
+    "field_key",
+    "field_label",
+    "field_type"
+  ]
+}

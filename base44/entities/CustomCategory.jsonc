@@ -1,0 +1,86 @@
+{
+  "name": "CustomCategory",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User email / id"
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "leisure",
+        "grocery",
+        "spend",
+        "task",
+        "recipe"
+      ],
+      "description": "Which entity type this category belongs to"
+    },
+    "name": {
+      "type": "string",
+      "description": "Category name"
+    },
+    "icon_type": {
+      "type": "string",
+      "enum": [
+        "emoji",
+        "library",
+        "custom"
+      ],
+      "default": "emoji",
+      "description": "Icon type"
+    },
+    "icon_value": {
+      "type": "string",
+      "description": "Emoji char, Lucide icon name, or image URL"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex color code e.g. #abff4f"
+    },
+    "translations": {
+      "type": "object",
+      "description": "Translations by language code",
+      "properties": {
+        "en": {
+          "type": "string"
+        },
+        "ru": {
+          "type": "string"
+        },
+        "es": {
+          "type": "string"
+        },
+        "fr": {
+          "type": "string"
+        },
+        "tr": {
+          "type": "string"
+        },
+        "de": {
+          "type": "string"
+        },
+        "az": {
+          "type": "string"
+        }
+      }
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false,
+      "description": "System-provided default category"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times this category has been used"
+    }
+  },
+  "required": [
+    "entity_type",
+    "name",
+    "icon_type",
+    "icon_value"
+  ]
+}

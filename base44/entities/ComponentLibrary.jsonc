@@ -1,0 +1,69 @@
+{
+  "name": "ComponentLibrary",
+  "type": "object",
+  "properties": {
+    "component_id": {
+      "type": "string",
+      "description": "Unique component identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Component display name"
+    },
+    "description": {
+      "type": "string",
+      "description": "What it does"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "chart",
+        "widget",
+        "layout"
+      ],
+      "description": "Component category"
+    },
+    "preview_image_url": {
+      "type": "string",
+      "description": "Screenshot URL"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Requires premium"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price if paid"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Times added to dashboards"
+    },
+    "created_by": {
+      "type": "string",
+      "enum": [
+        "system",
+        "user"
+      ],
+      "default": "system",
+      "description": "Origin"
+    },
+    "author_id": {
+      "type": "string",
+      "description": "User email for user-created components"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Search tags"
+    }
+  },
+  "required": [
+    "component_id",
+    "name"
+  ]
+}

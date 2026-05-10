@@ -21,5 +21,8 @@
       "format": "date-time",
       "description": "When premium access expires"
     }
-  }
+  },
+  "required": [
+    "premium_expires_at"
+  ]
 }

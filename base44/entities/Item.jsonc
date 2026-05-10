@@ -4,17 +4,15 @@
   "properties": {
     "type": {
       "type": "string",
-      "enum": [
-        "task",
-        "spend",
-        "subscription",
-        "payment",
-        "meeting",
-        "note",
-        "goal",
-        "contact"
-      ],
-      "description": "Item type"
+      "description": "Item type (task, spend, subscription, payment, meeting, note, goal, contact, or custom)"
+    },
+    "type_category_id": {
+      "type": "string",
+      "description": "CustomCategory ID for custom item types"
+    },
+    "custom_fields": {
+      "type": "object",
+      "description": "User-defined field values {field_key: value}"
     },
     "title": {
       "type": "string",
