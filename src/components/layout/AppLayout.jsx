@@ -13,6 +13,8 @@ import ShortcutsOverlay from '@/components/help/ShortcutsOverlay';
 import ShortcutsTip from '@/components/help/ShortcutsTip';
 import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import NewUserOnboarding, { isOnboardingDone, markOnboardingDone } from '@/components/onboarding/NewUserOnboarding';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const SEED_KEY = 'jar_projects_seeded_v1';
 const SIDEBAR_PREF_KEY = 'jar_sidebar_collapsed';
@@ -37,6 +39,8 @@ export default function AppLayout() {
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === 'xs' || breakpoint === 'sm' || breakpoint === 'md';
   const isTablet = breakpoint === 'tablet';
+  const { user } = useCurrentUser();
+  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingDone());
 
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -157,6 +161,13 @@ export default function AppLayout() {
         <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
         <ShortcutsTip />
         <IOSInstallPrompt />
+
+        {showOnboarding && user && (
+          <NewUserOnboarding
+            user={user}
+            onDone={() => setShowOnboarding(false)}
+          />
+        )}
       </div>
     </>
   );

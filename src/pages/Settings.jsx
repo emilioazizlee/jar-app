@@ -389,7 +389,8 @@ export default function Settings() {
       <SectionCard>
         <SettingsRow icon={Tag} title="Category Manager" subtitle="Customize categories for grocery, leisure, tasks, recipes" control={<ActionBtn onClick={() => window.location.href = '/settings/categories'}>Manage</ActionBtn>} />
         <SettingsRow icon={Sliders} title="Custom Fields" subtitle="Add your own fields to any entity" control={<ActionBtn onClick={() => window.location.href = '/settings/custom-fields'}>Manage</ActionBtn>} />
-        <SettingsRow icon={LayoutGrid} title="Component Marketplace" subtitle="Add widgets and charts to your dashboard" control={<ActionBtn onClick={() => window.location.href = '/marketplace'}>Browse</ActionBtn>} last />
+        <SettingsRow icon={LayoutGrid} title="Component Marketplace" subtitle="Add widgets and charts to your dashboard" control={<ActionBtn onClick={() => window.location.href = '/marketplace'}>Browse</ActionBtn>} />
+        <SettingsRow icon={Tag} title="Starter Library" subtitle="Browse pre-built categories and icons" control={<ActionBtn onClick={() => window.location.href = '/starter'}>Browse</ActionBtn>} last />
       </SectionCard>
 
       {/* BUDGETS */}
