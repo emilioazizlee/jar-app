@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'jar_sidebar_order_v1';
 
-const DEFAULT_TRACKING = ['/', '/spends', '/subscriptions', '/payments', '/finance', '/insights'];
+const DEFAULT_TRACKING = ['/', '/jars', '/spends', '/subscriptions', '/payments', '/finance', '/insights'];
 const DEFAULT_LIFE = ['/calendar', '/tasks', '/diet', '/groceries', '/health', '/leisure'];
 
 export function getDefaultOrder() {

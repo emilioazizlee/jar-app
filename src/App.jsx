@@ -40,6 +40,7 @@ import AdvancedAnalytics from './pages/AdvancedAnalytics';
 import CurrencyRates from './pages/CurrencyRates';
 import CloudSync from './pages/CloudSync';
 import AccountantExport from './pages/AccountantExport';
+import JarsPage from './pages/Jars';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -99,6 +100,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings/custom-fields" element={<CustomFieldsManager />} />
         <Route path="/marketplace" element={<ComponentMarketplace />} />
         <Route path="/starter" element={<StarterPackBrowser />} />
+        <Route path="/jars" element={<JarsPage />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

@@ -6,7 +6,7 @@ import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
   Calendar, CheckSquare, Apple, Heart, Settings, ShoppingBasket,
   ChevronLeft, ChevronRight, Plus, FolderOpen, Loader2, HelpCircle,
-  Wallet, Martini, Star, GripVertical,
+  Wallet, Martini, Star, GripVertical, Package,
 } from 'lucide-react';
 import { useIsDesktop } from '@/hooks/useBreakpoint';
 import { useQuery } from '@tanstack/react-query';
@@ -18,6 +18,7 @@ import { loadSidebarOrder, saveSidebarOrder } from '@/lib/sidebarOrder';
 
 const NAV_KEYS = {
   '/': 'nav.dashboard',
+  '/jars': 'nav.jars',
   '/spends': 'nav.dailySpends',
   '/subscriptions': 'nav.subscriptions',
   '/payments': 'nav.payments',
@@ -33,6 +34,7 @@ const NAV_KEYS = {
 
 const NAV_ICONS = {
   '/': LayoutDashboard,
+  '/jars': Package,
   '/spends': DollarSign,
   '/subscriptions': RefreshCw,
   '/payments': CreditCard,
