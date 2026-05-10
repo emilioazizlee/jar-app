@@ -97,6 +97,9 @@ export default function RecentEntries({ items = [] }) {
   };
 
   const handleDelete = async (item) => {
+    // Close expand panel immediately so stale buttons can't fire on this item
+    setExpandedId(null);
+    setEditFields(prev => { const n = { ...prev }; delete n[item.id]; return n; });
     await base44.entities.Item.delete(item.id);
     queryClient.invalidateQueries({ queryKey: ['items'] });
     toast(`Deleted "${cleanLabel(item.title)}"`, {
@@ -115,6 +118,7 @@ export default function RecentEntries({ items = [] }) {
 
   const handleSaveEdit = async (item) => {
     const fields = editFields[item.id] || {};
+    if (Object.keys(fields).length === 0) { setExpandedId(null); return; }
     await base44.entities.Item.update(item.id, fields);
     queryClient.invalidateQueries({ queryKey: ['items'] });
     setExpandedId(null);
