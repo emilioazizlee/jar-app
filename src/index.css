@@ -312,6 +312,78 @@ h3, .h3 { font-size: clamp(16px, 3vw, 28px); }
   html { overflow-y: scroll; }
 }
 
+/* ─── Additional device breakpoints ───────────────────────── */
+/* iPhone SE / very small phones */
+@media (max-width: 374px) {
+  .max-w-7xl { padding-left: 8px; padding-right: 8px; }
+  h1, .h1 { font-size: 18px; }
+}
+
+/* 2K+ monitors */
+@media (min-width: 1921px) {
+  .max-w-7xl { max-width: 1600px; }
+  .max-w-5xl { max-width: 1200px; }
+  body { font-size: 16px; }
+}
+
+/* 4K monitors */
+@media (min-width: 2561px) {
+  .max-w-7xl { max-width: 2000px; }
+  body { font-size: 18px; }
+}
+
+/* ─── Browser compatibility ────────────────────────────────── */
+/* Safari backdrop-filter support */
+@supports (-webkit-backdrop-filter: blur(10px)) {
+  .backdrop-blur-sm { -webkit-backdrop-filter: blur(4px); }
+  .backdrop-blur { -webkit-backdrop-filter: blur(8px); }
+  .backdrop-blur-md { -webkit-backdrop-filter: blur(12px); }
+}
+
+/* Firefox scrollbar styling */
+@-moz-document url-prefix() {
+  * { scrollbar-width: thin; scrollbar-color: #1f1f1f #0a0a0a; }
+}
+
+/* CSS grid fallback for older browsers */
+@supports not (display: grid) {
+  .card-grid { display: flex; flex-wrap: wrap; }
+  .card-grid > * { flex: 1 1 280px; }
+}
+
+/* ─── Touch & mouse optimization ──────────────────────────── */
+/* Minimum touch targets on mobile */
+@media (pointer: coarse) {
+  button, a, [role="button"], select, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Larger tap zones for icon buttons */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Desktop: smaller click targets are fine */
+@media (pointer: fine) {
+  button, a[role="button"] {
+    min-height: 32px;
+  }
+  /* Enable hover only on pointer-fine (non-touch) devices */
+  .hover-only:hover {
+    opacity: 0.8;
+  }
+}
+
+/* Smooth wheel scrolling everywhere */
+* {
+  scroll-behavior: smooth;
+}
+html {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Samsung Internet / Android Chrome: virtual keyboard fix */
 @media (max-width: 767px) {
   .keyboard-aware-footer {
