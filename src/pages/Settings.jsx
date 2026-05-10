@@ -10,8 +10,12 @@ import {
   User, Shield, Globe, DollarSign, Clock, Languages, Sun, AlignJustify,
   Circle, List, Moon, Database, Download, Upload, FileText, Trash2,
   Lock, Eye, EyeOff, Heart, Phone, Info, Mail, FileCode, ScrollText,
-  ChevronRight, CheckCircle2, AlertTriangle, Smartphone
+  ChevronRight, CheckCircle2, AlertTriangle, Smartphone, Zap, BarChart2,
+  Calendar, Cloud, RefreshCw
 } from 'lucide-react';
+import { usePremium } from '@/hooks/usePremium';
+import PremiumBadge from '@/components/premium/PremiumBadge';
+import PaywallModal from '@/components/premium/PaywallModal';
 import ProfileHeader from '@/components/settings/ProfileHeader';
 import CrisisResources from '@/components/settings/CrisisResources';
 import BulkTextImportModal from '@/components/settings/BulkTextImportModal';
@@ -161,6 +165,8 @@ function Toggle({ value, onChange, options }) {
 export default function Settings() {
   const { t } = useTranslation();
   const { prefs, setPref, saveAll, hasUnsaved } = useSettings();
+  const { isPremium, subscription } = usePremium();
+  const [showPaywall, setShowPaywall] = useState(false);
   const [user, setUser] = useState(null);
   const [sidebarResetDone, setSidebarResetDone] = useState(false);
   const [exportDone, setExportDone] = useState(false);
@@ -344,6 +350,40 @@ export default function Settings() {
         <SettingsRow icon={EyeOff} title={t('set.familySafe')} control={<ComingSoon />} last />
       </SectionCard>
 
+      {/* PREMIUM */}
+      <SectionLabel>PREMIUM</SectionLabel>
+      <SectionCard>
+        <div style={{ padding: '16px 18px', borderBottom: '1px solid #1f1f1f', display: 'flex', alignItems: 'center', gap: 14, background: isPremium ? 'linear-gradient(135deg, rgba(255,238,50,0.05) 0%, rgba(255,109,0,0.05) 100%)' : 'transparent' }}>
+          <div style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Zap size={16} color={isPremium ? '#ffee32' : '#7a7a7a'} fill={isPremium ? '#ffee32' : 'none'} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <p style={{ fontSize: 15, color: '#fff' }}>Current Plan</p>
+              {isPremium ? <PremiumBadge /> : <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', border: '1px solid #2a2a2a', borderRadius: 6, padding: '2px 8px' }}>FREE</span>}
+            </div>
+            <p style={{ fontSize: 13, color: '#7a7a7a', marginTop: 2 }}>
+              {isPremium
+                ? subscription?.status === 'trial'
+                  ? `Trial ends ${subscription?.end_date ? new Date(subscription.end_date).toLocaleDateString() : 'soon'}`
+                  : 'Full Premium access'
+                : 'Upgrade for advanced features'}
+            </p>
+          </div>
+          {!isPremium && (
+            <button onClick={() => setShowPaywall(true)}
+              style={{ padding: '7px 14px', borderRadius: 8, background: 'linear-gradient(135deg, #ffee32 0%, #ff6d00 100%)', color: '#0a0a0a', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              Upgrade ⚡
+            </button>
+          )}
+        </div>
+        <SettingsRow icon={Calendar} title="Visual Planner" subtitle="Drag & drop 24h schedule builder" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/planner'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} />
+        <SettingsRow icon={BarChart2} title="Advanced Analytics" subtitle="Deep insights, macro charts, budget health" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/analytics'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} />
+        <SettingsRow icon={RefreshCw} title="Multi-Currency" subtitle="Live FX rates and converted totals" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/currency'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} />
+        <SettingsRow icon={Cloud} title="Cloud Sync" subtitle="Multi-device auto-sync every 5 minutes" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/sync'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} />
+        <SettingsRow icon={FileText} title="Accountant Export" subtitle="Tax-ready CSV/PDF with business flags" control={isPremium ? <ActionBtn onClick={() => window.location.href = '/premium/export'}>Open</ActionBtn> : <span onClick={() => setShowPaywall(true)} style={{ cursor: 'pointer' }}><PremiumBadge size="xs" /></span>} last />
+      </SectionCard>
+
       {/* BUDGETS */}
       <SectionLabel>{t('set.budgets') || 'Budgets'}</SectionLabel>
       <SectionCard>
@@ -382,6 +422,7 @@ export default function Settings() {
       </SectionCard>
 
       {/* Modals */}
+      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
       {showBulkImport && <BulkTextImportModal onClose={() => setShowBulkImport(false)} />}
       {showCSVImport && <CSVImportModal onClose={() => setShowCSVImport(false)} />}
       {showClearData && <ClearDataModal onClose={() => setShowClearData(false)} />}

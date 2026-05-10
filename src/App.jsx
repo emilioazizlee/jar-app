@@ -31,6 +31,11 @@ import Entries from './pages/Entries';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import BudgetLimits from './pages/BudgetLimits';
+import PlannerVisual from './pages/PlannerVisual';
+import AdvancedAnalytics from './pages/AdvancedAnalytics';
+import CurrencyRates from './pages/CurrencyRates';
+import CloudSync from './pages/CloudSync';
+import AccountantExport from './pages/AccountantExport';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -81,6 +86,11 @@ const AuthenticatedApp = () => {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/settings/budgets" element={<BudgetLimits />} />
+        <Route path="/premium/planner" element={<PlannerVisual />} />
+        <Route path="/premium/analytics" element={<AdvancedAnalytics />} />
+        <Route path="/premium/currency" element={<CurrencyRates />} />
+        <Route path="/premium/sync" element={<CloudSync />} />
+        <Route path="/premium/export" element={<AccountantExport />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

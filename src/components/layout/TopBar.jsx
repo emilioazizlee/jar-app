@@ -3,12 +3,15 @@ import { Keyboard, Menu } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+import { usePremium } from '@/hooks/usePremium';
+import { Link } from 'react-router-dom';
 
 const isMac = typeof navigator !== 'undefined' && navigator.platform.startsWith('Mac');
 const modKey = isMac ? '⌘' : 'Ctrl';
 
 export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOpenAdd, onToggleSidebar }) {
   const [date, setDate] = useState(new Date());
+  const { isPremium } = usePremium();
 
   useEffect(() => {
     const timer = setInterval(() => setDate(new Date()), 60000);
@@ -37,6 +40,13 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
         </div>
         <div className="flex items-center gap-3">
           <NotificationCenter />
+          {isPremium && (
+            <Link to="/settings" title="Premium active">
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 6, background: 'rgba(255,238,50,0.1)', border: '1px solid rgba(255,238,50,0.25)', fontFamily: 'JetBrains Mono, monospace', fontSize: 9, fontWeight: 700, color: '#ffee32', letterSpacing: 0.5 }}>
+                ⚡ PRO
+              </span>
+            </Link>
+          )}
           {/* Shortcuts button — desktop only (hidden on mobile/touch-only devices) */}
           <button
             onClick={onOpenShortcuts}

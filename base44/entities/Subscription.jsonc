@@ -1,0 +1,67 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User email / id"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "premium"
+      ],
+      "default": "free",
+      "description": "Plan tier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "cancelled",
+        "expired",
+        "trial"
+      ],
+      "default": "active",
+      "description": "Subscription status"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End / expiry date"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Trial end date"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Payment method description"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Billed amount"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "USD",
+        "AZN",
+        "RUB"
+      ],
+      "default": "EUR"
+    }
+  },
+  "required": [
+    "user_id",
+    "tier"
+  ]
+}

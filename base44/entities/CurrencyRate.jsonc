@@ -1,0 +1,32 @@
+{
+  "name": "CurrencyRate",
+  "type": "object",
+  "properties": {
+    "base_currency": {
+      "type": "string",
+      "description": "Base currency code e.g. EUR"
+    },
+    "target_currency": {
+      "type": "string",
+      "description": "Target currency code e.g. USD"
+    },
+    "rate": {
+      "type": "number",
+      "description": "Exchange rate (1 base = rate target)"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When rate was last fetched"
+    },
+    "source": {
+      "type": "string",
+      "description": "Data source API"
+    }
+  },
+  "required": [
+    "base_currency",
+    "target_currency",
+    "rate"
+  ]
+}

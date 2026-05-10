@@ -1,17 +1,25 @@
 {
+  "name": "User",
+  "type": "object",
   "properties": {
     "role": {
       "type": "string",
-      "description": "The role of the user in the app",
       "enum": [
         "admin",
         "user"
-      ]
+      ],
+      "default": "user",
+      "description": "User role"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user has an active premium subscription"
+    },
+    "premium_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When premium access expires"
     }
-  },
-  "required": [
-    "role"
-  ],
-  "name": "User",
-  "type": "object"
+  }
 }
