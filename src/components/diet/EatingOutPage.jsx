@@ -141,10 +141,12 @@ export default function EatingOutPage() {
   const existingPlaces = useMemo(() => [...new Set(entries.map(e => e.place))], [entries]);
 
   const handleSave = async (form) => {
+    const me = await base44.auth.me();
     // Create EatingOut record
     await base44.entities.EatingOut.create({
       ...form,
       total: form.total ? Number(form.total) : undefined,
+      created_by: me.email,
     });
 
     // Auto-create Spend entry
@@ -157,6 +159,7 @@ export default function EatingOutPage() {
         currency: form.currency,
         date: form.date,
         note: form.items_ordered || '',
+        created_by: me.email,
       });
     }
 
@@ -169,6 +172,7 @@ export default function EatingOutPage() {
       unit: 'serving',
       time: form.time,
       notes: `[Eating Out] ${form.occasion}${form.people_with ? ' · ' + form.people_with : ''}`,
+      created_by: me.email,
     });
 
     qc.invalidateQueries({ queryKey: ['eating-out'] });

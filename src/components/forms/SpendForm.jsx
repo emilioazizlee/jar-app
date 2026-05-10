@@ -54,6 +54,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
     setSaving(true);
     if (form.note) recordFieldValue('spend_note_' + category, form.note);
     const catObj = SPEND_CATEGORIES.find(c => c.key === category);
+    const me = await base44.auth.me();
     await base44.entities.Item.create({
       type: 'spend',
       title: catObj?.label || category,
@@ -63,6 +64,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
       currency: form.currency,
       note: form.note || undefined,
       date: format(new Date(), 'yyyy-MM-dd'),
+      created_by: me.email,
     });
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });

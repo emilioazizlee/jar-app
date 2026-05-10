@@ -33,10 +33,12 @@ export default function LeisureForm({ open, onClose, onSaved, initial = null }) 
   const handleSave = async () => {
     if (!form.item || !form.sub_tag) return;
     setSaving(true);
+    const me = await base44.auth.me();
     // Create leisure entry
     const entry = await base44.entities.LeisureEntry.create({
       ...form,
       amount: form.amount ? Number(form.amount) : undefined,
+      created_by: me.email,
     });
 
     // Auto-create a linked Spend entry
@@ -49,6 +51,7 @@ export default function LeisureForm({ open, onClose, onSaved, initial = null }) 
         currency: form.currency,
         note: form.notes || undefined,
         date: form.date,
+        created_by: me.email,
       });
     }
 

@@ -17,10 +17,12 @@ export default function GoalForm({ open, onClose, onSaved }) {
   const handleSave = async () => {
     if (!form.title || !form.target_amount) return;
     setSaving(true);
+    const me = await base44.auth.me();
     await base44.entities.FinanceGoal.create({
       ...form,
       target_amount: Number(form.target_amount),
       saved_amount: Number(form.saved_amount) || 0,
+      created_by: me.email,
     });
     setSaving(false);
     onSaved();

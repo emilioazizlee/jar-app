@@ -49,6 +49,7 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
     if (!form.title.trim()) return;
     setSaving(true);
     const domain = form.domain || getDomainForSubscription(form.title) || '';
+    const me = await base44.auth.me();
     await base44.entities.Item.create({
       type: 'subscription',
       title: form.title,
@@ -61,6 +62,7 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
       date: format(new Date(), 'yyyy-MM-dd'),
       is_active: true,
       description: domain ? JSON.stringify({ domain }) : undefined,
+      created_by: me.email,
     });
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });

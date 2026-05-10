@@ -127,6 +127,7 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory, init
     if (selectedProjectId) {
       tagsWithProject.push(`project:${selectedProjectId}`);
     }
+    const me = await base44.auth.me();
     await base44.entities.Item.create({
       type: 'task',
       title: form.title,
@@ -145,6 +146,7 @@ export default function TaskForm({ open, onClose, onSaved, initialCategory, init
       tags: tagsWithProject.length ? tagsWithProject : undefined,
       subtasks: form.subtasks.length ? form.subtasks : undefined,
       description: form.steps.length ? JSON.stringify({ steps: form.steps }) : form.description,
+      created_by: me.email,
     });
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });

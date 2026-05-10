@@ -177,13 +177,15 @@ export default function TodayPage() {
     if (existing) {
       await base44.entities.WaterLog.update(existing.id, { amount_liters: waterTotal + liters, entries: [...(existing.entries || []), { time: format(new Date(), 'HH:mm'), amount_ml: ml }] });
     } else {
-      await base44.entities.WaterLog.create({ date: today, amount_liters: liters, entries: [{ time: format(new Date(), 'HH:mm'), amount_ml: ml }] });
+      const me = await base44.auth.me();
+      await base44.entities.WaterLog.create({ date: today, amount_liters: liters, entries: [{ time: format(new Date(), 'HH:mm'), amount_ml: ml }], created_by: me.email });
     }
     qc.invalidateQueries({ queryKey: ['water-logs', today] });
   };
 
   const addLog = async (data) => {
-    const created = await base44.entities.DietLog.create(data);
+    const me = await base44.auth.me();
+    const created = await base44.entities.DietLog.create({ ...data, created_by: me.email });
     qc.invalidateQueries({ queryKey: ['diet-logs', today] });
     // Trigger pantry decrement in background if product is linked
     if (created?.id && data.product_id) {

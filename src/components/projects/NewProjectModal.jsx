@@ -71,6 +71,7 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
   const handleCreate = async () => {
     if (!project.name.trim()) return;
     setSaving(true);
+    const me = await base44.auth.me();
     const created = await base44.entities.Project.create({
       name: project.name.trim(),
       description: project.description,
@@ -79,6 +80,7 @@ export default function NewProjectModal({ open, onClose, onCreated }) {
       structure: project.structure || 'A',
       work_types: project.work_types,
       is_archived: false,
+      created_by: me.email,
     });
     queryClient.invalidateQueries({ queryKey: ['projects'] });
     setSaving(false);

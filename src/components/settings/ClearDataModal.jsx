@@ -14,22 +14,30 @@ export default function ClearDataModal({ onClose }) {
   const handleClear = async () => {
     if (confirmText !== 'DELETE') return;
     setDeleting(true);
+    const me = await base44.auth.me();
     const ENTITIES = [
-      'Item', 'Project', 'GroceryProduct', 'PantryItem', 'ShoppingListItem',
-      'GroceryShop', 'Recipe', 'DietLog', 'DietGoals', 'WaterLog', 'EatingOut',
-      'LeisureEntry', 'FinanceSnapshot', 'FinanceGoal', 'Favorite', 'Link',
+      'Item', 'Project', 'LeisureEntry', 'EatingOut',
+      'DietLog', 'WaterLog', 'DietGoals', 'Recipe',
+      'GroceryProduct', 'PantryItem', 'ShoppingListItem', 'GroceryShop',
+      'FinanceSnapshot', 'FinanceGoal', 'Favorite', 'Link',
     ];
     for (const entityName of ENTITIES) {
       try {
-        const records = await base44.entities[entityName].list('-created_date', 500);
-        for (const record of records) {
+        const records = await base44.entities[entityName].list('-created_date', 9999);
+        const mine = records.filter(r => r.created_by === me.email || !r.created_by);
+        for (const record of mine) {
           await base44.entities[entityName].delete(record.id);
         }
-      } catch {}
+      } catch (e) {
+        console.error(`Error clearing ${entityName}:`, e);
+      }
     }
-    queryClient.invalidateQueries();
+    localStorage.removeItem('jar_projects_seeded_v1');
+    localStorage.removeItem('jar_seeded');
+    queryClient.clear();
     setDeleting(false);
     setDone(true);
+    setTimeout(() => window.location.reload(), 1500);
   };
 
   return (

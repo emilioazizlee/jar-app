@@ -59,7 +59,8 @@ export default function QuickItemForm({ open, onClose, onSaved, itemType }) {
         company: form.contact_company,
       };
     }
-    await base44.entities.Item.create(data);
+    const me = await base44.auth.me();
+    await base44.entities.Item.create({ ...data, created_by: me.email });
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });
     setSaving(false);
