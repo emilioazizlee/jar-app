@@ -12,8 +12,10 @@ import useKeyboardShortcuts from '@/hooks/useKeyboardShortcuts';
 import ShortcutsOverlay from '@/components/help/ShortcutsOverlay';
 import ShortcutsTip from '@/components/help/ShortcutsTip';
 import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const SEED_KEY = 'jar_projects_seeded_v1';
+const SIDEBAR_PREF_KEY = 'jar_sidebar_collapsed';
 
 async function autoSeedProjects(queryClient) {
   if (localStorage.getItem(SEED_KEY)) return;
@@ -32,7 +34,15 @@ async function autoSeedProjects(queryClient) {
 }
 
 export default function AppLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === 'xs' || breakpoint === 'sm' || breakpoint === 'md';
+  const isTablet = breakpoint === 'tablet';
+
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (window.innerWidth <= 1024) return true;
+    return localStorage.getItem(SIDEBAR_PREF_KEY) === 'true';
+  });
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -40,9 +50,31 @@ export default function AppLayout() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  useEffect(() => { autoSeedProjects(queryClient); }, []);
+  // Auto-collapse on tablet
+  useEffect(() => {
+    if (isTablet) setCollapsed(true);
+  }, [isTablet]);
 
-  // Cmd+Shift+H → home/dashboard
+  const handleToggleSidebar = useCallback(() => {
+    if (isMobile) {
+      setMobileDrawerOpen(d => !d);
+    } else {
+      setCollapsed(c => {
+        const next = !c;
+        if (!isTablet) localStorage.setItem(SIDEBAR_PREF_KEY, String(next));
+        return next;
+      });
+    }
+  }, [isMobile, isTablet]);
+
+  // Close drawer on escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') setMobileDrawerOpen(false); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  // Cmd+Shift+H → home
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'H') {
@@ -56,10 +88,12 @@ export default function AppLayout() {
 
   useKeyboardShortcuts({
     onOpenAdd: useCallback(() => setAddOpen(true), []),
-    onToggleSidebar: useCallback(() => setCollapsed(c => !c), []),
+    onToggleSidebar: handleToggleSidebar,
     onOpenShortcuts: useCallback(() => setShortcutsOpen(true), []),
     searchRef,
   });
+
+  useEffect(() => { autoSeedProjects(queryClient); }, []);
 
   const { data: items = [] } = useQuery({
     queryKey: ['items-month'],
@@ -72,35 +106,58 @@ export default function AppLayout() {
 
   const totalJars = items.length / 10;
 
+  const mainPadding = isMobile ? '12px 12px 120px' : isTablet ? '20px 20px 80px' : '24px 32px 40px';
+
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar — hidden on mobile, visible md+ */}
-      <div className="hidden md:block">
-        <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
-      </div>
+    <>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
 
-      {/* Mobile drawer overlay — slides in from LEFT */}
-      {mobileDrawerOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
-          <div className="w-64 h-full">
-            <Sidebar collapsed={false} onToggle={() => setMobileDrawerOpen(false)} onMobileClose={() => setMobileDrawerOpen(false)} />
+      <div className="flex overflow-hidden bg-background" style={{ height: '100dvh' }}>
+        {/* Sidebar — tablet and desktop only */}
+        {!isMobile && (
+          <Sidebar
+            collapsed={collapsed}
+            onToggle={() => setCollapsed(c => {
+              const next = !c;
+              if (!isTablet) localStorage.setItem(SIDEBAR_PREF_KEY, String(next));
+              return next;
+            })}
+          />
+        )}
+
+        {/* Mobile drawer overlay */}
+        {isMobile && mobileDrawerOpen && (
+          <div className="fixed inset-0 z-50 flex" role="dialog" aria-modal="true" aria-label="Navigation menu">
+            <div className="w-64 max-w-[80vw] h-full">
+              <Sidebar collapsed={false} onToggle={() => setMobileDrawerOpen(false)} onMobileClose={() => setMobileDrawerOpen(false)} />
+            </div>
+            <div className="flex-1 bg-black/60 backdrop-blur-sm" onClick={() => setMobileDrawerOpen(false)} aria-hidden="true" />
           </div>
-          <div className="flex-1 bg-black/50" onClick={() => setMobileDrawerOpen(false)} />
-        </div>
-      )}
+        )}
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar totalJars={totalJars} searchRef={searchRef} onOpenShortcuts={() => setShortcutsOpen(true)} onOpenAdd={() => setAddOpen(true)} onToggleSidebar={() => setMobileDrawerOpen(d => !d)} />
-        <main className="flex-1 overflow-y-auto p-3 md:p-6 pb-36 md:pb-6">
-          <Outlet />
-        </main>
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+          <TopBar
+            totalJars={totalJars}
+            searchRef={searchRef}
+            onOpenShortcuts={() => setShortcutsOpen(true)}
+            onOpenAdd={() => setAddOpen(true)}
+            onToggleSidebar={handleToggleSidebar}
+          />
+          <main
+            id="main-content"
+            className="flex-1 overflow-y-auto"
+            style={{ padding: mainPadding }}
+          >
+            <Outlet />
+          </main>
+        </div>
+
+        <UniversalAddButton externalOpen={addOpen} onExternalClose={() => setAddOpen(false)} />
+        {isMobile && <BottomNav onOpenAdd={() => setAddOpen(true)} />}
+        <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+        <ShortcutsTip />
+        <IOSInstallPrompt />
       </div>
-      <UniversalAddButton externalOpen={addOpen} onExternalClose={() => setAddOpen(false)} />
-      {/* Bottom nav — mobile only */}
-      <BottomNav onOpenAdd={() => setAddOpen(true)} />
-      <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
-      <ShortcutsTip />
-      <IOSInstallPrompt />
-    </div>
+    </>
   );
 }

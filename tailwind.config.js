@@ -4,6 +4,15 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+      screens: {
+        'xs': '320px',
+        // Keep standard Tailwind defaults for sm/md/lg/xl/2xl
+        // Add tablet as alias for md range
+        'tablet': '768px',
+        'desktop': '1025px',
+        'desktop-lg': '1440px',
+        'desktop-xl': '1920px',
+      },
   		fontFamily: {
   			inter: ['var(--font-inter)'],
   			mono: ['var(--font-mono)'],

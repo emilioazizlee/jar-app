@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import {
   ChevronLeft, ChevronRight, Plus, FolderOpen, Loader2, HelpCircle,
   Wallet, Martini, Star, GripVertical,
 } from 'lucide-react';
+import { useIsDesktop } from '@/hooks/useBreakpoint';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import DynIcon from '@/components/projects/DynIcon';
@@ -49,11 +50,47 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const isDesktop = useIsDesktop();
   const [showNewProject, setShowNewProject] = useState(false);
   const [order, setOrder] = useState(() => loadSidebarOrder());
   const [dragging, setDragging] = useState(null); // { section, index }
   const [dragOver, setDragOver] = useState(null); // { section, index }
   const [crossSectionDrag, setCrossSectionDrag] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    return parseInt(localStorage.getItem('jar_sidebar_width') || '240');
+  });
+  const resizing = useRef(false);
+  const startX = useRef(0);
+  const startW = useRef(0);
+
+  // Desktop sidebar resize
+  const handleResizeMouseDown = (e) => {
+    if (!isDesktop || collapsed) return;
+    resizing.current = true;
+    startX.current = e.clientX;
+    startW.current = sidebarWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const onMove = (e) => {
+      if (!resizing.current) return;
+      const delta = e.clientX - startX.current;
+      const next = Math.max(200, Math.min(360, startW.current + delta));
+      setSidebarWidth(next);
+    };
+    const onUp = () => {
+      if (!resizing.current) return;
+      resizing.current = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      localStorage.setItem('jar_sidebar_width', String(sidebarWidth));
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, [sidebarWidth]);
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['projects'],
@@ -106,11 +143,13 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
     { label: t('nav.life'), key: 'LIFE' },
   ];
 
+  const targetWidth = collapsed ? 64 : (isDesktop ? sidebarWidth : 240);
+
   return (
     <>
       <motion.aside
-        className="h-screen bg-sidebar border-r border-sidebar-border flex flex-col overflow-hidden z-30"
-        animate={{ width: collapsed ? 64 : 240 }}
+        className="h-screen bg-sidebar border-r border-sidebar-border flex flex-col overflow-hidden z-30 relative"
+        animate={{ width: targetWidth }}
         transition={{ duration: 0.2 }}
       >
         {/* Logo */}
@@ -273,6 +312,15 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
             </div>
           </div>
         </nav>
+
+        {/* Resize handle — desktop only */}
+        {isDesktop && !collapsed && (
+          <div
+            className="sidebar-resize-handle absolute right-0 top-0 bottom-0"
+            onMouseDown={handleResizeMouseDown}
+            title="Drag to resize"
+          />
+        )}
 
         {/* Bottom fixed links */}
         <div className="px-2 pb-4 border-t border-sidebar-border pt-2 flex-shrink-0 space-y-0.5">

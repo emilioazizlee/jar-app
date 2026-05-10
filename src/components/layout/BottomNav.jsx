@@ -24,6 +24,15 @@ const MORE_ITEMS = [
   { path: '/help', icon: HelpCircle, label: 'Help' },
 ];
 
+// Haptic feedback helper
+function haptic(style = 'light') {
+  try {
+    if (navigator.vibrate) {
+      navigator.vibrate(style === 'light' ? 8 : style === 'medium' ? 15 : 30);
+    }
+  } catch {}
+}
+
 export default function BottomNav({ onOpenAdd }) {
   const location = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -43,8 +52,10 @@ export default function BottomNav({ onOpenAdd }) {
     <>
       {/* Bottom Nav Bar */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 bg-sidebar border-t border-sidebar-border flex items-center justify-around px-2 md:hidden"
+        className="bottom-nav-bar fixed bottom-0 left-0 right-0 z-40 bg-sidebar border-t border-sidebar-border flex items-center justify-around px-2 md:hidden"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)', height: 'calc(56px + env(safe-area-inset-bottom))' }}
+        role="navigation"
+        aria-label="Main navigation"
       >
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
@@ -52,7 +63,10 @@ export default function BottomNav({ onOpenAdd }) {
             <Link
               key={path}
               to={path}
-              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all min-w-[44px] min-h-[44px] justify-center active:scale-95 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+              onClick={() => haptic('light')}
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all min-w-[52px] min-h-[52px] justify-center active:scale-90 touch-manipulation ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+              aria-label={label}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon className="w-5 h-5" />
               <span className="font-mono text-[9px]">{label}</span>
@@ -61,19 +75,24 @@ export default function BottomNav({ onOpenAdd }) {
         })}
 
         {/* Central + button placeholder (actual button is UniversalAddButton) */}
-        <div className="w-14" />
+        <div className="w-14" aria-hidden="true" />
 
         <Link
           to="/tasks"
-          className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all min-w-[44px] min-h-[44px] justify-center active:scale-95 ${location.pathname === '/tasks' ? 'text-primary' : 'text-muted-foreground'}`}
+          onClick={() => haptic('light')}
+          className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all min-w-[52px] min-h-[52px] justify-center active:scale-90 touch-manipulation ${location.pathname === '/tasks' ? 'text-primary' : 'text-muted-foreground'}`}
+          aria-label="Tasks"
+          aria-current={location.pathname === '/tasks' ? 'page' : undefined}
         >
           <CheckSquare className="w-5 h-5" />
           <span className="font-mono text-[9px]">Tasks</span>
         </Link>
 
         <button
-          onClick={() => setMoreOpen(true)}
-          className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all min-w-[44px] min-h-[44px] justify-center text-muted-foreground active:scale-95"
+          onClick={() => { haptic('light'); setMoreOpen(true); }}
+          className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all min-w-[52px] min-h-[52px] justify-center text-muted-foreground active:scale-90 touch-manipulation"
+          aria-label="More navigation options"
+          aria-expanded={moreOpen}
         >
           <MoreHorizontal className="w-5 h-5" />
           <span className="font-mono text-[9px]">More</span>
@@ -108,8 +127,9 @@ export default function BottomNav({ onOpenAdd }) {
                   <Link
                     key={path}
                     to={path}
-                    onClick={() => setMoreOpen(false)}
-                    className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all active:scale-98 ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                    onClick={() => { haptic('light'); setMoreOpen(false); }}
+                    className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all active:scale-95 touch-manipulation ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     <Icon className="w-5 h-5 shrink-0" />
                     <span className="font-mono text-sm">{label}</span>
