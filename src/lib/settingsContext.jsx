@@ -11,6 +11,7 @@ const defaults = {
   timezone: 'Auto-detect',
   bedtime: '01:00',
   oneHand: 'Off',
+  theme: 'Dark',
 };
 
 function getStored() {
@@ -61,7 +62,15 @@ export function SettingsProvider({ children }) {
     } else {
       root.style.setProperty('--radius', '0.75rem');
     }
-  }, [prefs.density, prefs.radius]);
+    // Theme
+    if (prefs.theme === 'Light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    }
+  }, [prefs.density, prefs.radius, prefs.theme]);
 
   // On mount, load from storage
   useEffect(() => {

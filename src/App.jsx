@@ -28,6 +28,8 @@ import MyBrands from './pages/MyBrands';
 import StepTemplateLibrary from './components/settings/StepTemplateLibrary';
 import TaskDetail from './pages/TaskDetail';
 import Entries from './pages/Entries';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -75,6 +77,8 @@ const AuthenticatedApp = () => {
         <Route path="/settings/templates" element={<StepTemplateLibrary />} />
         <Route path="/help" element={<Help />} />
         <Route path="/entries" element={<Entries />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

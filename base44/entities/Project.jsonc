@@ -12,11 +12,25 @@
     },
     "icon": {
       "type": "string",
-      "description": "Lucide icon name"
+      "description": "Lucide icon name or emoji"
     },
     "color": {
       "type": "string",
       "description": "Hex accent color"
+    },
+    "structure": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ],
+      "default": "A",
+      "description": "A=Steps only, B=Steps+Sub-projects, C=Sub-projects only"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "Parent project ID (for sub-projects)"
     },
     "work_types": {
       "type": "array",

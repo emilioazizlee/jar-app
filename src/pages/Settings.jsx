@@ -269,8 +269,7 @@ export default function Settings() {
         />
         <SettingsRow
           icon={Moon} title={t('set.theme')}
-          subtitle={t('set.darkOnly')}
-          control={<ComingSoon />}
+          control={<Toggle value={prefs.theme || 'Dark'} onChange={v => savePref('theme', v)} options={['Dark','Light']} />}
         />
         <SettingsRow
           icon={AlignJustify} title={t('set.density')}
@@ -367,8 +366,8 @@ export default function Settings() {
         <SettingsRow icon={Info} title={t('set.buildDate')} control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>2026-05-06</span>} />
         <SettingsRow icon={Info} title={t('set.credits')} subtitle="Built with Base44 · Nivo · Framer Motion · PapaParse" control={null} />
         <SettingsRow icon={Mail} title={t('set.sendFeedback')} control={<a href="mailto:feedback@jar.app" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#abff4f' }}>feedback@jar.app</a>} />
-        <SettingsRow icon={ScrollText} title={t('set.privacyPolicy')} control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>#</span>} />
-        <SettingsRow icon={ScrollText} title={t('set.terms')} control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>#</span>} last />
+        <SettingsRow icon={ScrollText} title={t('set.privacyPolicy')} onClick={() => window.location.href = '/privacy'} control={<ChevronRight size={16} color="#555" />} />
+        <SettingsRow icon={ScrollText} title={t('set.terms')} onClick={() => window.location.href = '/terms'} control={<ChevronRight size={16} color="#555" />} last />
       </SectionCard>
 
       {/* Modals */}
