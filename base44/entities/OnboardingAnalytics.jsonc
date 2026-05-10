@@ -1,0 +1,47 @@
+{
+  "name": "OnboardingAnalytics",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User email"
+    },
+    "starter_pack": {
+      "type": "string",
+      "enum": [
+        "scratch",
+        "templates",
+        "sample"
+      ],
+      "description": "Which starter pack was chosen"
+    },
+    "categories_imported": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Category names imported"
+    },
+    "steps_completed": {
+      "type": "number",
+      "description": "How many onboarding steps completed"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When onboarding finished"
+    },
+    "country": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "currency": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

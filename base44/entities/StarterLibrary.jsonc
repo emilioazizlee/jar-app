@@ -1,0 +1,102 @@
+{
+  "name": "StarterLibrary",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "category",
+        "icon",
+        "template"
+      ],
+      "description": "Item type"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description"
+    },
+    "category_type": {
+      "type": "string",
+      "enum": [
+        "leisure",
+        "grocery",
+        "spend",
+        "task",
+        "recipe"
+      ],
+      "description": "Which entity type this belongs to"
+    },
+    "icon_type": {
+      "type": "string",
+      "enum": [
+        "emoji",
+        "library"
+      ],
+      "default": "emoji",
+      "description": "Icon type"
+    },
+    "icon_value": {
+      "type": "string",
+      "description": "Emoji char or Lucide icon name"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex color"
+    },
+    "translations": {
+      "type": "object",
+      "description": "Translations by language code",
+      "properties": {
+        "en": {
+          "type": "string"
+        },
+        "ru": {
+          "type": "string"
+        },
+        "az": {
+          "type": "string"
+        },
+        "es": {
+          "type": "string"
+        },
+        "fr": {
+          "type": "string"
+        },
+        "tr": {
+          "type": "string"
+        },
+        "de": {
+          "type": "string"
+        }
+      }
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured in starter pack"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Times imported by users"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Search tags"
+    }
+  },
+  "required": [
+    "type",
+    "name",
+    "category_type",
+    "icon_type",
+    "icon_value"
+  ]
+}

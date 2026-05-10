@@ -11,6 +11,7 @@ import {
 import { useIsDesktop } from '@/hooks/useBreakpoint';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import DynIcon from '@/components/projects/DynIcon';
 import NewProjectModal from '@/components/projects/NewProjectModal';
 import ProjectContextMenu from '@/components/projects/ProjectContextMenu';
@@ -51,6 +52,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
+  const { user } = useCurrentUser();
   const [showNewProject, setShowNewProject] = useState(false);
   const [order, setOrder] = useState(() => loadSidebarOrder());
   const [dragging, setDragging] = useState(null); // { section, index }
@@ -93,8 +95,11 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   }, [sidebarWidth]);
 
   const { data: projects = [], isLoading } = useQuery({
-    queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list('created_date', 50).then(r => r.filter(p => !p.is_archived)),
+    queryKey: ['projects', user?.email],
+    queryFn: () => user
+      ? base44.entities.Project.filter({ created_by: user.email }, 'created_date', 50).then(r => r.filter(p => !p.is_archived))
+      : [],
+    enabled: !!user,
     initialData: [],
   });
 
@@ -139,8 +144,8 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   }, []);
 
   const SECTIONS = [
-    { label: t('nav.tracking'), key: 'TRACKING' },
-    { label: t('nav.life'), key: 'LIFE' },
+    { label: t('nav.tracking', 'Tracking'), key: 'TRACKING' },
+    { label: t('nav.life', 'Life'), key: 'LIFE' },
   ];
 
   const targetWidth = collapsed ? 64 : (isDesktop ? sidebarWidth : 240);
@@ -243,7 +248,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
           <div>
             {!collapsed && (
               <div className="flex items-center justify-between px-3 mb-2">
-                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">{t('proj.projects')}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">{t('nav.projects')}</p>
                 <button
                   onClick={() => setShowNewProject(true)}
                   className="w-7 h-7 rounded-full flex items-center justify-center bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors text-primary"
