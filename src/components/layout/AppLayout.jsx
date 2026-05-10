@@ -7,7 +7,6 @@ import UniversalAddButton from '../add/UniversalAddButton';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { startOfMonth, format } from 'date-fns';
-import { PROJECT_TEMPLATES } from '@/lib/projectTemplates';
 import useKeyboardShortcuts from '@/hooks/useKeyboardShortcuts';
 import ShortcutsOverlay from '@/components/help/ShortcutsOverlay';
 import ShortcutsTip from '@/components/help/ShortcutsTip';
@@ -16,24 +15,7 @@ import { useBreakpoint } from '@/hooks/useBreakpoint';
 import NewUserOnboarding, { isOnboardingDone, markOnboardingDone } from '@/components/onboarding/NewUserOnboarding';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
-const SEED_KEY = 'jar_projects_seeded_v1';
 const SIDEBAR_PREF_KEY = 'jar_sidebar_collapsed';
-
-async function autoSeedProjects(queryClient) {
-  if (localStorage.getItem(SEED_KEY)) return;
-  const toSeed = PROJECT_TEMPLATES.filter(t => t.id === 'football_agent' || t.id === 'studies');
-  for (const tpl of toSeed) {
-    const existing = await base44.entities.Project.list('created_date', 100).then(r => r.filter(p => p.name === tpl.name));
-    if (existing.length === 0) {
-      await base44.entities.Project.create({
-        name: tpl.name, description: tpl.description, icon: tpl.icon,
-        color: tpl.color, work_types: tpl.work_types, is_archived: false,
-      });
-    }
-  }
-  localStorage.setItem(SEED_KEY, '1');
-  queryClient.invalidateQueries({ queryKey: ['projects'] });
-}
 
 export default function AppLayout() {
   const breakpoint = useBreakpoint();
@@ -96,8 +78,6 @@ export default function AppLayout() {
     onOpenShortcuts: useCallback(() => setShortcutsOpen(true), []),
     searchRef,
   });
-
-  useEffect(() => { autoSeedProjects(queryClient); }, []);
 
   const { data: items = [] } = useQuery({
     queryKey: ['items-month'],
