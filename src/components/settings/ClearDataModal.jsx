@@ -14,11 +14,20 @@ export default function ClearDataModal({ onClose }) {
   const handleClear = async () => {
     if (confirmText !== 'DELETE') return;
     setDeleting(true);
-    const items = await base44.entities.Item.list('-created_date', 9999);
-    for (const item of items) {
-      await base44.entities.Item.delete(item.id);
+    const ENTITIES = [
+      'Item', 'Project', 'GroceryProduct', 'PantryItem', 'ShoppingListItem',
+      'GroceryShop', 'Recipe', 'DietLog', 'DietGoals', 'WaterLog', 'EatingOut',
+      'LeisureEntry', 'FinanceSnapshot', 'FinanceGoal', 'Favorite', 'Link',
+    ];
+    for (const entityName of ENTITIES) {
+      try {
+        const records = await base44.entities[entityName].list('-created_date', 500);
+        for (const record of records) {
+          await base44.entities[entityName].delete(record.id);
+        }
+      } catch {}
     }
-    queryClient.invalidateQueries({ queryKey: ['items'] });
+    queryClient.invalidateQueries();
     setDeleting(false);
     setDone(true);
   };

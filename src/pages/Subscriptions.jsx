@@ -63,7 +63,7 @@ function SubscriptionRow({ sub }) {
       <div className="flex items-center gap-3 p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
         <BrandLogo name={sub.title} size={40} />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{sub.title}</p>
+          <p className="text-sm font-medium leading-snug">{sub.title}</p>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <span className="font-mono text-[10px] text-muted-foreground capitalize">{sub.billing_cycle}</span>
             {daysUntil !== null && daysUntil >= 0 && (

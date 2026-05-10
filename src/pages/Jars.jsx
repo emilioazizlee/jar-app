@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useTranslation } from 'react-i18next';
-import { startOfMonth } from 'date-fns';
+import { format, startOfMonth } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { calculateJars, filterThisMonth } from '@/lib/jarsCalc';
 
-const JarVisual = ({ label, emoji, filled, color }) => {
-  const pct = Math.min(100, (filled / 10) * 100);
-  const dots = Math.round(pct / 10);
+const JarVisual = ({ label, emoji, score, entryCount, color }) => {
+  const dots = Math.min(10, Math.floor(score));
+  const pct = Math.min(100, (score / 1) * 100); // 1 JAR = full bar per category
 
   return (
     <div style={{
@@ -17,7 +18,7 @@ const JarVisual = ({ label, emoji, filled, color }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: 24 }}>{emoji}</span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#555' }}>
-          {filled} entries
+          {entryCount} entries
         </span>
       </div>
 
@@ -36,7 +37,7 @@ const JarVisual = ({ label, emoji, filled, color }) => {
       <div style={{ height: 3, background: '#1a1a1a', borderRadius: 2 }}>
         <div style={{
           height: '100%', borderRadius: 2,
-          width: `${pct}%`, background: color,
+          width: `${Math.min(100, pct)}%`, background: color,
           transition: 'width 0.6s ease'
         }} />
       </div>
@@ -44,7 +45,7 @@ const JarVisual = ({ label, emoji, filled, color }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#aaa' }}>{label}</span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color }}>
-          {(filled / 10).toFixed(1)} JARS
+          {score.toFixed(1)} pts
         </span>
       </div>
     </div>
@@ -55,78 +56,71 @@ export default function JarsPage() {
   const { t } = useTranslation();
   const { user } = useCurrentUser();
 
-  const monthStart = startOfMonth(new Date()).toISOString().split('T')[0];
+  const monthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
 
   const { data: items = [] } = useQuery({
     queryKey: ['items-jars', user?.email],
-    queryFn: () => user
-      ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 1000)
-      : [],
+    queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 1000) : [],
     enabled: !!user,
     initialData: [],
   });
 
   const { data: dietLogs = [] } = useQuery({
     queryKey: ['dietlogs-jars', user?.email],
-    queryFn: () => user
-      ? base44.entities.DietLog.filter({ created_by: user.email }, '-created_date', 500)
-      : [],
+    queryFn: () => user ? base44.entities.DietLog.filter({ created_by: user.email }, '-created_date', 500) : [],
     enabled: !!user,
     initialData: [],
   });
 
   const { data: leisureEntries = [] } = useQuery({
     queryKey: ['leisure-jars', user?.email],
-    queryFn: () => user
-      ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 500)
-      : [],
+    queryFn: () => user ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 500) : [],
     enabled: !!user,
     initialData: [],
   });
 
   const { data: waterLogs = [] } = useQuery({
     queryKey: ['water-jars', user?.email],
-    queryFn: () => user
-      ? base44.entities.WaterLog.filter({ created_by: user.email }, '-created_date', 500)
-      : [],
+    queryFn: () => user ? base44.entities.WaterLog.filter({ created_by: user.email }, '-created_date', 500) : [],
     enabled: !!user,
     initialData: [],
   });
 
   const { data: groceryShops = [] } = useQuery({
     queryKey: ['shops-jars', user?.email],
-    queryFn: () => user
-      ? base44.entities.GroceryShop.filter({ created_by: user.email }, '-created_date', 500)
-      : [],
+    queryFn: () => user ? base44.entities.GroceryShop.filter({ created_by: user.email }, '-created_date', 500) : [],
     enabled: !!user,
     initialData: [],
   });
 
-  // Filter to this month
-  const thisMonth = (arr) => arr.filter(i => {
-    const d = i.date || i.created_date;
-    return d && d >= monthStart;
-  });
+  const monthItems = useMemo(() => filterThisMonth(items, monthStart), [items, monthStart]);
+  const monthDiet = useMemo(() => filterThisMonth(dietLogs, monthStart), [dietLogs, monthStart]);
+  const monthLeisure = useMemo(() => filterThisMonth(leisureEntries, monthStart), [leisureEntries, monthStart]);
+  const monthWater = useMemo(() => filterThisMonth(waterLogs, monthStart), [waterLogs, monthStart]);
+  const monthShops = useMemo(() => filterThisMonth(groceryShops, monthStart), [groceryShops, monthStart]);
 
-  const monthItems = thisMonth(items);
-  const monthDiet = thisMonth(dietLogs);
-  const monthLeisure = thisMonth(leisureEntries);
-  const monthWater = thisMonth(waterLogs);
-  const monthShops = thisMonth(groceryShops);
+  const totalJars = useMemo(() => calculateJars({
+    items: monthItems,
+    dietLogs: monthDiet,
+    waterLogs: monthWater,
+    leisureEntries: monthLeisure,
+    groceryShops: monthShops,
+  }), [monthItems, monthDiet, monthWater, monthLeisure, monthShops]);
 
+  const totalEntries = monthItems.length + monthDiet.length + monthLeisure.length + monthWater.length + monthShops.length;
+
+  // Per-category scores
   const spends = monthItems.filter(i => i.type === 'spend');
-  const tasks = monthItems.filter(i => i.type === 'task');
+  const tasksDone = monthItems.filter(i => i.type === 'task' && i.status === 'done');
+  const tasksOpen = monthItems.filter(i => i.type === 'task' && i.status !== 'done');
 
-  const totalEntries = spends.length + tasks.length + monthDiet.length + monthLeisure.length + monthWater.length + monthShops.length;
-  const totalJars = totalEntries / 10;
-
-  const categories = [
-    { label: t('nav.finance'), emoji: '💰', filled: spends.length, color: '#22c55e' },
-    { label: t('nav.tasks'), emoji: '✅', filled: tasks.length, color: '#3b82f6' },
-    { label: t('nav.diet'), emoji: '🍽️', filled: monthDiet.length, color: '#f59e0b' },
-    { label: t('nav.leisure'), emoji: '🎉', filled: monthLeisure.length, color: '#ec4899' },
-    { label: t('nav.health'), emoji: '❤️', filled: monthWater.length, color: '#ef4444' },
-    { label: t('nav.groceries'), emoji: '🛒', filled: monthShops.length, color: '#8b5cf6' },
+  const categoryScores = [
+    { label: t('nav.finance'),   emoji: '💰', score: spends.length * 1,                                             entryCount: spends.length,        color: '#22c55e' },
+    { label: t('nav.tasks'),     emoji: '✅', score: tasksDone.length * 3 + tasksOpen.length * 1,                   entryCount: tasksDone.length + tasksOpen.length, color: '#3b82f6' },
+    { label: t('nav.diet'),      emoji: '🍽️', score: monthDiet.length * 2,                                          entryCount: monthDiet.length,     color: '#f59e0b' },
+    { label: t('nav.leisure'),   emoji: '🎉', score: monthLeisure.length * 1.5,                                     entryCount: monthLeisure.length,  color: '#ec4899' },
+    { label: t('nav.health'),    emoji: '💧', score: monthWater.length * 0.5,                                       entryCount: monthWater.length,    color: '#ef4444' },
+    { label: t('nav.groceries'), emoji: '🛒', score: monthShops.length * 0.5,                                       entryCount: monthShops.length,    color: '#8b5cf6' },
   ];
 
   return (
@@ -141,16 +135,16 @@ export default function JarsPage() {
           {totalJars.toFixed(1)}
         </div>
         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#555', letterSpacing: 4, marginTop: 4 }}>
-          {t('nav.jars').toUpperCase()} FILLED THIS MONTH
+          {t('jars.filledThisMonth')}
         </div>
         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444', marginTop: 8 }}>
-          {totalEntries} total entries
+          {totalEntries} {t('jars.totalEntries')}
         </div>
       </div>
 
       {/* Category grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-        {categories.map(cat => (
+        {categoryScores.map(cat => (
           <JarVisual key={cat.label} {...cat} />
         ))}
       </div>
@@ -159,9 +153,11 @@ export default function JarsPage() {
       <div style={{
         marginTop: 24, padding: 16, background: '#0a0a0a',
         borderRadius: 12, fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444',
-        textAlign: 'center'
+        textAlign: 'center', lineHeight: 1.8
       }}>
-        ●●●●●●●●●● = 10 entries = 1.0 JAR
+        <div>spend=1pt · task done=3pts · meal=2pts</div>
+        <div>leisure=1.5pts · water=0.5pts · grocery=0.5pts</div>
+        <div style={{ marginTop: 4 }}>10 pts = 1.0 JAR</div>
       </div>
     </div>
   );

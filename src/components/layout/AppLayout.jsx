@@ -7,6 +7,7 @@ import UniversalAddButton from '../add/UniversalAddButton';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { startOfMonth, format } from 'date-fns';
+import { calculateJars, filterThisMonth } from '@/lib/jarsCalc';
 import useKeyboardShortcuts from '@/hooks/useKeyboardShortcuts';
 import ShortcutsOverlay from '@/components/help/ShortcutsOverlay';
 import ShortcutsTip from '@/components/help/ShortcutsTip';
@@ -79,16 +80,60 @@ export default function AppLayout() {
     searchRef,
   });
 
-  const { data: items = [] } = useQuery({
-    queryKey: ['items-month'],
-    queryFn: () => {
-      const start = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-      return base44.entities.Item.filter({ date: { $gte: start } }, '-created_date', 500);
-    },
+  const monthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
+
+  const { data: monthItems = [] } = useQuery({
+    queryKey: ['items-month', user?.email],
+    queryFn: () => user
+      ? base44.entities.Item.filter({ created_by: user.email, date: { $gte: monthStart } }, '-created_date', 500)
+      : [],
+    enabled: !!user,
     initialData: [],
   });
 
-  const totalJars = items.length / 10;
+  const { data: monthDietLogs = [] } = useQuery({
+    queryKey: ['dietlogs-month', user?.email],
+    queryFn: () => user
+      ? base44.entities.DietLog.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const { data: monthWaterLogs = [] } = useQuery({
+    queryKey: ['water-month', user?.email],
+    queryFn: () => user
+      ? base44.entities.WaterLog.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const { data: monthLeisure = [] } = useQuery({
+    queryKey: ['leisure-month', user?.email],
+    queryFn: () => user
+      ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const { data: monthShops = [] } = useQuery({
+    queryKey: ['shops-month', user?.email],
+    queryFn: () => user
+      ? base44.entities.GroceryShop.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const totalJars = calculateJars({
+    items: monthItems,
+    dietLogs: monthDietLogs,
+    waterLogs: monthWaterLogs,
+    leisureEntries: monthLeisure,
+    groceryShops: monthShops,
+  });
 
   const mainPadding = isMobile ? '12px 12px 120px' : isTablet ? '20px 20px 80px' : '24px 32px 40px';
 
