@@ -1,3 +1,4 @@
+/* HIDDEN - PapaParse integration pending full architecture design */
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, ClipboardList, CheckCircle2, XCircle, Loader2, FileText, List } from 'lucide-react';

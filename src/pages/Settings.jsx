@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
 import {
   User, Shield, Globe, DollarSign, Clock, Languages, Sun, AlignJustify,
-  Circle, List, Moon, Database, Download, Upload, FileText, Trash2,
-  Lock, Eye, EyeOff, Heart, Phone, Info, Mail, FileCode, ScrollText,
+  Circle, List, Moon, Database, Download, FileText, Trash2,
+  Lock, Eye, EyeOff, Heart, Phone, Info, Mail, ScrollText,
   ChevronRight, CheckCircle2, AlertTriangle, Smartphone, Zap, BarChart2,
   Calendar, Cloud, RefreshCw, Tag, Sliders, LayoutGrid
 } from 'lucide-react';
@@ -18,8 +18,8 @@ import PremiumBadge from '@/components/premium/PremiumBadge';
 import PaywallModal from '@/components/premium/PaywallModal';
 import ProfileHeader from '@/components/settings/ProfileHeader';
 import CrisisResources from '@/components/settings/CrisisResources';
-import BulkTextImportModal from '@/components/settings/BulkTextImportModal';
-import CSVImportModal from '@/components/settings/CSVImportModal';
+// import BulkTextImportModal from '@/components/settings/BulkTextImportModal';
+// import CSVImportModal from '@/components/settings/CSVImportModal';
 import ClearDataModal from '@/components/settings/ClearDataModal';
 import { exportAllDataJSON, exportAllDataCSV } from '@/lib/exportData';
 
@@ -171,7 +171,6 @@ export default function Settings() {
   const [sidebarResetDone, setSidebarResetDone] = useState(false);
   const [exportDone, setExportDone] = useState(false);
   const [csvExportDone, setCsvExportDone] = useState(false);
-  const [showBulkImport, setShowBulkImport] = useState(false);
   const [showCSVImport, setShowCSVImport] = useState(false);
   const [showClearData, setShowClearData] = useState(false);
 
@@ -324,16 +323,6 @@ export default function Settings() {
           control={<ActionBtn onClick={handleExportCSV} done={csvExportDone}>{csvExportDone ? '✓ Exported' : 'Export CSV'}</ActionBtn>}
         />
         <SettingsRow
-          icon={Upload} title={t('set.importData')}
-          subtitle="JSON or CSV file"
-          control={<ActionBtn onClick={() => setShowCSVImport(true)}>Import</ActionBtn>}
-        />
-        <SettingsRow
-          icon={FileCode} title={t('set.bulkTextImport')}
-          subtitle="Paste freeform text, JAR parses it"
-          control={<ActionBtn onClick={() => setShowBulkImport(true)}>Open</ActionBtn>}
-        />
-        <SettingsRow
           icon={Trash2} title={t('set.clearAllData')}
           subtitle="Permanently delete everything"
           control={<ActionBtn danger onClick={() => setShowClearData(true)}>Clear all</ActionBtn>}
@@ -432,8 +421,7 @@ export default function Settings() {
 
       {/* Modals */}
       {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
-      {showBulkImport && <BulkTextImportModal onClose={() => setShowBulkImport(false)} />}
-      {showCSVImport && <CSVImportModal onClose={() => setShowCSVImport(false)} />}
+      {/* showCSVImport modal hidden - import system pending connection architecture */}
       {showClearData && <ClearDataModal onClose={() => setShowClearData(false)} />}
 
       {/* Sticky Save button */}
