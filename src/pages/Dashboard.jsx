@@ -17,6 +17,7 @@ import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { calculateJars } from '@/lib/jarsCalc';
 import WelcomeBanner from '@/components/onboarding/WelcomeBanner';
 import { nivoTheme } from '@/lib/nivoTheme';
 import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
@@ -44,6 +45,34 @@ export default function Dashboard() {
     initialData: [],
   });
 
+  const { data: dashDietLogs = [] } = useQuery({
+    queryKey: ['dietlogs-dashboard', user?.email],
+    queryFn: () => user ? base44.entities.DietLog.filter({ created_by: user.email }, '-created_date', 200) : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const { data: dashLeisure = [] } = useQuery({
+    queryKey: ['leisure-dashboard', user?.email],
+    queryFn: () => user ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 200) : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const { data: dashWaterLogs = [] } = useQuery({
+    queryKey: ['water-dashboard', user?.email],
+    queryFn: () => user ? base44.entities.WaterLog.filter({ created_by: user.email }, '-created_date', 200) : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const { data: dashShops = [] } = useQuery({
+    queryKey: ['shops-dashboard', user?.email],
+    queryFn: () => user ? base44.entities.GroceryShop.filter({ created_by: user.email }, '-created_date', 200) : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
   const todayItems = useMemo(() => allItems.filter(i => i.date && isSameDay(new Date(i.date), new Date())), [allItems]);
   const monthItems = useMemo(() => {
     const start = startOfMonth(new Date());
@@ -52,8 +81,9 @@ export default function Dashboard() {
 
   const selectedDayItems = useMemo(() => allItems.filter(i => i.date && isSameDay(new Date(i.date), selectedDate)), [allItems, selectedDate]);
 
-  const totalJarsMonth = (monthItems.length / 10).toFixed(1);
-  const totalJarsToday = (todayItems.length / 10).toFixed(1);
+  const jarData = { items: allItems, dietLogs: dashDietLogs, leisureEntries: dashLeisure, waterLogs: dashWaterLogs, groceryShops: dashShops };
+  const totalJarsMonth = calculateJars(jarData, 'month');
+  const totalJarsToday = calculateJars(jarData, 'today');
 
   // Category distribution for donut
   // Normalize category keys to clean display labels, merging _health suffixes
@@ -133,7 +163,7 @@ export default function Dashboard() {
 
       {/* Top row - Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <StatCard title="THIS MONTH" value={totalJarsMonth} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>
+        <StatCard title="THIS MONTH" value={totalJarsMonth.toFixed(1)} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>
           <div className="w-24 h-12">
                 <ResponsiveBar
                   data={chartData.slice(-14).map(d => ({ day: d.day, count: d.count }))}
@@ -154,7 +184,7 @@ export default function Dashboard() {
           </div>
         </StatCard>
 
-        <StatCard title="TODAY" value={totalJarsToday} subtitle={`${todayItems.length} entries`} accent="secondary" delay={0.1}>
+        <StatCard title="TODAY" value={totalJarsToday.toFixed(1)} subtitle={`${todayItems.length} entries`} accent="secondary" delay={0.1}>
           <JarVisual
             fillPercent={(todayItems.length % 10) * 10}
             completedJars={Math.floor(todayItems.length / 10)}

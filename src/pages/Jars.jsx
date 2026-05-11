@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useTranslation } from 'react-i18next';
-import { format, startOfMonth } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { calculateJars, filterThisMonth } from '@/lib/jarsCalc';
 
@@ -56,8 +55,6 @@ export default function JarsPage() {
   const { t } = useTranslation();
   const { user } = useCurrentUser();
 
-  const monthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-
   const { data: items = [] } = useQuery({
     queryKey: ['items-jars', user?.email],
     queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 1000) : [],
@@ -93,19 +90,20 @@ export default function JarsPage() {
     initialData: [],
   });
 
-  const monthItems = useMemo(() => filterThisMonth(items, monthStart), [items, monthStart]);
-  const monthDiet = useMemo(() => filterThisMonth(dietLogs, monthStart), [dietLogs, monthStart]);
-  const monthLeisure = useMemo(() => filterThisMonth(leisureEntries, monthStart), [leisureEntries, monthStart]);
-  const monthWater = useMemo(() => filterThisMonth(waterLogs, monthStart), [waterLogs, monthStart]);
-  const monthShops = useMemo(() => filterThisMonth(groceryShops, monthStart), [groceryShops, monthStart]);
+  const jarData = useMemo(() => ({
+    items, dietLogs, waterLogs: waterLogs, leisureEntries, groceryShops
+  }), [items, dietLogs, waterLogs, leisureEntries, groceryShops]);
 
-  const totalJars = useMemo(() => calculateJars({
-    items: monthItems,
-    dietLogs: monthDiet,
-    waterLogs: monthWater,
-    leisureEntries: monthLeisure,
-    groceryShops: monthShops,
-  }), [monthItems, monthDiet, monthWater, monthLeisure, monthShops]);
+  const totalJars = useMemo(() => calculateJars(jarData, 'month'), [jarData]);
+
+  // Month-filtered slices for per-category display
+  const now = new Date();
+  const monthStartStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+  const monthItems = useMemo(() => filterThisMonth(items, monthStartStr), [items, monthStartStr]);
+  const monthDiet = useMemo(() => filterThisMonth(dietLogs, monthStartStr), [dietLogs, monthStartStr]);
+  const monthLeisure = useMemo(() => filterThisMonth(leisureEntries, monthStartStr), [leisureEntries, monthStartStr]);
+  const monthWater = useMemo(() => filterThisMonth(waterLogs, monthStartStr), [waterLogs, monthStartStr]);
+  const monthShops = useMemo(() => filterThisMonth(groceryShops, monthStartStr), [groceryShops, monthStartStr]);
 
   const totalEntries = monthItems.length + monthDiet.length + monthLeisure.length + monthWater.length + monthShops.length;
 

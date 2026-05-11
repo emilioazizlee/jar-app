@@ -6,8 +6,7 @@ import BottomNav from './BottomNav';
 import UniversalAddButton from '../add/UniversalAddButton';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { startOfMonth, format } from 'date-fns';
-import { calculateJars, filterThisMonth } from '@/lib/jarsCalc';
+import { calculateJars } from '@/lib/jarsCalc';
 import useKeyboardShortcuts from '@/hooks/useKeyboardShortcuts';
 import ShortcutsOverlay from '@/components/help/ShortcutsOverlay';
 import ShortcutsTip from '@/components/help/ShortcutsTip';
@@ -80,60 +79,58 @@ export default function AppLayout() {
     searchRef,
   });
 
-  const monthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-
-  const { data: monthItems = [] } = useQuery({
-    queryKey: ['items-month', user?.email],
+  const { data: layoutItems = [] } = useQuery({
+    queryKey: ['items-layout', user?.email],
     queryFn: () => user
-      ? base44.entities.Item.filter({ created_by: user.email, date: { $gte: monthStart } }, '-created_date', 500)
+      ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 500)
       : [],
     enabled: !!user,
     initialData: [],
   });
 
-  const { data: monthDietLogs = [] } = useQuery({
-    queryKey: ['dietlogs-month', user?.email],
+  const { data: layoutDietLogs = [] } = useQuery({
+    queryKey: ['dietlogs-layout', user?.email],
     queryFn: () => user
-      ? base44.entities.DietLog.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      ? base44.entities.DietLog.filter({ created_by: user.email }, '-created_date', 200)
       : [],
     enabled: !!user,
     initialData: [],
   });
 
-  const { data: monthWaterLogs = [] } = useQuery({
-    queryKey: ['water-month', user?.email],
+  const { data: layoutWaterLogs = [] } = useQuery({
+    queryKey: ['water-layout', user?.email],
     queryFn: () => user
-      ? base44.entities.WaterLog.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      ? base44.entities.WaterLog.filter({ created_by: user.email }, '-created_date', 200)
       : [],
     enabled: !!user,
     initialData: [],
   });
 
-  const { data: monthLeisure = [] } = useQuery({
-    queryKey: ['leisure-month', user?.email],
+  const { data: layoutLeisure = [] } = useQuery({
+    queryKey: ['leisure-layout', user?.email],
     queryFn: () => user
-      ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 200)
       : [],
     enabled: !!user,
     initialData: [],
   });
 
-  const { data: monthShops = [] } = useQuery({
-    queryKey: ['shops-month', user?.email],
+  const { data: layoutShops = [] } = useQuery({
+    queryKey: ['shops-layout', user?.email],
     queryFn: () => user
-      ? base44.entities.GroceryShop.filter({ created_by: user.email }, '-created_date', 200).then(r => filterThisMonth(r, monthStart))
+      ? base44.entities.GroceryShop.filter({ created_by: user.email }, '-created_date', 200)
       : [],
     enabled: !!user,
     initialData: [],
   });
 
   const totalJars = calculateJars({
-    items: monthItems,
-    dietLogs: monthDietLogs,
-    waterLogs: monthWaterLogs,
-    leisureEntries: monthLeisure,
-    groceryShops: monthShops,
-  });
+    items: layoutItems,
+    dietLogs: layoutDietLogs,
+    waterLogs: layoutWaterLogs,
+    leisureEntries: layoutLeisure,
+    groceryShops: layoutShops,
+  }, 'month');
 
   const mainPadding = isMobile ? '12px 12px 120px' : isTablet ? '20px 20px 80px' : '24px 32px 40px';
 
