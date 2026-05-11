@@ -239,7 +239,7 @@ export default function Insights() {
                 format: intTickFormat,
                 tickValues: countTicks,
               }}
-              margin={{ top: 22, right: 22, bottom: 30, left: 34 }}
+              margin={{ top: 16, right: 16, bottom: 36, left: 42 }}
               tooltip={({ data, value }) => (
                 <div style={TOOLTIP_STYLE}>
                   {data.label}: <strong>{value}</strong> entries
@@ -314,8 +314,10 @@ export default function Insights() {
                 enableGridX={true}
                 enableGridY={false}
                 axisLeft={{ tickSize: 0, tickPadding: 6 }}
-                axisBottom={{ tickSize: 0, tickPadding: 4, format: v => `€${v}` }}
-                margin={{ top: 22, right: 60, bottom: 26, left: 96 }}
+                axisBottom={{ tickSize: 0, tickPadding: 6, tickRotation: 0, tickValues: 6, format: v => `€${v >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0)}` }}
+                margin={{ top: 22, right: 70, bottom: 36, left: 110 }}
+                labelPosition="end"
+                labelOffset={8}
                 tooltip={({ data, value }) => (
                   <div style={TOOLTIP_STYLE}>
                     <span style={{ color: data.color }}>■</span> {data.category}: <strong>€{value.toFixed(2)}</strong>

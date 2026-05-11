@@ -196,15 +196,16 @@ export function NetWorthPanel({ snapshots, delay = 0 }) {
             enableArea={true}
             areaOpacity={0.1}
             lineWidth={2}
-            pointSize={4}
+            pointSize={5}
             pointColor={{ from: 'color' }}
-            pointBorderWidth={0}
+            pointBorderWidth={2}
+            pointBorderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
             enableSlices={false}
             useMesh={true}
             enableGridX={false}
             axisBottom={{ tickSize: 0, tickPadding: 4 }}
-            axisLeft={{ tickSize: 0, tickPadding: 6, format: v => `€${v >= 1000 ? (v/1000).toFixed(0)+'k' : v}` }}
-            margin={{ top: 10, right: 10, bottom: 24, left: 50 }}
+            axisLeft={{ tickSize: 0, tickPadding: 6, format: v => `€${v >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0)}` }}
+            margin={{ top: 10, right: 16, bottom: 32, left: 54 }}
             motionConfig="gentle"
           />
         </div>

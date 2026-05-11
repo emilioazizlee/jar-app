@@ -22,7 +22,6 @@ const SUB_TAG_COLORS = {
   'Travel':           PALETTE.orange,
   'Grooming':         PALETTE.pink,
   'Books':            PALETTE.muted,
-  'Cigarettes':       PALETTE.red,
   'Custom':           PALETTE.muted,
 };
 
@@ -118,13 +117,24 @@ export default function Leisure() {
           <p className="mono-header text-[10px] text-muted-foreground mb-3">BY CATEGORY</p>
           {subTagData.length > 0 ? (
             <div className="flex items-center gap-3">
-              <div className="w-24 h-24 shrink-0">
+              <div className="w-32 h-32 shrink-0">
                 <ResponsivePie
                   data={subTagData}
                   colors={({ data }) => data.color}
                   innerRadius={0.65} padAngle={2} cornerRadius={3}
                   borderWidth={0} enableArcLinkLabels={false} enableArcLabels={false}
                   activeOuterRadiusOffset={6} theme={nivoTheme}
+                  layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', ({ centerX, centerY }) => {
+                    const total = subTagData.reduce((s, d) => s + d.value, 0);
+                    const top = subTagData[0];
+                    const pct = top && total > 0 ? Math.round((top.value / total) * 100) : 0;
+                    return (
+                      <text x={centerX} y={centerY} textAnchor="middle" dominantBaseline="central"
+                        style={{ fontFamily: 'JetBrains Mono', fontSize: 13, fontWeight: 700, fill: top?.color || '#fff' }}>
+                        {pct}%
+                      </text>
+                    );
+                  }]}
                   tooltip={({ datum }) => (
                     <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: 11 }}>
                       <span style={{ color: datum.color }}>■</span> {datum.id}: <strong>€{datum.value.toFixed(2)}</strong>
@@ -150,13 +160,24 @@ export default function Leisure() {
           <p className="mono-header text-[10px] text-muted-foreground mb-3">BY CONTEXT</p>
           {contextData.length > 0 ? (
             <div className="flex items-center gap-3">
-              <div className="w-24 h-24 shrink-0">
+              <div className="w-32 h-32 shrink-0">
                 <ResponsivePie
                   data={contextData}
                   colors={({ data }) => data.color}
                   innerRadius={0.65} padAngle={2} cornerRadius={3}
                   borderWidth={0} enableArcLinkLabels={false} enableArcLabels={false}
                   activeOuterRadiusOffset={6} theme={nivoTheme}
+                  layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends', ({ centerX, centerY }) => {
+                    const total = contextData.reduce((s, d) => s + d.value, 0);
+                    const top = contextData[0];
+                    const pct = top && total > 0 ? Math.round((top.value / total) * 100) : 0;
+                    return (
+                      <text x={centerX} y={centerY} textAnchor="middle" dominantBaseline="central"
+                        style={{ fontFamily: 'JetBrains Mono', fontSize: 13, fontWeight: 700, fill: top?.color || '#fff' }}>
+                        {pct}%
+                      </text>
+                    );
+                  }]}
                 />
               </div>
               <div className="space-y-1 flex-1">

@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { BarChart2, Package, ShoppingBag } from 'lucide-react';
+import { ResponsiveLine } from '@nivo/line';
+import { nivoTheme } from '@/lib/nivoTheme';
+import { Package } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 function StatSection({ title, children }) {
@@ -156,14 +157,27 @@ export default function GroceryStatsPage() {
       {monthlySpend.length > 1 && (
         <StatSection title="MONTHLY SPEND TREND">
           <div className="h-36">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlySpend}>
-                <XAxis dataKey="month" tick={{ fontSize: 10, fontFamily: 'monospace' }} />
-                <YAxis tick={{ fontSize: 10, fontFamily: 'monospace' }} width={40} />
-                <Tooltip formatter={v => `€${v}`} contentStyle={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 6, fontSize: 10, fontFamily: 'monospace' }} />
-                <Line type="monotone" dataKey="total" stroke="#abff4f" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
-            </ResponsiveContainer>
+            <ResponsiveLine
+              data={[{ id: 'spend', data: monthlySpend.map(d => ({ x: d.month, y: d.total })) }]}
+              theme={nivoTheme}
+              colors={['#abff4f']}
+              curve="monotoneX"
+              lineWidth={2}
+              pointSize={4}
+              pointColor="#abff4f"
+              enableArea={true}
+              areaOpacity={0.1}
+              enableGridX={false}
+              axisBottom={{ tickSize: 0, tickPadding: 6 }}
+              axisLeft={{ tickSize: 0, tickPadding: 6, format: v => `€${v >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0)}` }}
+              margin={{ top: 10, right: 16, bottom: 30, left: 50 }}
+              motionConfig="gentle"
+              tooltip={({ point }) => (
+                <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: 11 }}>
+                  {point.data.xFormatted}: <strong>€{Number(point.data.y).toFixed(2)}</strong>
+                </div>
+              )}
+            />
           </div>
         </StatSection>
       )}

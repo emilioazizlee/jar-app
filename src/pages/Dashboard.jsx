@@ -174,13 +174,12 @@ export default function Dashboard() {
                   borderRadius={2}
                   padding={0.3}
                   enableLabel={false}
-                  enableGridY={false}
-                  axisBottom={null}
-                  axisLeft={null}
-                  isInteractive={false}
-                  animate={false}
-                  valueFormat={intTickFormat}
-                />
+                   enableGridY={false}
+                   axisBottom={null}
+                   axisLeft={null}
+                   isInteractive={false}
+                   animate={false}
+                  />
           </div>
         </StatCard>
 

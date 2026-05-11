@@ -183,7 +183,7 @@ export default function Health() {
                 format: intTickFormat,
                 tickValues: yTicks,
               }}
-              margin={{ top: 10, right: 10, bottom: 30, left: 32 }}
+              margin={{ top: 10, right: 16, bottom: 32, left: 44 }}
               motionConfig="gentle"
               tooltip={({ data, value }) => (
                 <div style={TOOLTIP_STYLE}>

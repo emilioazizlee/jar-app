@@ -86,26 +86,30 @@ export default function HistoryPage() {
         <div className="h-40">
           <ResponsiveLine
             data={[
-              { id: 'kcal', color: '#abff4f', data: last30Days.filter((_, i) => i % 3 === 0).map(d => ({ x: d.label, y: d.calories })) },
-              { id: 'protein g', color: '#0096c7', data: last30Days.filter((_, i) => i % 3 === 0).map(d => ({ x: d.label, y: d.protein })) },
+              { id: 'kcal', color: '#abff4f', data: last30Days.map(d => ({ x: d.label, y: calTarget > 0 ? Math.round((d.calories / calTarget) * 100) : 0, raw: d.calories })) },
+              { id: 'protein', color: '#0096c7', data: last30Days.map(d => ({ x: d.label, y: (goal?.daily_protein || 150) > 0 ? Math.round((d.protein / (goal?.daily_protein || 150)) * 100) : 0, raw: d.protein })) },
             ]}
             theme={nivoTheme}
             colors={['#abff4f', '#0096c7']}
             curve="monotoneX"
             lineWidth={1.5}
-            pointSize={0}
-            enableArea={false}
+            pointSize={3}
+            pointColor={{ from: 'color' }}
+            enableArea={true}
+            areaOpacity={0.1}
             enableSlices="x"
             useMesh={false}
             enableGridX={false}
-            axisBottom={{ tickSize: 0, tickPadding: 5 }}
-            axisLeft={{ tickSize: 0, tickPadding: 5 }}
-            margin={{ top: 10, right: 10, bottom: 28, left: 40 }}
+            yScale={{ type: 'linear', min: 0, max: 150, nice: false }}
+            markers={[{ axis: 'y', value: 100, lineStyle: { stroke: '#ffffff22', strokeWidth: 1, strokeDasharray: '4 4' } }]}
+            axisBottom={{ tickSize: 0, tickPadding: 5, tickValues: 6 }}
+            axisLeft={{ tickSize: 0, tickPadding: 5, format: v => `${v}%`, tickValues: [0, 50, 100] }}
+            margin={{ top: 10, right: 16, bottom: 32, left: 44 }}
             motionConfig="gentle"
             sliceTooltip={({ slice }) => (
               <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8, padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
                 {slice.points.map(p => (
-                  <div key={p.id}><span style={{ color: p.serieColor }}>■</span> {p.serieId}: <strong>{p.data.y}</strong></div>
+                  <div key={p.id}><span style={{ color: p.serieColor }}>■</span> {p.serieId}: <strong>{p.data.raw ?? p.data.y}</strong>{p.serieId === 'kcal' ? ' kcal' : 'g'} ({p.data.y}%)</div>
                 ))}
               </div>
             )}
