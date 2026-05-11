@@ -73,7 +73,8 @@ export default function BrandLogo({ name, size = 40, className = '' }) {
   }, [domain]);
 
   const logoUrl = domain ? `https://cdn.brandfetch.io/${domain}/w/64/h/64` : null;
-  const initial = name?.[0]?.toUpperCase() || '?';
+  // Always use first letter of the subscription NAME (not domain)
+  const initial = name?.trim()?.[0]?.toUpperCase() || '?';
 
   if (!domain || imgStatus === 'error') {
     return (

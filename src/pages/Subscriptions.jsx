@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,14 +21,18 @@ const FILTER_CATEGORIES = ['Streaming', 'AI & Productivity', 'Gaming', 'Telecom 
 function SubscriptionRow({ sub }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
+  const [swiped, setSwiped] = useState(false);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+
+  const SWIPE_THRESHOLD = 40;
+  const REVEAL_WIDTH = 80;
 
   const daysUntil = sub.next_renewal ? differenceInDays(new Date(sub.next_renewal), new Date()) : null;
   const currSym = sub.currency === 'EUR' ? '€' : sub.currency === 'USD' ? '$' : sub.currency || '€';
   const isFav = sub.tags?.includes('__favorite__');
 
-  // description holds internal metadata (domain, etc) — parse it for structured data
   const descMeta = (() => { try { return JSON.parse(sub.description || '{}'); } catch { return {}; } })();
-  // note is user-facing text only — never JSON
   const userNote = (() => {
     if (!sub.note) return '';
     try { JSON.parse(sub.note); return ''; } catch { return sub.note; }
@@ -54,90 +58,140 @@ function SubscriptionRow({ sub }) {
     queryClient.invalidateQueries({ queryKey: ['items'] });
   };
 
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const onTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    const dy = Math.abs(touchStartY.current - e.changedTouches[0].clientY);
+    // Only swipe if horizontal movement dominates
+    if (dy > Math.abs(dx)) return;
+    if (dx > SWIPE_THRESHOLD) setSwiped(true);
+    else if (dx < -SWIPE_THRESHOLD) setSwiped(false);
+    touchStartX.current = null;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-card border border-border rounded-xl overflow-hidden transition-all ${sub.is_active === false ? 'opacity-50' : 'hover:border-blue-400/20'}`}
+      className={`rounded-xl overflow-hidden transition-all ${sub.is_active === false ? 'opacity-50' : ''}`}
+      style={{ position: 'relative' }}
+      onClick={() => swiped && setSwiped(false)}
     >
-      <div className="flex items-center gap-3 p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <BrandLogo name={sub.title} size={40} />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium leading-snug">{sub.title}</p>
-          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            <span className="font-mono text-[10px] text-muted-foreground capitalize">{sub.billing_cycle}</span>
-            {daysUntil !== null && daysUntil >= 0 && (
-              <Badge variant="outline" className={`text-[10px] font-mono ${daysUntil <= 3 ? 'text-destructive border-destructive/30' : 'text-muted-foreground'}`}>
-                {daysUntil === 0 ? 'Today' : `${daysUntil}d`}
-              </Badge>
-            )}
-          </div>
-        </div>
-        <p className="font-mono text-sm font-semibold text-foreground">{currSym}{sub.amount?.toFixed(2) || '0.00'}</p>
-
-        <button onClick={toggleFav} className="p-1.5 flex-shrink-0">
-          <Star className="w-3.5 h-3.5" style={{ fill: isFav ? '#ffd60a' : 'none', color: isFav ? '#ffd60a' : '#7a7a7a' }} />
-        </button>
-        <button onClick={toggleActive} className="p-1.5 rounded-lg hover:bg-muted transition-colors flex-shrink-0">
-          {sub.is_active === false ? <Play className="w-3.5 h-3.5 text-primary" /> : <Pause className="w-3.5 h-3.5 text-muted-foreground" />}
-        </button>
-        <button onClick={deleteSub} className="p-1.5 rounded-lg hover:bg-muted transition-colors flex-shrink-0">
-          <Trash2 className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
-        </button>
-        {expanded ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+      {/* Delete reveal layer — sits behind the card */}
+      <div
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: REVEAL_WIDTH,
+          background: '#dc2626',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1,
+          borderRadius: '0 12px 12px 0',
+        }}
+        onClick={deleteSub}
+      >
+        <Trash2 className="w-5 h-5 text-white" />
       </div>
 
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="border-t border-border/50 overflow-hidden"
-          >
-            <div className="p-4 space-y-3">
-              <div className="grid grid-cols-2 gap-4">
-                {sub.next_renewal && (
+      {/* Card content — slides left to reveal delete, stays above */}
+      <div
+        className={`bg-card border border-border rounded-xl ${!swiped ? 'hover:border-blue-400/20' : ''}`}
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          transform: swiped ? `translateX(-${REVEAL_WIDTH}px)` : 'translateX(0)',
+          transition: 'transform 0.2s ease',
+        }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
+        <div className="flex items-center gap-3 p-4 cursor-pointer" onClick={() => !swiped && setExpanded(!expanded)}>
+          <BrandLogo name={sub.title} size={40} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium leading-snug">{sub.title}</p>
+            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+              <span className="font-mono text-[10px] text-muted-foreground capitalize">{sub.billing_cycle}</span>
+              {daysUntil !== null && daysUntil >= 0 && (
+                <Badge variant="outline" className={`text-[10px] font-mono ${daysUntil <= 3 ? 'text-destructive border-destructive/30' : 'text-muted-foreground'}`}>
+                  {daysUntil === 0 ? 'Today' : `${daysUntil}d`}
+                </Badge>
+              )}
+            </div>
+          </div>
+          <p className="font-mono text-sm font-semibold text-foreground flex-shrink-0">{currSym}{sub.amount?.toFixed(2) || '0.00'}</p>
+
+          <button onClick={toggleFav} className="p-1.5 flex-shrink-0">
+            <Star className="w-3.5 h-3.5" style={{ fill: isFav ? '#ffd60a' : 'none', color: isFav ? '#ffd60a' : '#7a7a7a' }} />
+          </button>
+          <button onClick={toggleActive} className="p-1.5 rounded-lg hover:bg-muted transition-colors flex-shrink-0">
+            {sub.is_active === false ? <Play className="w-3.5 h-3.5 text-primary" /> : <Pause className="w-3.5 h-3.5 text-muted-foreground" />}
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setSwiped(false); setExpanded(!expanded); }} className="p-1.5 flex-shrink-0">
+            {expanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+          </button>
+        </div>
+
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="border-t border-border/50 overflow-hidden"
+            >
+              <div className="p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  {sub.next_renewal && (
+                    <div>
+                      <p className="font-mono text-[10px] text-muted-foreground mb-1">NEXT BILLING</p>
+                      <p className="text-sm font-mono">{format(new Date(sub.next_renewal), 'MMM d, yyyy')}</p>
+                    </div>
+                  )}
+                  {(note.payment_method || descMeta.payment_method) && (
+                    <div>
+                      <p className="font-mono text-[10px] text-muted-foreground mb-1">PAYMENT METHOD</p>
+                      <p className="text-sm">{note.payment_method || descMeta.payment_method}</p>
+                    </div>
+                  )}
+                  {(note.website || descMeta.website) && (
+                    <div>
+                      <p className="font-mono text-[10px] text-muted-foreground mb-1">WEBSITE</p>
+                      <a href={note.website || descMeta.website} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-xs text-primary hover:underline">
+                        <ExternalLink className="w-3 h-3" /> {note.website || descMeta.website}
+                      </a>
+                    </div>
+                  )}
+                  {(note.cancel_url || descMeta.cancel_url) && (
+                    <div>
+                      <p className="font-mono text-[10px] text-muted-foreground mb-1">CANCEL LINK</p>
+                      <a href={note.cancel_url || descMeta.cancel_url} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-xs text-destructive hover:underline">
+                        <ExternalLink className="w-3 h-3" /> Cancel Subscription
+                      </a>
+                    </div>
+                  )}
+                </div>
+                {userNote && (
                   <div>
-                    <p className="font-mono text-[10px] text-muted-foreground mb-1">NEXT BILLING</p>
-                    <p className="text-sm font-mono">{format(new Date(sub.next_renewal), 'MMM d, yyyy')}</p>
-                  </div>
-                )}
-                {(note.payment_method || descMeta.payment_method) && (
-                  <div>
-                    <p className="font-mono text-[10px] text-muted-foreground mb-1">PAYMENT METHOD</p>
-                    <p className="text-sm">{note.payment_method || descMeta.payment_method}</p>
-                  </div>
-                )}
-                {(note.website || descMeta.website) && (
-                  <div>
-                    <p className="font-mono text-[10px] text-muted-foreground mb-1">WEBSITE</p>
-                    <a href={note.website || descMeta.website} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs text-primary hover:underline">
-                      <ExternalLink className="w-3 h-3" /> {note.website || descMeta.website}
-                    </a>
-                  </div>
-                )}
-                {(note.cancel_url || descMeta.cancel_url) && (
-                  <div>
-                    <p className="font-mono text-[10px] text-muted-foreground mb-1">CANCEL LINK</p>
-                    <a href={note.cancel_url || descMeta.cancel_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs text-destructive hover:underline">
-                      <ExternalLink className="w-3 h-3" /> Cancel Subscription
-                    </a>
+                    <p className="font-mono text-[10px] text-muted-foreground mb-1">NOTES</p>
+                    <p className="text-sm text-muted-foreground">{userNote}</p>
                   </div>
                 )}
               </div>
-              {userNote && (
-                <div>
-                  <p className="font-mono text-[10px] text-muted-foreground mb-1">NOTES</p>
-                  <p className="text-sm text-muted-foreground">{userNote}</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
