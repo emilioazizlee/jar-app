@@ -20,6 +20,7 @@ import { ITEM_TYPES, CHART_COLORS, PALETTE } from '@/lib/constants';
 import { cleanLabel, isUUID } from '@/lib/labelUtils';
 import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
 import InsightsFilterBar from '@/components/insights/InsightsFilterBar';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const CHART_CARD = {
   background: '#141414',
@@ -81,9 +82,12 @@ export default function Insights() {
     categories: [],
   });
 
+  const { user } = useCurrentUser();
+
   const { data: allItems = [] } = useQuery({
-    queryKey: ['items'],
-    queryFn: () => base44.entities.Item.list('-created_date', 1000),
+    queryKey: ['items', 'insights', user?.email],
+    queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 1000) : [],
+    enabled: !!user,
     initialData: [],
   });
 
@@ -223,7 +227,7 @@ export default function Insights() {
               indexBy="day"
               theme={nivoTheme}
               colors={PALETTE.blue}
-              borderRadius={4}
+              borderRadius={3}
               padding={0.35}
               enableLabel={false}
               enableGridY={true}
@@ -306,7 +310,7 @@ export default function Insights() {
                 layout="horizontal"
                 theme={nivoTheme}
                 colors={({ data }) => data.color}
-                borderRadius={4}
+                borderRadius={3}
                 padding={0.3}
                 enableLabel={true}
                 label={({ value }) => `€${value.toFixed(0)}`}

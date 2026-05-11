@@ -12,6 +12,7 @@ import GoalCard from '@/components/finance/GoalCard';
 import GoalForm from '@/components/finance/GoalForm';
 import FavoritesBar from '@/components/favorites/FavoritesBar';
 import { CategoryBreakdownPanel, BurnRatePanel, NetWorthPanel, SpendingHeatmap } from '@/components/finance/FinancePanels';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Finance() {
   const queryClient = useQueryClient();
@@ -30,9 +31,12 @@ export default function Finance() {
     queryFn: () => base44.entities.FinanceGoal.list('-created_date', 50),
     initialData: [],
   });
+  const { user } = useCurrentUser();
+
   const { data: items = [] } = useQuery({
-    queryKey: ['items'],
-    queryFn: () => base44.entities.Item.list('-created_date', 1000),
+    queryKey: ['items', 'finance', user?.email],
+    queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 1000) : [],
+    enabled: !!user,
     initialData: [],
   });
 

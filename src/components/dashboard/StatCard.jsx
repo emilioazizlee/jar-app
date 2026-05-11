@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function StatCard({ title, value, subtitle, accent = 'primary', delay = 0, children }) {
+export default function StatCard({ title, value, subtitle, accent = 'primary', delay = 0, children, onClick }) {
   const accentColors = {
     primary: 'text-primary',
     secondary: 'text-secondary',
@@ -14,7 +14,8 @@ export default function StatCard({ title, value, subtitle, accent = 'primary', d
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
-      className="bg-card border border-border rounded-2xl p-5 hover:border-primary/20 transition-all"
+      className={`bg-card border border-border rounded-xl p-5 hover:border-primary/30 transition-all ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
     >
       <p className="mono-header text-[10px] text-muted-foreground mb-3">{title}</p>
       <div className="flex items-end justify-between">

@@ -7,6 +7,7 @@ import { startOfMonth, format } from 'date-fns';
 import { ResponsivePie } from '@nivo/pie';
 import { nivoTheme } from '@/lib/nivoTheme';
 import { PALETTE, CHART_COLORS } from '@/lib/constants';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import LeisureForm from '@/components/leisure/LeisureForm';
 import LeisureList from '@/components/leisure/LeisureList';
 
@@ -39,11 +40,13 @@ const CONTEXT_COLORS = {
 
 export default function Leisure() {
   const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
   const [showForm, setShowForm] = useState(false);
 
   const { data: entries = [] } = useQuery({
-    queryKey: ['leisure'],
-    queryFn: () => base44.entities.LeisureEntry.list('-created_date', 500),
+    queryKey: ['leisure', user?.email],
+    queryFn: () => user ? base44.entities.LeisureEntry.filter({ created_by: user.email }, '-created_date', 500) : [],
+    enabled: !!user,
     initialData: [],
   });
 

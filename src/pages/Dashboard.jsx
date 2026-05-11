@@ -13,6 +13,7 @@ import RepeatLastEntry from '@/components/dashboard/RepeatLastEntry';
 import CatchUpModal from '@/components/dashboard/CatchUpModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
@@ -33,6 +34,7 @@ const QUICK_TAPS = [
 
 export default function Dashboard() {
   const { user } = useCurrentUser();
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [spendCategory, setSpendCategory] = useState(null);
   const [customOpen, setCustomOpen] = useState(false);
@@ -72,6 +74,21 @@ export default function Dashboard() {
     enabled: !!user,
     initialData: [],
   });
+
+  // Active tasks for dashboard widget
+  const urgentTasks = useMemo(() => {
+    const activeTasks = allItems.filter(i => i.type === 'task' && i.status !== 'done');
+    return activeTasks
+      .filter(t => t.priority >= 4 || t.due_date)
+      .sort((a, b) => {
+        if (a.due_date && b.due_date) return new Date(a.due_date) - new Date(b.due_date);
+        if (a.due_date) return -1;
+        if (b.due_date) return 1;
+        return (b.priority || 0) - (a.priority || 0);
+      })
+      .slice(0, 5);
+  }, [allItems]);
+  const activeTotalTasks = useMemo(() => allItems.filter(i => i.type === 'task' && i.status !== 'done').length, [allItems]);
 
   const todayItems = useMemo(() => allItems.filter(i => i.date && isSameDay(new Date(i.date), new Date())), [allItems]);
   const monthItems = useMemo(() => {
@@ -163,7 +180,7 @@ export default function Dashboard() {
 
       {/* Top row - Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <StatCard title="THIS MONTH" value={totalJarsMonth.toFixed(1)} subtitle={`${monthItems.length} entries`} accent="primary" delay={0}>
+        <StatCard title="THIS MONTH" value={totalJarsMonth.toFixed(1)} subtitle={`${monthItems.length} entries`} accent="primary" delay={0} onClick={() => navigate('/spends')}>
           <div className="w-24 h-12">
                 <ResponsiveBar
                   data={chartData.slice(-14).map(d => ({ day: d.day, count: d.count }))}
@@ -183,7 +200,7 @@ export default function Dashboard() {
           </div>
         </StatCard>
 
-        <StatCard title="TODAY" value={totalJarsToday.toFixed(1)} subtitle={`${todayItems.length} entries`} accent="secondary" delay={0.1}>
+        <StatCard title="TODAY" value={totalJarsToday.toFixed(1)} subtitle={`${todayItems.length} entries`} accent="secondary" delay={0.1} onClick={() => navigate('/spends')}>
           <JarVisual
             fillPercent={(todayItems.length % 10) * 10}
             completedJars={Math.floor(todayItems.length / 10)}
@@ -192,7 +209,7 @@ export default function Dashboard() {
           />
         </StatCard>
 
-        <StatCard title="UPCOMING" value={upcoming.length} subtitle="payments due" accent="destructive" delay={0.2}>
+        <StatCard title="UPCOMING" value={upcoming.length} subtitle="payments due" accent="destructive" delay={0.2} onClick={() => navigate('/payments')}>
           <div className="space-y-1">
             {upcoming.map(item => (
               <p key={item.id} className="font-mono text-[10px] text-muted-foreground truncate max-w-[120px]">
@@ -202,6 +219,39 @@ export default function Dashboard() {
           </div>
         </StatCard>
       </div>
+
+      {/* Active tasks widget */}
+      {urgentTasks.length > 0 && (
+        <div
+          className="bg-card border border-border rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-all"
+          onClick={() => navigate('/tasks')}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">ACTIVE TASKS</p>
+            <span className="font-mono text-[10px] text-primary">{activeTotalTasks} total →</span>
+          </div>
+          <div className="space-y-2">
+            {urgentTasks.map(task => (
+              <div
+                key={task.id}
+                className="flex items-center gap-3 py-1.5 border-b border-border/40 last:border-0"
+                onClick={(e) => { e.stopPropagation(); navigate('/tasks'); }}
+              >
+                <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                  task.priority >= 4 ? 'bg-red-500' :
+                  task.priority >= 3 ? 'bg-yellow-500' : 'bg-primary'
+                }`} />
+                <span className="font-mono text-xs text-foreground flex-1 truncate">{task.title || task.label}</span>
+                {task.due_date && (
+                  <span className="font-mono text-[10px] text-muted-foreground shrink-0">
+                    {new Date(task.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Day strip */}
       <DayStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} items={allItems} />
@@ -213,7 +263,8 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-card border border-border rounded-2xl p-5"
+          className="bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-primary/30 transition-all"
+          onClick={() => navigate('/insights')}
         >
           <p className="mono-header text-[10px] text-muted-foreground mb-3">TODAY'S DISTRIBUTION</p>
           {categoryData.length > 0 ? (
@@ -279,7 +330,8 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="bg-card border border-border rounded-2xl p-5"
+          className="bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-primary/30 transition-all"
+          onClick={() => navigate('/subscriptions')}
         >
           <p className="mono-header text-[10px] text-muted-foreground mb-3">MONTHLY BURN</p>
           <p className="font-mono text-3xl font-bold text-secondary">€{monthlyBurn.toFixed(2)}</p>
@@ -291,7 +343,8 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-card border border-border rounded-2xl p-5"
+          className="bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-primary/30 transition-all"
+          onClick={() => navigate('/insights')}
         >
           <p className="mono-header text-[10px] text-muted-foreground mb-3">TOP CATEGORIES</p>
           <div className="space-y-2">

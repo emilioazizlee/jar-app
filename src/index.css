@@ -74,7 +74,7 @@
     --chart-4: 196 100% 39%;  /* blue   */
     --chart-5: 281 68% 59%;   /* violet */
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     --sidebar-background: 0 0% 5.5%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 88 100% 65%;
@@ -438,12 +438,16 @@ html {
 }
 
 /* ─── Global border-radius enforcement ─────────────────────────────── */
-/* Cards: 12px */
-.bg-card, [class*="rounded-2xl"], [class*="rounded-xl"] {
-  /* Handled via Tailwind rounded-xl = 12px via --radius token */
-}
-/* Ensure dialogs/popovers use 12px */
-[role="dialog"] > div { border-radius: 12px; }
+/* Cards: 10px */
+.bg-card { border-radius: 10px; }
+/* Modals/dialogs: 10px */
+[role="dialog"] > div { border-radius: 10px; }
+/* Buttons */
+button, [role="button"] { border-radius: 8px; }
+/* Inputs */
+input:not([type="checkbox"]):not([type="radio"]), textarea, select { border-radius: 8px; }
+/* Badges / pills — small rounded elements */
+.badge, [class*="rounded-full"]:not(.w-1\\.5):not(.w-2):not(.w-3):not(.animate-pulse) { border-radius: 6px; }
 
 /* Mono header style */
 .mono-header {

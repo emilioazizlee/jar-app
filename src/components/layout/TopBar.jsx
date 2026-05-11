@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { usePremium } from '@/hooks/usePremium';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const isMac = typeof navigator !== 'undefined' && navigator.platform.startsWith('Mac');
@@ -13,6 +13,7 @@ const modKey = isMac ? '⌘' : 'Ctrl';
 export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOpenAdd, onToggleSidebar }) {
   const [date, setDate] = useState(new Date());
   const { isPremium } = usePremium();
+  const navigate = useNavigate();
   const breakpoint = useBreakpoint();
   const isTablet = breakpoint === 'tablet';
   const isMobile = breakpoint === 'xs' || breakpoint === 'sm' || breakpoint === 'md';
@@ -35,7 +36,8 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5"
+              className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 cursor-pointer hover:border-primary/40 transition-all"
+              onClick={() => navigate('/jars')}
             >
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span className="font-mono text-xs text-primary font-semibold">
@@ -81,7 +83,10 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
           </button>
           <span className="font-mono text-base font-bold text-primary tracking-widest">JAR</span>
           <div className="flex items-center gap-2">
-            <motion.div className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
+            <motion.div
+              className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 cursor-pointer hover:border-primary/40 transition-all"
+              onClick={() => navigate('/jars')}
+            >
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span className="font-mono text-[10px] text-primary font-semibold"><CountUp value={totalJars} /> JARS</span>
             </motion.div>
@@ -111,7 +116,10 @@ export default function TopBar({ totalJars = 0, searchRef, onOpenShortcuts, onOp
 
           <div className="flex items-center gap-2">
             <NotificationCenter />
-            <div className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
+            <div
+              className="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 cursor-pointer hover:border-primary/40 transition-all"
+              onClick={() => navigate('/jars')}
+            >
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span className="font-mono text-[10px] text-primary font-semibold">
                 <CountUp value={totalJars} /> JARS
