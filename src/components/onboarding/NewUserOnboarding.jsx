@@ -58,14 +58,40 @@ export function markOnboardingDone() {
   localStorage.setItem(ONBOARDING_KEY, '1');
 }
 
+// Detect browser language code → app language code
+function detectLanguage() {
+  const browserLang = navigator.language || navigator.userLanguage || 'en';
+  const base = browserLang.split('-')[0].toLowerCase();
+  const valid = ['en', 'ru', 'az', 'es', 'fr', 'tr', 'de'];
+  return valid.includes(base) ? base : 'en';
+}
+
+// Detect likely country from browser timezone
+function detectCountry() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (tz.includes('Baku'))    return 'Azerbaijan';
+    if (tz.includes('Moscow') || tz.includes('Russia')) return 'Russia';
+    if (tz.includes('Istanbul') || tz.includes('Ankara')) return 'Turkey';
+    if (tz.includes('London'))  return 'UK';
+    if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Los_Angeles')) return 'USA';
+    if (tz.includes('Madrid'))  return 'Spain';
+    if (tz.includes('Paris'))   return 'France';
+    if (tz.includes('Berlin'))  return 'Germany';
+  } catch {}
+  return 'Other';
+}
+
 export default function NewUserOnboarding({ user, onDone }) {
   const { setPref, saveAll } = useSettings();
   const [step, setStep] = useState(0); // 0=welcome 1=profile 2=starter 3=tour
+
+  const detectedCountry = detectCountry();
   const [profile, setProfile] = useState({
-    country: 'Other',
-    currency: 'EUR',
-    timezone: 'Auto-detect',
-    language: 'en',
+    country: detectedCountry,
+    currency: COUNTRY_CURRENCY[detectedCountry] || 'EUR',
+    timezone: COUNTRY_TIMEZONE[detectedCountry] || 'Auto-detect',
+    language: detectLanguage(),
   });
   const [saving, setSaving] = useState(false);
 
@@ -234,6 +260,7 @@ function ProfileStep({ profile, onUpdate, onNext, onBack, countries, languages, 
           <select style={sel} value={profile.language} onChange={e => onUpdate('language', e.target.value)}>
             {languages.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
           </select>
+          <p className="font-mono text-[10px] text-muted-foreground mt-1.5">Auto-detected from browser</p>
         </div>
       </div>
 
