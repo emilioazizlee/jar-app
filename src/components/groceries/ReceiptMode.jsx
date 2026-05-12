@@ -129,12 +129,15 @@ export default function ReceiptMode({ open, onClose, onSaved }) {
       await updateProductAfterPurchase(productId, { store, price: Number(row.price_per_unit), unit: row.unit, date });
     }
 
-    // Create spend entry
-    await base44.entities.Item.create({
+    // Create linked spend in Finance
+    const linkedSpend = await base44.entities.Item.create({
       type: 'spend', title: `Groceries — ${store}`, category: 'groceries',
       amount: total, currency, date,
       description: JSON.stringify({ shop_id: shop.id, store, item_count: validItems.length }),
     });
+
+    // Store back-link on the shop so UI can show "✓ Linked to Finance"
+    await base44.entities.GroceryShop.update(shop.id, { linked_spend_id: linkedSpend.id });
 
     invalidateProductCache();
     qc.invalidateQueries({ queryKey: ['grocery-shops'] });

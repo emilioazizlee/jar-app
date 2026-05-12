@@ -63,8 +63,12 @@ export default function Finance() {
   const monthIncome = Number(snapForm.monthly_income) || 0;
   const netChange = monthIncome - monthSpend;
 
-  // Recurring outflow
-  const subBurn = useMemo(() => items.filter(i => i.type === 'subscription' && i.is_active && i.amount).reduce((s, i) => s + (i.amount || 0), 0), [items]);
+  // Recurring outflow — normalize billing cycles to monthly
+  const subBurn = useMemo(() => items.filter(i => i.type === 'subscription' && i.is_active !== false && i.amount).reduce((s, i) => {
+    if (i.billing_cycle === 'yearly') return s + (i.amount / 12);
+    if (i.billing_cycle === 'quarterly') return s + (i.amount / 3);
+    return s + i.amount;
+  }, 0), [items]);
   const paymentsBurn = useMemo(() => items.filter(i => i.type === 'payment' && i.is_active && i.amount).reduce((s, i) => s + (i.amount || 0), 0), [items]);
 
   // Avg daily spend over last 90 days

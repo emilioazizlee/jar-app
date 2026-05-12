@@ -1,9 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Store, Calendar, Package, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+
+async function linkExistingShops(shops, qc) {
+  const unlinked = shops.filter(s => !s.linked_spend_id && s.total > 0);
+  if (!unlinked.length) return;
+  for (const shop of unlinked) {
+    const linkedSpend = await base44.entities.Item.create({
+      type: 'spend',
+      title: `Groceries — ${shop.store}`,
+      category: 'groceries',
+      amount: shop.total,
+      currency: shop.currency || 'EUR',
+      date: shop.date,
+      description: JSON.stringify({ shop_id: shop.id, store: shop.store, item_count: shop.item_count || 0, retroactive: true }),
+    });
+    await base44.entities.GroceryShop.update(shop.id, { linked_spend_id: linkedSpend.id });
+  }
+  qc.invalidateQueries({ queryKey: ['grocery-shops'] });
+  qc.invalidateQueries({ queryKey: ['items'] });
+}
 
 function ShopCard({ shop, onDelete }) {
   const [expanded, setExpanded] = useState(false);
@@ -21,6 +40,10 @@ function ShopCard({ shop, onDelete }) {
           {shop.actual_receipt_total && Math.abs(shop.total - shop.actual_receipt_total) > 0.05 && (
             <div className="font-mono text-[10px] text-destructive">receipt: €{shop.actual_receipt_total.toFixed(2)}</div>
           )}
+          {shop.linked_spend_id
+            ? <div className="font-mono text-[10px] text-primary">✓ In Finance</div>
+            : <div className="font-mono text-[10px] text-muted-foreground/50">not linked</div>
+          }
         </div>
         {expanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
       </button>
@@ -62,6 +85,14 @@ export default function ShopLogPage({ onNewShop }) {
     queryKey: ['grocery-shops'],
     queryFn: () => base44.entities.GroceryShop.list('-date', 100),
   });
+
+  // Retroactive migration: link any existing unlinked shops to Finance (runs once per session)
+  useEffect(() => {
+    if (!shops.length || isLoading) return;
+    const key = 'jar_grocery_migration_v1';
+    if (localStorage.getItem(key)) return;
+    linkExistingShops(shops, qc).then(() => localStorage.setItem(key, 'true'));
+  }, [shops.length, isLoading]);
 
   const deleteShop = async (id) => {
     await base44.entities.GroceryShop.delete(id);

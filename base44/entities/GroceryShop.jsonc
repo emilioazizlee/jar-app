@@ -66,6 +66,10 @@
       },
       "description": "Line items in this shop"
     },
+    "linked_spend_id": {
+      "type": "string",
+      "description": "ID of the linked Item (spend) in Finance"
+    },
     "notes": {
       "type": "string",
       "description": "Notes"
