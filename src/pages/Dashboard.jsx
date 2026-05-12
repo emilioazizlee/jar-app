@@ -18,6 +18,7 @@ import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
 import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLabel } from '@/lib/constants';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useT } from '@/lib/i18n';
 import { calculateJars } from '@/lib/jarsCalc';
 import WelcomeBanner from '@/components/onboarding/WelcomeBanner';
 import SubscriptionInsights from '@/components/dashboard/SubscriptionInsights';
@@ -25,16 +26,8 @@ import BudgetAlerts from '@/components/dashboard/BudgetAlerts';
 import { nivoTheme } from '@/lib/nivoTheme';
 import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
 
-const QUICK_TAPS = [
-  { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },
-  { key: 'coffee',     label: 'Coffee',     icon: '☕', color: CATEGORY_COLORS.coffee     },
-  { key: 'taxi',       label: 'Taxi',       icon: '🚕', color: CATEGORY_COLORS.taxi       },
-  { key: 'food_out',   label: 'Food Out',   icon: '🍽️', color: CATEGORY_COLORS.food_out   },
-  { key: 'groceries',  label: 'Groceries',  icon: '🛒', color: CATEGORY_COLORS.groceries  },
-  { key: '__custom__', label: 'Custom',     icon: '➕', color: CATEGORY_COLORS.other       },
-];
-
 export default function Dashboard() {
+  const t = useT();
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -184,6 +177,15 @@ export default function Dashboard() {
       }, 0);
   }, [allItems]);
 
+  const QUICK_TAPS = [
+    { key: 'cigarettes', label: t('qt_cigarettes'), icon: '🚬', color: CATEGORY_COLORS.cigarettes },
+    { key: 'coffee',     label: t('qt_coffee'),     icon: '☕', color: CATEGORY_COLORS.coffee     },
+    { key: 'taxi',       label: t('qt_taxi'),       icon: '🚕', color: CATEGORY_COLORS.taxi       },
+    { key: 'food_out',   label: t('qt_food_out'),   icon: '🍽️', color: CATEGORY_COLORS.food_out   },
+    { key: 'groceries',  label: t('qt_groceries'),  icon: '🛒', color: CATEGORY_COLORS.groceries  },
+    { key: '__custom__', label: t('qt_custom'),     icon: '➕', color: CATEGORY_COLORS.other       },
+  ];
+
   const getQuickTapCount = (category) => displayItems.filter(i => i.category === category).length;
 
   const handleQuickTap = async (cat) => {
@@ -201,7 +203,7 @@ export default function Dashboard() {
 
       {/* Top row - Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <StatCard title="THIS MONTH" value={totalJarsMonth.toFixed(1)} subtitle={`${monthItems.length} entries`} accent="primary" delay={0} onClick={() => navigate('/spends')}>
+        <StatCard title={t('this_month')} value={totalJarsMonth.toFixed(1)} subtitle={`${monthItems.length} ${t('entries')}`} accent="primary" delay={0} onClick={() => navigate('/spends')}>
           <div className="w-24 h-12">
                 <ResponsiveBar
                   data={chartData.slice(-14).map(d => ({ day: d.day, count: d.count }))}
@@ -221,7 +223,7 @@ export default function Dashboard() {
           </div>
         </StatCard>
 
-        <StatCard title={selectedDate ? format(selectedDate, 'MMM d') : 'TODAY'} value={totalJarsToday.toFixed(1)} subtitle={`${displayItems.length} entries`} accent="secondary" delay={0.1} onClick={() => navigate('/spends')}>
+        <StatCard title={selectedDate ? format(selectedDate, 'MMM d') : t('today')} value={totalJarsToday.toFixed(1)} subtitle={`${displayItems.length} ${t('entries')}`} accent="secondary" delay={0.1} onClick={() => navigate('/spends')}>
           <JarVisual
             fillPercent={(displayItems.length % 10) * 10}
             completedJars={Math.floor(displayItems.length / 10)}
@@ -230,7 +232,7 @@ export default function Dashboard() {
           />
         </StatCard>
 
-        <StatCard title="UPCOMING" value={upcoming.length} subtitle="payments due" accent="destructive" delay={0.2} onClick={() => navigate('/payments')}>
+        <StatCard title={t('upcoming')} value={upcoming.length} subtitle={t('payments_due')} accent="destructive" delay={0.2} onClick={() => navigate('/payments')}>
           <div className="space-y-1">
             {upcoming.map(item => (
               <p key={item.id} className="font-mono text-[10px] text-muted-foreground truncate max-w-[120px]">
@@ -248,8 +250,8 @@ export default function Dashboard() {
           onClick={() => navigate('/tasks')}
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">ACTIVE TASKS</p>
-            <span className="font-mono text-[10px] text-primary">{activeTotalTasks} total →</span>
+            <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">{t('active_tasks')}</p>
+            <span className="font-mono text-[10px] text-primary">{activeTotalTasks} {t('total_arrow')}</span>
           </div>
           <div className="space-y-2">
             {urgentTasks.map(task => (
@@ -282,8 +284,8 @@ export default function Dashboard() {
       />
       {selectedDate && (
         <div className="flex items-center gap-2 -mt-1">
-          <span className="text-xs text-muted-foreground font-mono">Filtered: {format(selectedDate, 'MMM d, yyyy')}</span>
-          <button onClick={() => setSelectedDate(null)} className="text-xs text-primary hover:underline font-mono">Clear</button>
+          <span className="text-xs text-muted-foreground font-mono">{t('filtered')}: {format(selectedDate, 'MMM d, yyyy')}</span>
+          <button onClick={() => setSelectedDate(null)} className="text-xs text-primary hover:underline font-mono">{t('clear')}</button>
         </div>
       )}
 
@@ -297,7 +299,7 @@ export default function Dashboard() {
           className="bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-primary/30 transition-all"
           onClick={() => navigate('/insights')}
         >
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">TODAY'S DISTRIBUTION</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">{t('todays_dist')}</p>
           {selectedDate && (
             <p className="text-[10px] text-primary font-mono mb-2">{format(selectedDate, 'EEE, MMM d')}</p>
           )}
@@ -355,7 +357,7 @@ export default function Dashboard() {
               </div>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-6">No entries today</p>
+            <p className="text-sm text-muted-foreground text-center py-6">{t('no_entries_today')}</p>
           )}
         </motion.div>
 
@@ -367,9 +369,9 @@ export default function Dashboard() {
           className="bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-primary/30 transition-all"
           onClick={() => navigate('/subscriptions')}
         >
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">MONTHLY BURN</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">{t('monthly_burn')}</p>
           <p className="font-mono text-3xl font-bold text-secondary">€{monthlyBurn.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">active subscriptions</p>
+          <p className="text-xs text-muted-foreground mt-1">{t('active_subs')}</p>
         </motion.div>
 
         {/* Top categories */}
@@ -380,7 +382,7 @@ export default function Dashboard() {
           className="bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-primary/30 transition-all"
           onClick={() => navigate('/insights')}
         >
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">TOP CATEGORIES</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">{t('top_cats')}</p>
           <div className="space-y-2">
             {[...categoryData].sort((a, b) => b.value - a.value).slice(0, 5).map((cat, i) => (
               <div key={cat.name} className="flex items-center gap-2">
@@ -400,7 +402,7 @@ export default function Dashboard() {
             {categoryData.length === 0 && (
               <div className="flex flex-col items-center justify-center py-4 gap-2">
                 <span className="text-2xl opacity-30">📊</span>
-                <p className="font-mono text-[10px] text-muted-foreground text-center">Start logging to see your<br />top categories</p>
+                <p className="font-mono text-[10px] text-muted-foreground text-center">{t('start_logging')}<br />{t('top_categories')}</p>
               </div>
             )}
           </div>
@@ -416,13 +418,13 @@ export default function Dashboard() {
       {/* Quick-tap row */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <p className="mono-header text-[10px] text-muted-foreground">QUICK TAP</p>
+          <p className="mono-header text-[10px] text-muted-foreground">{t('quick_tap')}</p>
           <button
             onClick={() => setCatchUpOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border hover:border-secondary/40 transition-all font-mono text-[10px] text-muted-foreground hover:text-secondary"
           >
             <Zap className="w-3 h-3" />
-            Catch-up
+            {t('catch_up')}
           </button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">

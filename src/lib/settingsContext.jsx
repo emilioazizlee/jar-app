@@ -19,7 +19,7 @@ function getStored() {
   catch { return { ...defaults }; }
 }
 
-const SettingsContext = createContext(null);
+export const SettingsContext = createContext(null);
 
 export function SettingsProvider({ children }) {
   const [prefs, setPrefs] = useState(getStored);
@@ -34,6 +34,7 @@ export function SettingsProvider({ children }) {
   const saveAll = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
     setSavedPrefs(prefs);
+    window.dispatchEvent(new Event('language-changed'));
     return true;
   }, [prefs]);
 
