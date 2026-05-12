@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { format, isSameDay, startOfMonth, subDays } from 'date-fns';
 import StatCard from '@/components/dashboard/StatCard';
 import QuickTapTile from '@/components/dashboard/QuickTapTile';
@@ -37,15 +37,22 @@ const QUICK_TAPS = [
 export default function Dashboard() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const queryClient = useQueryClient();
+  const [selectedDate, setSelectedDate] = useState(null);
   const [spendCategory, setSpendCategory] = useState(null);
   const [customOpen, setCustomOpen] = useState(false);
   const [catchUpOpen, setCatchUpOpen] = useState(false);
+
+  // Clear cache on mount to prevent seeing other users' data
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['items'] });
+  }, []);
 
   const { data: allItems = [] } = useQuery({
     queryKey: ['items', user?.email],
     queryFn: () => user ? base44.entities.Item.filter({ created_by: user.email }, '-created_date', 500) : [],
     enabled: !!user,
+    staleTime: 0,
     initialData: [],
   });
 
@@ -92,13 +99,18 @@ export default function Dashboard() {
   }, [allItems]);
   const activeTotalTasks = useMemo(() => allItems.filter(i => i.type === 'task' && i.status !== 'done').length, [allItems]);
 
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
   const todayItems = useMemo(() => allItems.filter(i => i.date && isSameDay(new Date(i.date), new Date())), [allItems]);
   const monthItems = useMemo(() => {
     const start = startOfMonth(new Date());
     return allItems.filter(i => i.date && new Date(i.date) >= start);
   }, [allItems]);
 
-  const selectedDayItems = useMemo(() => allItems.filter(i => i.date && isSameDay(new Date(i.date), selectedDate)), [allItems, selectedDate]);
+  // Date filter: when a date is selected in DayStrip, filter dashboard display items
+  const filteredItems = useMemo(() => {
+    if (!selectedDate) return null; // null means no filter active
+    return allItems.filter(i => i.date && isSameDay(new Date(i.date), selectedDate));
+  }, [allItems, selectedDate]);
 
   const jarData = { items: allItems, dietLogs: dashDietLogs, leisureEntries: dashLeisure, waterLogs: dashWaterLogs, groceryShops: dashShops };
   const totalJarsMonth = calculateJars(jarData, 'month');
@@ -125,10 +137,13 @@ export default function Dashboard() {
     'saas', 'gaming', 'news', 'music', 'cloud', 'software',
   ]), []);
 
+  // Use filteredItems if a date is selected, else fall back to today's items
+  const displayItems = filteredItems ?? todayItems;
+
   const categoryData = useMemo(() => {
     const counts = {};
     const keyMap = {};
-    todayItems
+    displayItems
       .filter(i => i.type !== 'subscription' && !SUBSCRIPTION_CATEGORIES.has((i.category || '').toLowerCase()))
       .forEach(i => {
         const label = normalizeCategory(i.category || i.type);
@@ -137,7 +152,7 @@ export default function Dashboard() {
         keyMap[label] = key;
       });
     return Object.entries(counts).map(([name, value]) => ({ name, value, key: keyMap[name] }));
-  }, [todayItems]);
+  }, [displayItems]);
 
   // Intentionally unused — donut uses getCategoryColor per segment
 
@@ -158,14 +173,18 @@ export default function Dashboard() {
       .slice(0, 3);
   }, [allItems]);
 
-  // Monthly subscription burn
+  // Monthly subscription burn (normalized per billing cycle)
   const monthlyBurn = useMemo(() => {
     return allItems
-      .filter(i => i.type === 'subscription' && i.is_active && i.amount)
-      .reduce((sum, i) => sum + (i.amount || 0), 0);
+      .filter(i => i.type === 'subscription' && i.is_active !== false && i.amount)
+      .reduce((sum, i) => {
+        if (i.billing_cycle === 'yearly') return sum + (i.amount / 12);
+        if (i.billing_cycle === 'quarterly') return sum + (i.amount / 3);
+        return sum + i.amount;
+      }, 0);
   }, [allItems]);
 
-  const getQuickTapCount = (category) => todayItems.filter(i => i.category === category).length;
+  const getQuickTapCount = (category) => displayItems.filter(i => i.category === category).length;
 
   const handleQuickTap = async (cat) => {
     if (cat === '__custom__') {
@@ -202,10 +221,10 @@ export default function Dashboard() {
           </div>
         </StatCard>
 
-        <StatCard title="TODAY" value={totalJarsToday.toFixed(1)} subtitle={`${todayItems.length} entries`} accent="secondary" delay={0.1} onClick={() => navigate('/spends')}>
+        <StatCard title={selectedDate ? format(selectedDate, 'MMM d') : 'TODAY'} value={totalJarsToday.toFixed(1)} subtitle={`${displayItems.length} entries`} accent="secondary" delay={0.1} onClick={() => navigate('/spends')}>
           <JarVisual
-            fillPercent={(todayItems.length % 10) * 10}
-            completedJars={Math.floor(todayItems.length / 10)}
+            fillPercent={(displayItems.length % 10) * 10}
+            completedJars={Math.floor(displayItems.length / 10)}
             size="sm"
             color={PALETTE.yellow}
           />
@@ -256,7 +275,17 @@ export default function Dashboard() {
       )}
 
       {/* Day strip */}
-      <DayStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} items={allItems} />
+      <DayStrip
+        selectedDate={selectedDate}
+        onSelectDate={(day) => setSelectedDate(prev => (prev && isSameDay(prev, day)) ? null : day)}
+        items={allItems}
+      />
+      {selectedDate && (
+        <div className="flex items-center gap-2 -mt-1">
+          <span className="text-xs text-muted-foreground font-mono">Filtered: {format(selectedDate, 'MMM d, yyyy')}</span>
+          <button onClick={() => setSelectedDate(null)} className="text-xs text-primary hover:underline font-mono">Clear</button>
+        </div>
+      )}
 
       {/* Middle row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
@@ -269,6 +298,9 @@ export default function Dashboard() {
           onClick={() => navigate('/insights')}
         >
           <p className="mono-header text-[10px] text-muted-foreground mb-3">TODAY'S DISTRIBUTION</p>
+          {selectedDate && (
+            <p className="text-[10px] text-primary font-mono mb-2">{format(selectedDate, 'EEE, MMM d')}</p>
+          )}
           {categoryData.length > 0 ? (
             <div className="flex flex-row items-center gap-4">
               <div className="w-28 h-28 shrink-0">
@@ -301,7 +333,7 @@ export default function Dashboard() {
                         dominantBaseline="central"
                         style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, fill: centerColor }}
                       >
-                        {todayItems.length}
+                        {displayItems.length}
                       </text>
                     );
                   }]}
