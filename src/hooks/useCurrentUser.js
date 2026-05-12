@@ -9,6 +9,6 @@ import { useAuth } from '@/lib/AuthContext';
  *   base44.entities.Item.filter({ created_by: user?.email }, '-created_date', 200)
  */
 export function useCurrentUser() {
-  const { user, isAuthenticated } = useAuth();
-  return { user, isAuthenticated };
+  const { user, isAuthenticated, isLoadingAuth } = useAuth();
+  return { user, isAuthenticated, isLoading: isLoadingAuth };
 }

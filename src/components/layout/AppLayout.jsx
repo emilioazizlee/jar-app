@@ -14,6 +14,7 @@ import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import NewUserOnboarding, { isOnboardingDone, markOnboardingDone } from '@/components/onboarding/NewUserOnboarding';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { verifyRLS } from '@/lib/rlsVerifier';
 
 const SIDEBAR_PREF_KEY = 'jar_sidebar_collapsed';
 const ACTIVITY_KEY = 'jar_last_activity';
@@ -25,6 +26,9 @@ export default function AppLayout() {
   const isTablet = breakpoint === 'tablet';
   const { user } = useCurrentUser();
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingDone());
+
+  // Dev-only RLS check — verifies data isolation on mount
+  useEffect(() => { verifyRLS(); }, []);
 
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
