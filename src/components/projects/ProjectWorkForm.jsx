@@ -120,6 +120,11 @@ export default function ProjectWorkForm({ open, onClose, onSaved, project }) {
   const [formData, setFormData] = useState({});
   const [status, setStatus] = useState('Active');
   const [date, setDate] = useState(today());
+  const [title, setTitle] = useState('');
+  const [notes, setNotes] = useState('');
+  const [tags, setTags] = useState('');
+  const [location, setLocation] = useState('');
+  const [attendees, setAttendees] = useState('');
   const [saving, setSaving] = useState(false);
 
   const [localWorkTypes, setLocalWorkTypes] = useState(null);
@@ -132,20 +137,26 @@ export default function ProjectWorkForm({ open, onClose, onSaved, project }) {
   const handleSave = async () => {
     if (!workType) return;
     setSaving(true);
-    // Build a readable title from the most prominent field
+    // Build title: use explicit title field, then auto-detect from schema fields, then fallback
     const fields = workType.fields || [];
-    const titleField = fields.find(f => f.key === 'player_name' || f.key === 'title' || f.key === 'client' || f.key === 'subject' || f.key === 'track' || f.field_type === 'text');
-    const titleVal = titleField ? formData[titleField.key] : '';
-    const title = titleVal ? `${workType.label} — ${titleVal}` : workType.label;
+    const autoField = fields.find(f => f.key === 'player_name' || f.key === 'client' || f.key === 'subject' || f.key === 'track' || f.field_type === 'text');
+    const autoVal = autoField ? formData[autoField.key] : '';
+    const finalTitle = title.trim() || (autoVal ? `${workType.label} — ${autoVal}` : workType.label);
+
+    const extraMeta = {};
+    if (location.trim()) extraMeta.location = location.trim();
+    if (attendees.trim()) extraMeta.attendees = attendees;
+    const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
 
     await base44.entities.Item.create({
       type: 'task',
-      title,
+      title: finalTitle,
       category: `project:${project.id}`,
       status,
       date,
-      description: JSON.stringify({ work_type: workType.key, project_id: project.id, ...formData }),
-      note: formData.notes || '',
+      tags: tagList.length ? tagList : undefined,
+      description: JSON.stringify({ work_type: workType.key, project_id: project.id, ...formData, ...extraMeta }),
+      note: notes.trim() || undefined,
     });
     queryClient.invalidateQueries({ queryKey: ['project-items', project.id] });
     queryClient.invalidateQueries({ queryKey: ['items'] });
@@ -226,7 +237,13 @@ export default function ProjectWorkForm({ open, onClose, onSaved, project }) {
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
-          {/* Date + Status always present */}
+          {/* Title */}
+          <div>
+            <Label className="text-xs text-muted-foreground font-mono">TITLE <span className="text-muted-foreground/50">(optional — auto-generated if blank)</span></Label>
+            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder={`${workType.label}...`} className="bg-muted border-none mt-1 text-sm" />
+          </div>
+
+          {/* Date + Status */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-muted-foreground font-mono">DATE</Label>
@@ -244,13 +261,39 @@ export default function ProjectWorkForm({ open, onClose, onSaved, project }) {
           </div>
 
           {/* Dynamic fields from schema */}
-          <div className="grid grid-cols-2 gap-3">
-            {(workType.fields || []).map(field => (
-              <div key={field.key} className={field.field_type === 'textarea' ? 'col-span-2' : ''}>
-                <Label className="text-xs text-muted-foreground font-mono">{field.label.toUpperCase()}</Label>
-                <FieldInput field={field} value={formData[field.key]} onChange={v => setField(field.key, v)} />
+          {(workType.fields || []).length > 0 && (
+            <div className="grid grid-cols-2 gap-3">
+              {(workType.fields || []).map(field => (
+                <div key={field.key} className={field.field_type === 'textarea' ? 'col-span-2' : ''}>
+                  <Label className="text-xs text-muted-foreground font-mono">{field.label.toUpperCase()}</Label>
+                  <FieldInput field={field} value={formData[field.key]} onChange={v => setField(field.key, v)} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Location + Attendees — shown when work type key contains 'meeting' */}
+          {workType.key?.includes('meeting') && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">LOCATION</Label>
+                <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="Room / Zoom link" className="bg-muted border-none mt-1 text-sm" />
               </div>
-            ))}
+              <div>
+                <Label className="text-xs text-muted-foreground font-mono">ATTENDEES</Label>
+                <Input value={attendees} onChange={e => setAttendees(e.target.value)} placeholder="John, Sarah..." className="bg-muted border-none mt-1 text-sm" />
+              </div>
+            </div>
+          )}
+
+          {/* Notes + Tags */}
+          <div>
+            <Label className="text-xs text-muted-foreground font-mono">NOTES</Label>
+            <Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Additional context, links, references..." className="bg-muted border-none mt-1 text-sm" rows={2} />
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground font-mono">TAGS <span className="text-muted-foreground/50">(comma-separated)</span></Label>
+            <Input value={tags} onChange={e => setTags(e.target.value)} placeholder="urgent, client-facing, research" className="bg-muted border-none mt-1 text-sm" />
           </div>
 
           <Button

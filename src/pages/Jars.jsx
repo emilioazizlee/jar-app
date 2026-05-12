@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useTranslation } from 'react-i18next';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { calculateJars, filterThisMonth } from '@/lib/jarsCalc';
+import { ChevronDown } from 'lucide-react';
 
 const JarVisual = ({ label, emoji, score, entryCount, color }) => {
   const dots = Math.min(10, Math.floor(score));
@@ -121,8 +122,10 @@ export default function JarsPage() {
     { label: t('nav.groceries'), emoji: '🛒', score: monthShops.length * 0.5,                                       entryCount: monthShops.length,    color: '#8b5cf6' },
   ];
 
+  const [scoringOpen, setScoringOpen] = useState(false);
+
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', paddingBottom: scoringOpen ? 260 : 60 }}>
       {/* Hero */}
       <div style={{
         textAlign: 'center', padding: '32px 0',
@@ -147,15 +150,73 @@ export default function JarsPage() {
         ))}
       </div>
 
-      {/* Legend */}
+      {/* Expandable scoring panel — fixed at bottom */}
       <div style={{
-        marginTop: 24, padding: 16, background: '#0a0a0a',
-        borderRadius: 12, fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444',
-        textAlign: 'center', lineHeight: 1.8
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: '#111', borderTop: '1px solid #222', zIndex: 40,
       }}>
-        <div>spend=1pt · task done=3pts · meal=2pts</div>
-        <div>leisure=1.5pts · water=0.5pts · grocery=0.5pts</div>
-        <div style={{ marginTop: 4 }}>10 pts = 1.0 JAR</div>
+        <button
+          onClick={() => setScoringOpen(v => !v)}
+          style={{
+            width: '100%', padding: '12px 16px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'transparent', border: 'none', cursor: 'pointer',
+            fontFamily: 'JetBrains Mono, monospace',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#7a7a7a' }}>
+            <span>💡</span>
+            <span>How JAR Scoring Works</span>
+          </div>
+          <ChevronDown
+            style={{
+              width: 16, height: 16, color: '#7a7a7a',
+              transform: scoringOpen ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.2s ease',
+            }}
+          />
+        </button>
+
+        {scoringOpen && (
+          <div style={{ padding: '0 16px 16px', maxHeight: 300, overflowY: 'auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 12 }}>
+              {[
+                { emoji: '💰', label: 'Finance',   rows: ['Spend logged = 1pt', 'Budget under limit = +2pts'] },
+                { emoji: '✅', label: 'Tasks',     rows: ['Task completed = 3pts', 'Task created = 1pt'] },
+                { emoji: '🍽️', label: 'Diet',      rows: ['Meal logged = 2pts', 'Within calorie goal = +3pts'] },
+                { emoji: '💧', label: 'Health',    rows: ['Water logged = 0.5pts', 'Health metric = 2pts'] },
+                { emoji: '🎉', label: 'Leisure',   rows: ['Activity logged = 1.5pts'] },
+                { emoji: '🛒', label: 'Groceries', rows: ['Shop logged = 0.5pts'] },
+              ].map(cat => (
+                <div key={cat.label} style={{
+                  background: '#0a0a0a', borderRadius: 10,
+                  border: '1px solid #1f1f1f', padding: '10px 12px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                    <span style={{ fontSize: 16 }}>{cat.emoji}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#aaa' }}>{cat.label}</span>
+                  </div>
+                  {cat.rows.map(row => {
+                    const parts = row.split('=');
+                    return (
+                      <div key={row} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', marginBottom: 2 }}>
+                        {parts[0]}= <span style={{ color: '#abff4f' }}>{parts[1]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <div style={{
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444',
+              textAlign: 'center', borderTop: '1px solid #1f1f1f', paddingTop: 10,
+            }}>
+              <span style={{ color: '#abff4f' }}>10 points = 1.0 JAR</span>
+              <span style={{ margin: '0 8px' }}>·</span>
+              The fuller your JAR, the more intentional your life
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

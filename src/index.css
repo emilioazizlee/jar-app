@@ -505,3 +505,57 @@ body {
 .neon-gold-glow {
   box-shadow: 0 0 20px var(--color-yellow-dim);
 }
+
+/* ─── Modern glassmorphism card upgrade ─────────────────── */
+.bg-card {
+  background: rgba(20, 20, 20, 0.7) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Clickable cards lift on hover */
+a .bg-card:hover,
+button .bg-card:hover,
+[class*="cursor-pointer"].bg-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(171, 255, 79, 0.08);
+}
+
+/* ─── Smoother global transitions ───────────────────────── */
+button, a, [role="button"] {
+  transition: color 0.15s ease, background-color 0.15s ease,
+              border-color 0.15s ease, box-shadow 0.15s ease,
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.15s ease;
+}
+
+/* ─── Modern shimmer skeleton ────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.animate-pulse {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 0%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.6s infinite !important;
+}
+
+/* ─── Gradient primary button ────────────────────────────── */
+.bg-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(88 90% 55%) 100%) !important;
+}
+.bg-secondary {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(55 90% 52%) 100%) !important;
+}
+
+/* ─── Better card hover shadows ──────────────────────────── */
+.hover\:border-primary\/30:hover,
+.hover\:border-blue-400\/20:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
