@@ -11,8 +11,9 @@ import {
   Circle, List, Moon, Database, Download, FileText, Trash2,
   Lock, Eye, EyeOff, Heart, Phone, Info, Mail, ScrollText,
   ChevronRight, CheckCircle2, AlertTriangle, Smartphone, Zap, BarChart2,
-  Calendar, Cloud, RefreshCw, Tag, Sliders, LayoutGrid
+  Calendar, Cloud, RefreshCw, Tag, Sliders, LayoutGrid, LogOut
 } from 'lucide-react';
+import { useT } from '@/lib/i18n';
 import { usePremium } from '@/hooks/usePremium';
 import PremiumBadge from '@/components/premium/PremiumBadge';
 import PaywallModal from '@/components/premium/PaywallModal';
@@ -164,6 +165,7 @@ function Toggle({ value, onChange, options }) {
 
 export default function Settings() {
   const { t } = useTranslation();
+  const tJ = useT();
   const { prefs, setPref, saveAll, hasUnsaved } = useSettings();
   const { isPremium, subscription } = usePremium();
   const [showPaywall, setShowPaywall] = useState(false);
@@ -221,6 +223,11 @@ export default function Settings() {
     setCsvExportDone(true);
     const t = setTimeout(() => setCsvExportDone(false), 2500);
     return () => clearTimeout(t);
+  };
+
+  const handleLogout = async () => {
+    await base44.auth.logout();
+    localStorage.clear();
   };
 
   const now = new Date();
@@ -405,6 +412,20 @@ export default function Settings() {
           control={<ActionBtn onClick={() => window.location.href = '/settings/brands'}>View directory</ActionBtn>}
           last
         />
+      </SectionCard>
+
+      {/* ACCOUNT ACTIONS */}
+      <SectionLabel>{tJ('account')}</SectionLabel>
+      <SectionCard>
+        <div style={{ padding: '14px 18px' }}>
+          <button
+            onClick={handleLogout}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px 16px', borderRadius: 8, background: 'rgba(193,18,31,0.1)', border: '1px solid rgba(193,18,31,0.3)', color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, cursor: 'pointer' }}
+          >
+            <LogOut size={15} />
+            {tJ('logout')}
+          </button>
+        </div>
       </SectionCard>
 
       {/* CRISIS RESOURCES */}

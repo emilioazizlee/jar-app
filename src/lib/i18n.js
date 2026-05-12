@@ -158,6 +158,8 @@ const T = {
     range_label: 'RANGE',
     filter_label: 'FILTER',
     clear_all: 'Clear all',
+    logout: 'Logout',
+    account: 'Account',
   },
 
   Russian: {
@@ -302,6 +304,8 @@ const T = {
     range_label: 'ПЕРИОД',
     filter_label: 'ФИЛЬТР',
     clear_all: 'Очистить',
+    logout: 'Выйти',
+    account: 'Аккаунт',
   },
 
   Azerbaijani: {
@@ -446,6 +450,8 @@ const T = {
     range_label: 'ARALIK',
     filter_label: 'FİLTR',
     clear_all: 'Hamısını sil',
+    logout: 'Çıxış',
+    account: 'Hesab',
   },
 };
 
