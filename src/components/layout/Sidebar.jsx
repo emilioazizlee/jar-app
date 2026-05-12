@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
-  Calendar, CheckSquare, Apple, Heart, Settings, ShoppingBasket,
+  Calendar, CheckSquare, Apple, Settings, ShoppingBasket,
   ChevronLeft, ChevronRight, Plus, FolderOpen, Loader2, HelpCircle,
   Wallet, Martini, Star, GripVertical, Package, ChevronDown,
 } from 'lucide-react';
@@ -28,7 +28,6 @@ const NAV_KEYS = {
   '/tasks': 'nav.tasks',
   '/diet': 'nav.diet',
   '/groceries': 'nav.groceries',
-  '/health': 'nav.health',
   '/leisure': 'nav.leisure',
 };
 
@@ -44,7 +43,6 @@ const NAV_ICONS = {
   '/tasks': CheckSquare,
   '/diet': Apple,
   '/groceries': ShoppingBasket,
-  '/health': Heart,
   '/leisure': Martini,
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
+import { useT } from '@/lib/i18n';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -214,6 +215,7 @@ function SubscriptionRow({ sub, onEdit }) {
 }
 
 export default function Subscriptions() {
+  const t = useT();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editSub, setEditSub] = useState(null);
@@ -258,8 +260,8 @@ export default function Subscriptions() {
     <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h1 className="mono-header text-lg md:text-xl text-foreground">SUBSCRIPTIONS</h1>
-          <p className="text-sm text-muted-foreground mt-1">{activeSubs.length} active</p>
+          <h1 className="mono-header text-lg md:text-xl text-foreground">{t('subscriptions')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{activeSubs.length} {t('active')}</p>
         </div>
         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-500 text-white rounded-xl font-mono text-sm min-h-[44px]">
@@ -270,11 +272,11 @@ export default function Subscriptions() {
       {/* Summary */}
       <div className="grid grid-cols-2 gap-3 md:gap-4">
         <div className="bg-card border border-border rounded-2xl p-4 md:p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-2">MONTHLY</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-2">{t('monthly')}</p>
           <p className="font-mono text-2xl md:text-3xl font-bold text-secondary">€{monthlyTotal.toFixed(2)}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-4 md:p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-2">YEARLY</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-2">{t('yearly')}</p>
           <p className="font-mono text-2xl md:text-3xl font-bold text-foreground">€{yearlyTotal.toFixed(2)}</p>
         </div>
       </div>
@@ -284,7 +286,7 @@ export default function Subscriptions() {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1 flex-1 bg-muted rounded-lg px-3 py-1.5 min-w-[160px]">
             <Search className="w-3.5 h-3.5 text-muted-foreground" />
-            <input className="bg-transparent text-sm flex-1 outline-none font-mono" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
+            <input className="bg-transparent text-sm flex-1 outline-none font-mono" placeholder={t('search')} value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           <select value={sortKey} onChange={e => handleSort(e.target.value)} className="bg-muted border-none rounded-lg px-3 py-1.5 font-mono text-xs text-foreground outline-none">
             {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
@@ -307,7 +309,7 @@ export default function Subscriptions() {
           <AnimatePresence>
             {sorted.map(sub => <SubscriptionRow key={sub.id} sub={sub} onEdit={(s) => setEditSub(s)} />)}
           </AnimatePresence>
-          {sorted.length === 0 && <p className="text-center text-muted-foreground py-12 text-sm">No subscriptions found</p>}
+          {sorted.length === 0 && <p className="text-center text-muted-foreground py-12 text-sm">{t('no_subs_found')}</p>}
         </QueryStateWrapper>
       </div>
 

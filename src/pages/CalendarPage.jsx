@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useT } from '@/lib/i18n';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -7,6 +8,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ITEM_TYPES, CATEGORY_COLORS, getCategoryColor } from '@/lib/constants';
 
 export default function CalendarPage() {
+  const t = useT();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -32,7 +34,7 @@ export default function CalendarPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <h1 className="mono-header text-xl text-foreground">CALENDAR</h1>
+      <h1 className="mono-header text-xl text-foreground">{t('calendar')}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar grid */}
@@ -97,7 +99,7 @@ export default function CalendarPage() {
           <p className="mono-header text-[10px] text-muted-foreground mb-3">
             {format(selectedDate, 'EEEE, MMM d')}
           </p>
-          <p className="font-mono text-sm text-muted-foreground mb-4">{dayItems.length} entries</p>
+          <p className="font-mono text-sm text-muted-foreground mb-4">{dayItems.length} {t('entries')}</p>
           <div className="space-y-2">
             {dayItems.map((item) => {
               const typeInfo = ITEM_TYPES.find(t => t.key === item.type);
@@ -120,7 +122,7 @@ export default function CalendarPage() {
               );
             })}
             {dayItems.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-8">No entries this day</p>
+              <p className="text-sm text-muted-foreground text-center py-8">{t('no_entries_day')}</p>
             )}
           </div>
         </motion.div>

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useT } from '@/lib/i18n';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -27,6 +28,7 @@ const STATUS_COLORS = {
 };
 
 export default function Tasks() {
+  const t = useT();
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -91,12 +93,12 @@ export default function Tasks() {
     <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h1 className="mono-header text-lg md:text-xl text-foreground">TASKS</h1>
-          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">{filtered.length} tasks</p>
+          <h1 className="mono-header text-lg md:text-xl text-foreground">{t('tasks')}</h1>
+          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">{filtered.length} {t('tasks').toLowerCase()}</p>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden sm:block">
-            <JarVisual fillPercent={jarFill} completedJars={completedJars} size="sm" label="completed" />
+          <JarVisual fillPercent={jarFill} completedJars={completedJars} size="sm" label={t('completed')} />
           </div>
           {/* View toggle */}
           <div className="flex bg-muted rounded-lg p-1 gap-1">
@@ -131,14 +133,14 @@ export default function Tasks() {
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-40 bg-card border-border font-mono text-sm"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="all">{t('all_statuses')}</SelectItem>
             {TASK_STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={filterType} onValueChange={setFilterType}>
           <SelectTrigger className="w-40 bg-card border-border font-mono text-sm"><SelectValue placeholder="Type" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="all">{t('all_types')}</SelectItem>
             {TASK_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -247,13 +249,13 @@ export default function Tasks() {
         {filtered.length === 0 && tasks.length === 0 && (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">📋</div>
-            <p className="font-mono text-sm text-foreground mb-1">No tasks yet</p>
-            <p className="text-muted-foreground text-sm mb-4">Create your first task to get started</p>
+            <p className="font-mono text-sm text-foreground mb-1">{t('no_tasks')}</p>
+            <p className="text-muted-foreground text-sm mb-4">{t('create_first_task')}</p>
             <button
               onClick={() => setShowForm(true)}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-xl font-mono text-sm"
             >
-              + New Task
+              + {t('new_task')}
             </button>
           </div>
         )}
