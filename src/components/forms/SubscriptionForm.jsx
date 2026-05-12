@@ -12,12 +12,21 @@ import { Search, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { getDomainForSubscription, BUNDLED_SUBSCRIPTION_NAMES } from '@/lib/subscriptionDomains';
 
-export default function SubscriptionForm({ open, onClose, onSaved }) {
+export default function SubscriptionForm({ open, onClose, onSaved, editItem = null }) {
   const queryClient = useQueryClient();
-  const [step, setStep] = useState('catalog');
+  const isEdit = !!editItem;
+  const [step, setStep] = useState(isEdit ? 'details' : 'catalog');
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(isEdit ? {
+    title: editItem.title || '',
+    category: editItem.category || '',
+    amount: editItem.amount ?? '',
+    currency: editItem.currency || 'EUR',
+    billing_cycle: editItem.billing_cycle || 'monthly',
+    next_renewal: editItem.next_renewal || format(new Date(), 'yyyy-MM-dd'),
+    note: (() => { try { return JSON.parse(editItem.note || '{}')?.user_note || ''; } catch { return editItem.note || ''; } })(),
+  } : {
     title: '',
     category: '',
     amount: '',
@@ -49,21 +58,33 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
     if (!form.title.trim()) return;
     setSaving(true);
     const domain = form.domain || getDomainForSubscription(form.title) || '';
-    const me = await base44.auth.me();
-    await base44.entities.Item.create({
-      type: 'subscription',
-      title: form.title,
-      category: form.category,
-      amount: form.amount ? Number(form.amount) : undefined,
-      currency: form.currency,
-      billing_cycle: form.billing_cycle,
-      next_renewal: form.next_renewal,
-      note: form.note || undefined,
-      date: format(new Date(), 'yyyy-MM-dd'),
-      is_active: true,
-      description: domain ? JSON.stringify({ domain }) : undefined,
-      created_by: me.email,
-    });
+    if (isEdit) {
+      await base44.entities.Item.update(editItem.id, {
+        title: form.title,
+        category: form.category,
+        amount: form.amount ? Number(form.amount) : undefined,
+        currency: form.currency,
+        billing_cycle: form.billing_cycle,
+        next_renewal: form.next_renewal,
+        note: form.note || undefined,
+      });
+    } else {
+      const me = await base44.auth.me();
+      await base44.entities.Item.create({
+        type: 'subscription',
+        title: form.title,
+        category: form.category,
+        amount: form.amount ? Number(form.amount) : undefined,
+        currency: form.currency,
+        billing_cycle: form.billing_cycle,
+        next_renewal: form.next_renewal,
+        note: form.note || undefined,
+        date: format(new Date(), 'yyyy-MM-dd'),
+        is_active: true,
+        description: domain ? JSON.stringify({ domain }) : undefined,
+        created_by: me.email,
+      });
+    }
     queryClient.invalidateQueries({ queryKey: ['items'] });
     queryClient.invalidateQueries({ queryKey: ['items-month'] });
     setSaving(false);
@@ -75,7 +96,7 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
       <DialogContent className="bg-card border-border max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="mono-header text-sm text-blue-400">
-            {step === 'catalog' ? 'ADD SUBSCRIPTION' : (
+            {isEdit ? 'EDIT SUBSCRIPTION' : step === 'catalog' ? 'ADD SUBSCRIPTION' : (
               <button onClick={() => setStep('catalog')} className="flex items-center gap-2 hover:text-foreground transition-colors">
                 <ArrowLeft className="w-4 h-4" />{form.title}
               </button>
@@ -161,7 +182,7 @@ export default function SubscriptionForm({ open, onClose, onSaved }) {
             </div>
 
             <Button onClick={handleSave} disabled={saving || !form.title.trim()} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-mono">
-              {saving ? 'SAVING...' : 'ADD SUBSCRIPTION'}
+              {saving ? 'SAVING...' : isEdit ? 'SAVE CHANGES' : 'ADD SUBSCRIPTION'}
             </Button>
           </div>
         )}

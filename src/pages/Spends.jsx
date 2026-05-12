@@ -6,7 +6,8 @@ import { SPEND_CATEGORIES, getCategoryLabel } from '@/lib/constants';
 import SpendForm from '@/components/forms/SpendForm';
 import JarVisual from '@/components/jar/JarVisual';
 import { format, isSameDay, subDays, startOfMonth } from 'date-fns';
-import { Plus, RotateCcw } from 'lucide-react';
+import { Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Spends() {
@@ -33,6 +34,24 @@ export default function Spends() {
 
   const getCatCount = (key) => todaySpends.filter(s => s.category === key).length;
   const getCatTotal = (key) => todaySpends.filter(s => s.category === key).reduce((sum, s) => sum + (s.amount || 0), 0);
+
+  const deleteSpend = async (spend) => {
+    await base44.entities.Item.delete(spend.id);
+    queryClient.invalidateQueries({ queryKey: ['items-spends'] });
+    queryClient.invalidateQueries({ queryKey: ['items'] });
+    toast.success('Spend deleted', {
+      action: {
+        label: 'Undo',
+        onClick: async () => {
+          const { id, created_date, updated_date, ...rest } = spend;
+          await base44.entities.Item.create(rest);
+          queryClient.invalidateQueries({ queryKey: ['items-spends'] });
+          queryClient.invalidateQueries({ queryKey: ['items'] });
+          toast.success('Spend restored');
+        },
+      },
+    });
+  };
 
   const repeatLast = async (catKey) => {
     const last = spends.find(s => s.category === catKey);
@@ -153,6 +172,13 @@ export default function Spends() {
                     {spend.currency === 'EUR' ? '€' : spend.currency === 'USD' ? '$' : spend.currency}{spend.amount}
                   </span>
                 )}
+                <button
+                  onClick={() => deleteSpend(spend)}
+                  className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                  title="Delete"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
               </motion.div>
             );
           })}

@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pause, Play, Trash2, Star, ChevronDown, ChevronUp, Search, ExternalLink } from 'lucide-react';
+import { Plus, Pause, Play, Trash2, Star, ChevronDown, ChevronUp, Search, ExternalLink, Edit2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format, differenceInDays } from 'date-fns';
 import SubscriptionForm from '@/components/forms/SubscriptionForm';
@@ -20,7 +20,7 @@ const SORT_OPTIONS = [
 ];
 const FILTER_CATEGORIES = ['Streaming', 'AI & Productivity', 'Gaming', 'Telecom & Utilities', 'Food Delivery', 'Travel', 'Learning', 'Lifestyle', 'Local', 'Other'];
 
-function SubscriptionRow({ sub }) {
+function SubscriptionRow({ sub, onEdit }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [swiped, setSwiped] = useState(false);
@@ -143,6 +143,9 @@ function SubscriptionRow({ sub }) {
           </div>
           <p className="font-mono text-sm font-semibold text-foreground flex-shrink-0">{currSym}{sub.amount?.toFixed(2) || '0.00'}</p>
 
+          <button onClick={(e) => { e.stopPropagation(); setSwiped(false); onEdit(sub); }} className="p-1.5 rounded-lg hover:bg-muted transition-colors flex-shrink-0">
+            <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
+          </button>
           <button onClick={toggleFav} className="p-1.5 flex-shrink-0">
             <Star className="w-3.5 h-3.5" style={{ fill: isFav ? '#ffd60a' : 'none', color: isFav ? '#ffd60a' : '#7a7a7a' }} />
           </button>
@@ -213,6 +216,7 @@ function SubscriptionRow({ sub }) {
 export default function Subscriptions() {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
+  const [editSub, setEditSub] = useState(null);
   const [sortKey, setSortKey] = useState(() => localStorage.getItem('jar_sub_sort') || 'due_date');
   const [filterCats, setFilterCats] = useState([]);
   const [search, setSearch] = useState('');
@@ -301,7 +305,7 @@ export default function Subscriptions() {
       <div className="space-y-2">
         <QueryStateWrapper isLoading={subsLoading && subs.length === 0} error={subsError} onRetry={refetchSubs} skeletonCount={3} skeletonHeight="h-[72px]">
           <AnimatePresence>
-            {sorted.map(sub => <SubscriptionRow key={sub.id} sub={sub} />)}
+            {sorted.map(sub => <SubscriptionRow key={sub.id} sub={sub} onEdit={(s) => setEditSub(s)} />)}
           </AnimatePresence>
           {sorted.length === 0 && <p className="text-center text-muted-foreground py-12 text-sm">No subscriptions found</p>}
         </QueryStateWrapper>
@@ -312,6 +316,14 @@ export default function Subscriptions() {
           open={showForm}
           onClose={() => setShowForm(false)}
           onSaved={() => { setShowForm(false); queryClient.invalidateQueries({ queryKey: ['items'] }); }}
+        />
+      )}
+      {editSub && (
+        <SubscriptionForm
+          open={!!editSub}
+          onClose={() => setEditSub(null)}
+          onSaved={() => { setEditSub(null); queryClient.invalidateQueries({ queryKey: ['items'] }); }}
+          editItem={editSub}
         />
       )}
     </div>
