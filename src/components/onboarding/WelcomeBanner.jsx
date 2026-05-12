@@ -1,5 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
+
+const WELCOME_DISMISSED_KEY = 'jar_welcome_dismissed';
 
 const TIPS = [
   { icon: '💰', text: 'Tap + to log your first spend' },
@@ -9,11 +12,25 @@ const TIPS = [
 ];
 
 export default function WelcomeBanner({ userName }) {
+  const [dismissed, setDismissed] = useState(
+    () => localStorage.getItem(WELCOME_DISMISSED_KEY) === 'true'
+  );
+
+  const dismiss = () => {
+    localStorage.setItem(WELCOME_DISMISSED_KEY, 'true');
+    setDismissed(true);
+  };
+
+  if (dismissed) return null;
+
   return (
+    <AnimatePresence>
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="relative"
       style={{
         background: 'linear-gradient(135deg, rgba(171,255,79,0.08) 0%, rgba(255,238,50,0.04) 100%)',
         border: '1px solid rgba(171,255,79,0.2)',
@@ -22,6 +39,13 @@ export default function WelcomeBanner({ userName }) {
         marginBottom: 20,
       }}
     >
+      <button
+        onClick={dismiss}
+        className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="Dismiss welcome banner"
+      >
+        <X className="w-4 h-4" />
+      </button>
       <div className="flex items-center gap-3 mb-4">
         <span className="text-3xl">🫙</span>
         <div>
@@ -51,5 +75,6 @@ export default function WelcomeBanner({ userName }) {
         ))}
       </div>
     </motion.div>
+    </AnimatePresence>
   );
 }
