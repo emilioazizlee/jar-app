@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Pause, Play, Trash2, Star, ChevronDown, ChevronUp, Search, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -54,8 +55,20 @@ function SubscriptionRow({ sub }) {
 
   const deleteSub = async (e) => {
     e.stopPropagation();
+    const snapshot = { ...sub };
     await base44.entities.Item.delete(sub.id);
     queryClient.invalidateQueries({ queryKey: ['items'] });
+    toast.success(`${sub.title} deleted`, {
+      action: {
+        label: 'Undo',
+        onClick: async () => {
+          const { id, created_date, updated_date, ...restData } = snapshot;
+          await base44.entities.Item.create(restData);
+          queryClient.invalidateQueries({ queryKey: ['items'] });
+          toast.success(`${snapshot.title} restored`);
+        },
+      },
+    });
   };
 
   const onTouchStart = (e) => {

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -63,6 +64,22 @@ export default function Tasks() {
 
   const jarFill = (tasks.filter(t => t.status === 'Done').length % 10) * 10;
   const completedJars = Math.floor(tasks.filter(t => t.status === 'Done').length / 10);
+
+  const deleteTask = async (task) => {
+    await base44.entities.Item.delete(task.id);
+    queryClient.invalidateQueries({ queryKey: ['items'] });
+    toast.success('Task deleted', {
+      action: {
+        label: 'Undo',
+        onClick: async () => {
+          const { id, created_date, updated_date, ...restData } = task;
+          await base44.entities.Item.create(restData);
+          queryClient.invalidateQueries({ queryKey: ['items'] });
+          toast.success('Task restored');
+        },
+      },
+    });
+  };
 
   const openDetail = (taskId, e) => {
     if (e) e.stopPropagation();
@@ -225,8 +242,27 @@ export default function Tasks() {
             </motion.div>
           ))}
         </AnimatePresence>
-        {filtered.length === 0 && (
-          <p className="text-center text-muted-foreground py-12 text-sm">No tasks found. Create your first task!</p>
+        {filtered.length === 0 && tasks.length === 0 && (
+          <div className="text-center py-16">
+            <div className="text-5xl mb-4">📋</div>
+            <p className="font-mono text-sm text-foreground mb-1">No tasks yet</p>
+            <p className="text-muted-foreground text-sm mb-4">Create your first task to get started</p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-xl font-mono text-sm"
+            >
+              + New Task
+            </button>
+          </div>
+        )}
+        {filtered.length === 0 && tasks.length > 0 && (
+          <p className="text-center text-muted-foreground py-12 text-sm">No tasks match the current filters.</p>
+        )}
+        {filtered.length > 0 && tasks.length > 0 && tasks.every(t => t.status === 'Done') && (
+          <div className="text-center py-6">
+            <div className="text-3xl mb-2">🎉</div>
+            <p className="font-mono text-xs text-muted-foreground">All tasks completed!</p>
+          </div>
         )}
       </div>}
 

@@ -20,6 +20,8 @@ import { CHART_COLORS, CATEGORY_COLORS, PALETTE, getCategoryColor, getCategoryLa
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { calculateJars } from '@/lib/jarsCalc';
 import WelcomeBanner from '@/components/onboarding/WelcomeBanner';
+import SubscriptionInsights from '@/components/dashboard/SubscriptionInsights';
+import BudgetAlerts from '@/components/dashboard/BudgetAlerts';
 import { nivoTheme } from '@/lib/nivoTheme';
 import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
 
@@ -371,6 +373,12 @@ export default function Dashboard() {
             )}
           </div>
         </motion.div>
+      </div>
+
+      {/* Subscription insights + Budget alerts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+        <SubscriptionInsights items={allItems} />
+        <BudgetAlerts items={allItems} />
       </div>
 
       {/* Quick-tap row */}
