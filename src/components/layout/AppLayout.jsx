@@ -16,6 +16,8 @@ import NewUserOnboarding, { isOnboardingDone, markOnboardingDone } from '@/compo
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const SIDEBAR_PREF_KEY = 'jar_sidebar_collapsed';
+const ACTIVITY_KEY = 'jar_last_activity';
+const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
 export default function AppLayout() {
   const breakpoint = useBreakpoint();
@@ -40,6 +42,29 @@ export default function AppLayout() {
   useEffect(() => {
     if (isTablet) setCollapsed(true);
   }, [isTablet]);
+
+  // Session activity tracking + timeout check
+  useEffect(() => {
+    const updateActivity = () => localStorage.setItem(ACTIVITY_KEY, Date.now().toString());
+    const checkSession = async () => {
+      const lastActivity = localStorage.getItem(ACTIVITY_KEY);
+      if (!lastActivity) { updateActivity(); return; }
+      const elapsed = Date.now() - parseInt(lastActivity, 10);
+      if (elapsed > SESSION_TIMEOUT) {
+        console.log('[SECURITY] Session expired');
+        base44.auth.logout();
+        return;
+      }
+    };
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(e => window.addEventListener(e, updateActivity, { passive: true }));
+    const interval = setInterval(checkSession, 5 * 60 * 1000);
+    updateActivity();
+    return () => {
+      events.forEach(e => window.removeEventListener(e, updateActivity));
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleToggleSidebar = useCallback(() => {
     if (isMobile) {
