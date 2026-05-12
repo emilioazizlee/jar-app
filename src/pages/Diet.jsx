@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Apple } from 'lucide-react';
-import { useT } from '@/lib/i18n';
+
 import DietDashboard from '@/components/diet/DietDashboard';
 import TodayPage from '@/components/diet/TodayPage';
 import RecipesPage from '@/components/diet/RecipesPage';
@@ -11,7 +11,7 @@ import EatingOutPage from '@/components/diet/EatingOutPage';
 const TAB_IDS = ['today', 'eating_out', 'recipes', 'goals', 'history'];
 
 export default function Diet() {
-  const t = useT();
+
   const [tab, setTab] = useState('today');
 
   return (
@@ -23,7 +23,7 @@ export default function Diet() {
         </div>
         <div>
           <h1 className="mono-header text-lg text-foreground">{t('diet').toUpperCase()}</h1>
-          <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">{t('diet_subtitle')}</p>
+          <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">food log · macros · recipes · goals</p>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useT } from '@/lib/i18n';
+
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -16,7 +16,7 @@ import { CategoryBreakdownPanel, BurnRatePanel, NetWorthPanel, SpendingHeatmap }
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Finance() {
-  const t = useT();
+
   const queryClient = useQueryClient();
   const [showGoalForm, setShowGoalForm] = useState(false);
   const [editingSnapshot, setEditingSnapshot] = useState(false);
@@ -142,7 +142,7 @@ export default function Finance() {
   return (
     <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="mono-header text-lg md:text-xl text-foreground">{t('finance_dash')}</h1>
+        <h1 className="mono-header text-lg md:text-xl text-foreground">FINANCE DASHBOARD</h1>
         {isAnomaly && (
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-destructive/10 border border-destructive/30 rounded-xl">
             <AlertTriangle className="w-3.5 h-3.5 text-destructive" />
@@ -157,7 +157,7 @@ export default function Finance() {
       {/* What You Have */}
       <div className="bg-card border border-border rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
-          <p className="mono-header text-[10px] text-muted-foreground">{t('what_you_have')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground">WHAT YOU HAVE</p>
           <button
             onClick={() => editingSnapshot ? handleSaveSnapshot() : setEditingSnapshot(true)}
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-mono transition-colors"
@@ -177,7 +177,7 @@ export default function Finance() {
           </Button>
         )}
         <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-          <span className="font-mono text-xs text-muted-foreground">{t('total_available')}</span>
+          <span className="font-mono text-xs text-muted-foreground">TOTAL AVAILABLE</span>
           <span className="font-mono text-2xl font-bold text-primary">€{totalAvailable.toFixed(2)}</span>
         </div>
       </div>
@@ -185,15 +185,15 @@ export default function Finance() {
       {/* This Month */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-2">{t('income_month')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-2">INCOME THIS MONTH</p>
           <p className="font-mono text-2xl font-bold text-primary">€{monthIncome.toFixed(2)}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-2">{t('spent_month')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-2">SPENT THIS MONTH</p>
           <p className="font-mono text-2xl font-bold" style={{ color: PALETTE.orange }}>€{monthSpend.toFixed(2)}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-2">{t('net_change')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-2">NET CHANGE</p>
           <div className="flex items-center gap-2">
             {netChange >= 0
               ? <TrendingUp className="w-5 h-5 text-primary" />
@@ -207,7 +207,7 @@ export default function Finance() {
 
       {/* Recurring Outflow */}
       <div className="bg-card border border-border rounded-2xl p-5">
-        <p className="mono-header text-[10px] text-muted-foreground mb-4">{t('recurring_outflow')}</p>
+        <p className="mono-header text-[10px] text-muted-foreground mb-4">RECURRING OUTFLOW (ESTIMATED)</p>
         <div className="space-y-2">
           {[
             { label: t('subscriptions'), value: subBurn, color: PALETTE.yellow },

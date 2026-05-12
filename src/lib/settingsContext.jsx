@@ -5,7 +5,6 @@ const STORAGE_KEY = 'jar_prefs';
 const defaults = {
   density: 'Comfortable',
   radius: 'Rounded',
-  language: 'English',
   currency: 'EUR',
   country: 'Auto-detect',
   timezone: 'Auto-detect',
@@ -34,7 +33,6 @@ export function SettingsProvider({ children }) {
   const saveAll = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
     setSavedPrefs(prefs);
-    window.dispatchEvent(new Event('language-changed'));
     return true;
   }, [prefs]);
 

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import ProductAutocomplete from '@/components/shared/ProductAutocomplete';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useT } from '@/lib/i18n';
+
 
 const MEAL_SLOTS = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 const DIET_UNITS = ['g', 'ml', 'pcs', 'serving', 'cup', 'tbsp', 'tsp', 'L'];
@@ -100,7 +100,6 @@ function AddFoodForm({ slot, onSave, onCancel }) {
 }
 
 function MealSlot({ slot, slotLabel, logs, onAdd, onDelete }) {
-  const t = useT();
   const [adding, setAdding] = useState(false);
   const qc = useQueryClient();
   const today = format(new Date(), 'yyyy-MM-dd');
@@ -142,7 +141,7 @@ function MealSlot({ slot, slotLabel, logs, onAdd, onDelete }) {
           </div>
         ))}
         {logs.length === 0 && !adding && (
-          <div className="py-3 text-center font-mono text-xs text-muted-foreground/40">{t('empty_tap_log')}</div>
+          <div className="py-3 text-center font-mono text-xs text-muted-foreground/40">Empty — tap + to log</div>
         )}
       </div>
       <AnimatePresence>
@@ -159,7 +158,6 @@ function MealSlot({ slot, slotLabel, logs, onAdd, onDelete }) {
 }
 
 export default function TodayPage() {
-  const t = useT();
   const qc = useQueryClient();
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -206,7 +204,7 @@ export default function TodayPage() {
           <div className="flex items-center gap-2">
             <Droplets className="w-4 h-4 text-blue-400" />
             <span className="font-mono text-sm font-bold text-blue-400">{waterTotal.toFixed(2)} L</span>
-            <span className="font-mono text-xs text-muted-foreground">{t('water_today')}</span>
+            <span className="font-mono text-xs text-muted-foreground">water today</span>
           </div>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -219,7 +217,7 @@ export default function TodayPage() {
       </div>
 
       {MEAL_SLOTS.map(slot => (
-        <MealSlot key={slot} slot={slot} slotLabel={t(slot.toLowerCase())} logs={slotLogs(slot)} onAdd={addLog} />
+        <MealSlot key={slot} slot={slot} slotLabel={slot.charAt(0).toUpperCase() + slot.slice(1)} logs={slotLogs(slot)} onAdd={addLog} />
       ))}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useT } from '@/lib/i18n';
+
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -182,7 +182,7 @@ function PaymentRow({ payment, onEdit }) {
 }
 
 export default function Payments() {
-  const t = useT();
+
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
@@ -229,7 +229,7 @@ export default function Payments() {
     <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h1 className="mono-header text-lg md:text-xl text-foreground">{t('payments')}</h1>
+          <h1 className="mono-header text-lg md:text-xl text-foreground">PAYMENTS</h1>
           <p className="text-sm text-muted-foreground mt-1">{payments.length} {t('total').toLowerCase()}</p>
         </div>
         <motion.button
@@ -291,7 +291,7 @@ export default function Payments() {
           ))}
         </AnimatePresence>
         {sorted.length === 0 && (
-          <p className="text-center text-muted-foreground py-12 text-sm">{t('no_payments')}</p>
+          <p className="text-center text-muted-foreground py-12 text-sm">No payments found</p>
         )}
       </div>
 

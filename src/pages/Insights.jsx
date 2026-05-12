@@ -21,7 +21,7 @@ import { cleanLabel, isUUID } from '@/lib/labelUtils';
 import { intTickValues, intTickFormat, xTickFilter } from '@/lib/chartUtils';
 import InsightsFilterBar from '@/components/insights/InsightsFilterBar';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { useT } from '@/lib/i18n';
+
 
 const CHART_CARD = {
   background: '#141414',
@@ -78,7 +78,7 @@ function KpiCard({ label, value, color, delay = 0 }) {
 }
 
 export default function Insights() {
-  const t = useT();
+
   const [filters, setFilters] = useState({
     range: 'month',
     categories: [],
@@ -213,14 +213,14 @@ export default function Insights() {
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <KpiCard label={t('total_entries')} value={items.length} color={PALETTE.green} delay={0} />
-        <KpiCard label={t('total_spend')} value={`€${totalSpend.toFixed(0)}`} color={PALETTE.orange} delay={0.05} />
-        <KpiCard label={t('avg_daily')} value={`€${avgDailySpend.toFixed(2)}`} color={PALETTE.yellow} delay={0.1} />
+        <KpiCard label=TOTAL ENTRIES value={items.length} color={PALETTE.green} delay={0} />
+        <KpiCard label=TOTAL SPEND value={`€${totalSpend.toFixed(0)}`} color={PALETTE.orange} delay={0.05} />
+        <KpiCard label=AVG DAILY SPEND value={`€${avgDailySpend.toFixed(2)}`} color={PALETTE.yellow} delay={0.1} />
         <KpiCard label={t('jars_filled')} value={(items.length / 10).toFixed(1)} color={PALETTE.blue} delay={0.15} />
       </div>
 
       {/* Activity bar chart */}
-      <ChartCard title={t('activity')} delay={0.2}>
+      <ChartCard title=ACTIVITY delay={0.2}>
         <div className="h-48 md:h-56">
           {hasActivityData ? (
             <ResponsiveBar
@@ -254,7 +254,7 @@ export default function Insights() {
               motionConfig="gentle"
             />
           ) : (
-            <ChartEmptyState noDataText={t('no_data_period')} tryText={t('try_different_range')} />
+            <ChartEmptyState noDataText=No data yet for this period tryText=Try a different range or start logging. />
           )}
         </div>
       </ChartCard>
@@ -333,7 +333,7 @@ export default function Insights() {
               />
             </div>
           ) : (
-            <ChartEmptyState noDataText={t('no_data_period')} tryText={t('try_different_range')} />
+            <ChartEmptyState noDataText=No data yet for this period tryText=Try a different range or start logging. />
           )}
         </ChartCard>
       </div>
@@ -382,7 +382,7 @@ export default function Insights() {
               )}
             />
           ) : (
-            <ChartEmptyState noDataText={t('no_data_period')} tryText={t('try_different_range')} />
+            <ChartEmptyState noDataText=No data yet for this period tryText=Try a different range or start logging. />
           )}
         </div>
       </ChartCard>

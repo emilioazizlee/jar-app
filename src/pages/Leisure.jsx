@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useT } from '@/lib/i18n';
+
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -40,7 +40,7 @@ const CONTEXT_COLORS = {
 };
 
 export default function Leisure() {
-  const t = useT();
+
   const queryClient = useQueryClient();
   const { user } = useCurrentUser();
   const [showForm, setShowForm] = useState(false);
@@ -100,18 +100,18 @@ export default function Leisure() {
     <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h1 className="mono-header text-lg md:text-xl text-foreground">{t('leisure').toUpperCase()}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t('this_month')}: <span className="font-mono text-primary font-semibold">€{monthTotal.toFixed(2)}</span>
-            {' · '}{monthEntries.length} {t('entries')}
-          </p>
+          <h1 className="mono-header text-lg md:text-xl text-foreground">LEISURE</h1>
+           <p className="text-sm text-muted-foreground mt-1">
+             THIS MONTH: <span className="font-mono text-primary font-semibold">€{monthTotal.toFixed(2)}</span>
+             {' · '}{monthEntries.length} entries
+           </p>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-3 md:px-4 py-2 bg-primary text-primary-foreground rounded-xl font-mono text-sm min-h-[44px]"
         >
-          <Plus className="w-4 h-4" /> {t('log')}
+          <Plus className="w-4 h-4" /> LOG
         </motion.button>
       </div>
 
@@ -119,7 +119,7 @@ export default function Leisure() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         {/* Sub-tag donut */}
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">{t('by_category')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">BY CATEGORY</p>
           {subTagData.length > 0 ? (
             <div className="flex items-center gap-3">
               <div className="w-32 h-32 shrink-0">
@@ -157,12 +157,12 @@ export default function Leisure() {
                 ))}
               </div>
             </div>
-          ) : <p className="text-sm text-muted-foreground text-center py-6">{t('no_data_month')}</p>}
-        </div>
+          ) : <p className="text-sm text-muted-foreground text-center py-6">No data this month</p>}
+          </div>
 
-        {/* Context donut */}
+          {/* Context donut */}
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">{t('by_context')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">BY CONTEXT</p>
           {contextData.length > 0 ? (
             <div className="flex items-center gap-3">
               <div className="w-32 h-32 shrink-0">
@@ -195,12 +195,12 @@ export default function Leisure() {
                 ))}
               </div>
             </div>
-          ) : <p className="text-sm text-muted-foreground text-center py-6">{t('no_data_month')}</p>}
-        </div>
+          ) : <p className="text-sm text-muted-foreground text-center py-6">No data this month</p>}
+          </div>
 
-        {/* Top 5 most expensive */}
+          {/* Top 5 most expensive */}
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">{t('top_5_entries')}</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">TOP 5 ENTRIES</p>
           <div className="space-y-2">
             {top5.length > 0 ? top5.map((e, i) => (
               <div key={e.id} className="flex items-center gap-2">
@@ -216,7 +216,7 @@ export default function Leisure() {
       {/* Favorite people */}
       {favPeople.length > 0 && (
         <div className="bg-card border border-border rounded-2xl p-5">
-          <p className="mono-header text-[10px] text-muted-foreground mb-3">FAVORITE PEOPLE TO SPEND WITH</p>
+          <p className="mono-header text-[10px] text-muted-foreground mb-3">PEOPLE</p>
           <div className="flex flex-wrap gap-2">
             {favPeople.map(([person, count]) => (
               <div key={person} className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-xl">
