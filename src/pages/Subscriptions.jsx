@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { format, differenceInDays } from 'date-fns';
 import SubscriptionForm from '@/components/forms/SubscriptionForm';
 import BrandLogo from '@/components/subscriptions/BrandLogo';
+import QueryStateWrapper from '@/components/shared/QueryStateWrapper';
 
 const SORT_OPTIONS = [
   { key: 'due_date', label: 'Next Due' },
@@ -216,7 +217,7 @@ export default function Subscriptions() {
   const [filterCats, setFilterCats] = useState([]);
   const [search, setSearch] = useState('');
 
-  const { data: subs = [] } = useQuery({
+  const { data: subs = [], isLoading: subsLoading, error: subsError, refetch: refetchSubs } = useQuery({
     queryKey: ['items', 'subscriptions'],
     queryFn: () => base44.entities.Item.filter({ type: 'subscription' }, '-created_date', 200),
     initialData: [],
@@ -298,10 +299,12 @@ export default function Subscriptions() {
 
       {/* List */}
       <div className="space-y-2">
-        <AnimatePresence>
-          {sorted.map(sub => <SubscriptionRow key={sub.id} sub={sub} />)}
-        </AnimatePresence>
-        {sorted.length === 0 && <p className="text-center text-muted-foreground py-12 text-sm">No subscriptions found</p>}
+        <QueryStateWrapper isLoading={subsLoading && subs.length === 0} error={subsError} onRetry={refetchSubs} skeletonCount={3} skeletonHeight="h-[72px]">
+          <AnimatePresence>
+            {sorted.map(sub => <SubscriptionRow key={sub.id} sub={sub} />)}
+          </AnimatePresence>
+          {sorted.length === 0 && <p className="text-center text-muted-foreground py-12 text-sm">No subscriptions found</p>}
+        </QueryStateWrapper>
       </div>
 
       {showForm && (

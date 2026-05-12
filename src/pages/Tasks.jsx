@@ -15,6 +15,7 @@ import TasksBoardView from '@/components/tasks/TasksBoardView.jsx';
 import { format } from 'date-fns';
 import { getProjectName } from '@/lib/labelUtils';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import QueryStateWrapper from '@/components/shared/QueryStateWrapper';
 
 const STATUS_COLORS = {
   'Idea': '#7a7a7a',
@@ -35,7 +36,7 @@ export default function Tasks() {
   const [filterType, setFilterType] = useState('all');
   const [boardInitialStatus, setBoardInitialStatus] = useState('Planned');
 
-  const { data: tasks = [] } = useQuery({
+  const { data: tasks = [], isLoading: tasksLoading, error: tasksError, refetch: refetchTasks } = useQuery({
     queryKey: ['items', 'tasks', user?.email],
     queryFn: () => user ? base44.entities.Item.filter({ type: 'task', created_by: user.email }, '-created_date', 200) : [],
     enabled: !!user,
@@ -91,7 +92,7 @@ export default function Tasks() {
       <div className="flex items-center justify-between gap-2">
         <div>
           <h1 className="mono-header text-lg md:text-xl text-foreground">TASKS</h1>
-          <p className="text-sm text-muted-foreground mt-1">{filtered.length} tasks</p>
+          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">{filtered.length} tasks</p>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden sm:block">
@@ -154,6 +155,7 @@ export default function Tasks() {
 
       {/* Task list */}
       {viewMode === 'list' && <div className="space-y-2">
+      <QueryStateWrapper isLoading={tasksLoading && tasks.length === 0} error={tasksError} onRetry={refetchTasks} skeletonCount={4} skeletonHeight="h-[72px]">
         <AnimatePresence>
           {filtered.map((task, i) => (
             <motion.div
@@ -264,6 +266,7 @@ export default function Tasks() {
             <p className="font-mono text-xs text-muted-foreground">All tasks completed!</p>
           </div>
         )}
+      </QueryStateWrapper>
       </div>}
 
 

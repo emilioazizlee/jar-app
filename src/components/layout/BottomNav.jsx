@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -36,6 +36,13 @@ function haptic(style = 'light') {
 export default function BottomNav({ onOpenAdd }) {
   const location = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const handler = (e) => { if (e.key === 'Escape') setMoreOpen(false); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [moreOpen]);
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
@@ -115,6 +122,7 @@ export default function BottomNav({ onOpenAdd }) {
               <button
                 onClick={() => setMoreOpen(false)}
                 className="p-2 rounded-lg hover:bg-muted text-muted-foreground active:scale-95"
+                aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
               </button>
