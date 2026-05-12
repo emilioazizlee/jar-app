@@ -7,41 +7,44 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { SettingsProvider } from '@/lib/settingsContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { lazy, Suspense } from 'react';
 
 import AppLayout from './components/layout/AppLayout.jsx';
-import Dashboard from './pages/Dashboard';
-import Tasks from './pages/Tasks';
-import Spends from './pages/Spends';
-import Subscriptions from './pages/Subscriptions';
-import Payments from './pages/Payments';
-import Insights from './pages/Insights';
-import CalendarPage from './pages/CalendarPage';
-import ProjectPage from './pages/ProjectPage';
-import Diet from './pages/Diet';
-import Groceries from './pages/Groceries';
-import Health from './pages/Health';
-import Leisure from './pages/Leisure';
-import Finance from './pages/Finance';
-import Favorites from './pages/Favorites';
-import Settings from './pages/Settings';
-import Help from './pages/Help';
-import MyBrands from './pages/MyBrands';
-import StepTemplateLibrary from './components/settings/StepTemplateLibrary';
-import TaskDetail from './pages/TaskDetail';
-import Entries from './pages/Entries';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
-import BudgetLimits from './pages/BudgetLimits';
-import PlannerVisual from './pages/PlannerVisual';
-import CategoryManager from './pages/CategoryManager';
-import CustomFieldsManager from './pages/CustomFieldsManager';
-import ComponentMarketplace from './pages/ComponentMarketplace';
-import StarterPackBrowser from './pages/StarterPackBrowser';
-import AdvancedAnalytics from './pages/AdvancedAnalytics';
-import CurrencyRates from './pages/CurrencyRates';
-import CloudSync from './pages/CloudSync';
-import AccountantExport from './pages/AccountantExport';
-import JarsPage from './pages/Jars';
+
+// Lazy-loaded pages — split into separate chunks to reduce initial bundle
+const Dashboard        = lazy(() => import('./pages/Dashboard'));
+const Tasks            = lazy(() => import('./pages/Tasks'));
+const Spends           = lazy(() => import('./pages/Spends'));
+const Subscriptions    = lazy(() => import('./pages/Subscriptions'));
+const Payments         = lazy(() => import('./pages/Payments'));
+const Insights         = lazy(() => import('./pages/Insights'));
+const CalendarPage     = lazy(() => import('./pages/CalendarPage'));
+const ProjectPage      = lazy(() => import('./pages/ProjectPage'));
+const Diet             = lazy(() => import('./pages/Diet'));
+const Groceries        = lazy(() => import('./pages/Groceries'));
+const Health           = lazy(() => import('./pages/Health'));
+const Leisure          = lazy(() => import('./pages/Leisure'));
+const Finance          = lazy(() => import('./pages/Finance'));
+const Favorites        = lazy(() => import('./pages/Favorites'));
+const Settings         = lazy(() => import('./pages/Settings'));
+const Help             = lazy(() => import('./pages/Help'));
+const MyBrands         = lazy(() => import('./pages/MyBrands'));
+const StepTemplateLibrary = lazy(() => import('./components/settings/StepTemplateLibrary'));
+const TaskDetail       = lazy(() => import('./pages/TaskDetail'));
+const Entries          = lazy(() => import('./pages/Entries'));
+const PrivacyPolicy    = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService   = lazy(() => import('./pages/TermsOfService'));
+const BudgetLimits     = lazy(() => import('./pages/BudgetLimits'));
+const PlannerVisual    = lazy(() => import('./pages/PlannerVisual'));
+const CategoryManager  = lazy(() => import('./pages/CategoryManager'));
+const CustomFieldsManager = lazy(() => import('./pages/CustomFieldsManager'));
+const ComponentMarketplace = lazy(() => import('./pages/ComponentMarketplace'));
+const StarterPackBrowser = lazy(() => import('./pages/StarterPackBrowser'));
+const AdvancedAnalytics = lazy(() => import('./pages/AdvancedAnalytics'));
+const CurrencyRates    = lazy(() => import('./pages/CurrencyRates'));
+const CloudSync        = lazy(() => import('./pages/CloudSync'));
+const AccountantExport = lazy(() => import('./pages/AccountantExport'));
+const JarsPage         = lazy(() => import('./pages/Jars'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -67,6 +70,14 @@ const AuthenticatedApp = () => {
   }
 
   return (
+    <Suspense fallback={
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <span className="font-mono text-3xl font-bold text-primary tracking-widest">JAR</span>
+          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        </div>
+      </div>
+    }>
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
@@ -105,6 +116,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 
