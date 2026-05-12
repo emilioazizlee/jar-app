@@ -1,3 +1,9 @@
+/*
+ * SECURITY NOTE: localStorage is unencrypted and accessible via XSS.
+ * Only non-sensitive, user-preference data should be stored here.
+ * Sensitive data (auth tokens, personal info) must use secure backend storage.
+ */
+
 /**
  * Shared product database utilities — cross-module (Groceries + Diet)
  * Products stored in GroceryProduct entity. Local cache in localStorage for fast autocomplete.

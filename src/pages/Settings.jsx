@@ -205,19 +205,22 @@ export default function Settings() {
   const handleSidebarReset = () => {
     resetSidebarOrder();
     setSidebarResetDone(true);
-    setTimeout(() => setSidebarResetDone(false), 2500);
+    const t = setTimeout(() => setSidebarResetDone(false), 2500);
+    return () => clearTimeout(t);
   };
 
   const handleExportJSON = async () => {
     await exportAllDataJSON(allItems);
     setExportDone(true);
-    setTimeout(() => setExportDone(false), 2500);
+    const t = setTimeout(() => setExportDone(false), 2500);
+    return () => clearTimeout(t);
   };
 
   const handleExportCSV = async () => {
     await exportAllDataCSV(allItems);
     setCsvExportDone(true);
-    setTimeout(() => setCsvExportDone(false), 2500);
+    const t = setTimeout(() => setCsvExportDone(false), 2500);
+    return () => clearTimeout(t);
   };
 
   const now = new Date();

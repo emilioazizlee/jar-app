@@ -1,3 +1,9 @@
+/*
+ * SECURITY NOTE: localStorage is unencrypted and accessible via XSS.
+ * Only non-sensitive, user-preference data should be stored here.
+ * Sensitive data (auth tokens, personal info) must use secure backend storage.
+ */
+
 /**
  * JAR Brand Database
  * Personal brand memory stored in localStorage.

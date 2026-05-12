@@ -11,7 +11,16 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('[JAR Error Boundary]', error, errorInfo);
+    if (import.meta.env.DEV) {
+      console.error('[JAR Error]', error, errorInfo);
+    } else {
+      // Production: log sanitized error only — no user data
+      console.error('[JAR Error]', {
+        message: error.message,
+        stack: error.stack?.split('\n')[0],
+        component: errorInfo.componentStack?.split('\n')[1]?.trim(),
+      });
+    }
   }
 
   render() {

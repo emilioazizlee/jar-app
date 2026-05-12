@@ -1,3 +1,9 @@
+/*
+ * SECURITY NOTE: localStorage is unencrypted and accessible via XSS.
+ * Only non-sensitive, user-preference data should be stored here.
+ * Sensitive data (auth tokens, personal info) must use secure backend storage.
+ */
+
 /**
  * JAR Smart Category Memory
  * Maps item names → categories based on user history.
