@@ -147,6 +147,17 @@ const T = {
     all_entries: 'ALL ENTRIES',
     no_leisure: 'No leisure entries yet. Log your first one!',
     log: 'LOG',
+    // Diet sub-page
+    water_today: 'water today',
+    breakfast: 'Breakfast',
+    lunch: 'Lunch',
+    dinner: 'Dinner',
+    snack: 'Snack',
+    empty_tap_log: 'Empty — tap + to log',
+    // Insights filter
+    range_label: 'RANGE',
+    filter_label: 'FILTER',
+    clear_all: 'Clear all',
   },
 
   Russian: {
@@ -282,6 +293,15 @@ const T = {
     all_entries: 'ВСЕ ЗАПИСИ',
     no_leisure: 'Записей досуга пока нет. Добавьте первую!',
     log: 'ДОБАВИТЬ',
+    water_today: 'воды сегодня',
+    breakfast: 'Завтрак',
+    lunch: 'Обед',
+    dinner: 'Ужин',
+    snack: 'Перекус',
+    empty_tap_log: 'Пусто — нажмите + для добавления',
+    range_label: 'ПЕРИОД',
+    filter_label: 'ФИЛЬТР',
+    clear_all: 'Очистить',
   },
 
   Azerbaijani: {
@@ -417,6 +437,15 @@ const T = {
     all_entries: 'BÜTÜN QEYDLƏR',
     no_leisure: 'Hələ asudə vaxt qeydi yoxdur. İlkini əlavə edin!',
     log: 'ƏLAVƏ ET',
+    water_today: 'su bu gün',
+    breakfast: 'Səhər yeməyi',
+    lunch: 'Nahar',
+    dinner: 'Axşam yeməyi',
+    snack: 'Qəlyanaltı',
+    empty_tap_log: 'Boş — əlavə etmək üçün + toxunun',
+    range_label: 'ARALIK',
+    filter_label: 'FİLTR',
+    clear_all: 'Hamısını sil',
   },
 };
 
