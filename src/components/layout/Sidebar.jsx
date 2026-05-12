@@ -6,7 +6,7 @@ import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
   Calendar, CheckSquare, Apple, Heart, Settings, ShoppingBasket,
   ChevronLeft, ChevronRight, Plus, FolderOpen, Loader2, HelpCircle,
-  Wallet, Martini, Star, GripVertical, Package,
+  Wallet, Martini, Star, GripVertical, Package, ChevronDown,
 } from 'lucide-react';
 import { useIsDesktop } from '@/hooks/useBreakpoint';
 import { useQuery } from '@tanstack/react-query';
@@ -54,6 +54,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
   const [showNewProject, setShowNewProject] = useState(false);
+  const [collapsedProjects, setCollapsedProjects] = useState({});
   const [order, setOrder] = useState(() => loadSidebarOrder());
   const [dragging, setDragging] = useState(null); // { section, index }
   const [dragOver, setDragOver] = useState(null); // { section, index }
@@ -107,6 +108,19 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
     enabled: !!currentUser,
     initialData: [],
   });
+
+  const { data: sidebarTasks = [] } = useQuery({
+    queryKey: ['sidebar-tasks', currentUser?.email],
+    queryFn: () => currentUser
+      ? base44.entities.Item.filter({ created_by: currentUser.email, type: 'task' }, '-created_date', 100)
+      : [],
+    enabled: !!currentUser,
+    initialData: [],
+  });
+
+  const toggleProjectCollapse = (projectId) => {
+    setCollapsedProjects(prev => ({ ...prev, [projectId]: !prev[projectId] }));
+  };
 
   const handleProjectCreated = (project) => {
     navigate(`/project/${project.id}`);
@@ -253,12 +267,13 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
           <div>
             {!collapsed && (
               <div className="flex items-center justify-between px-3 mb-2">
+                <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground">Projects</p>
                 <button
                   onClick={() => setShowNewProject(true)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors text-primary"
+                  className="p-1 hover:bg-sidebar-accent rounded transition-colors text-muted-foreground hover:text-primary"
                   title="New Project"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}
@@ -272,6 +287,11 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                 {projects.map((project) => {
                   const path = `/project/${project.id}`;
                   const isActive = location.pathname === path;
+                  const projectTasks = sidebarTasks.filter(t =>
+                    t.status !== 'done' && t.tags?.some(tag => tag === `project:${project.id}`)
+                  );
+                  const isCollapsed = collapsedProjects[project.id];
+
                   return (
                     <motion.div
                       key={project.id}
@@ -279,27 +299,80 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
                     >
-                      <ProjectContextMenu project={project} onMobileClose={onMobileClose}>
-                        <Link
-                          to={path}
-                          onClick={onMobileClose}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
-                            isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
-                          }`}
-                          style={isActive ? { color: project.color } : {}}
-                        >
-                          <DynIcon
-                            name={project.icon || 'FolderOpen'}
-                            className="w-4 h-4 shrink-0"
-                            style={{ color: isActive ? project.color : undefined }}
-                          />
-                          {!collapsed && <span className="truncate">{project.name}</span>}
-                        </Link>
-                      </ProjectContextMenu>
+                      {/* Project row */}
+                      <div className="flex items-center gap-1">
+                        <ProjectContextMenu project={project} onMobileClose={onMobileClose}>
+                          <Link
+                            to={path}
+                            onClick={onMobileClose}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all flex-1 min-w-0 ${
+                              isActive ? 'bg-sidebar-accent' : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
+                            }`}
+                            style={isActive ? { color: project.color } : {}}
+                          >
+                            <DynIcon
+                              name={project.icon || 'FolderOpen'}
+                              className="w-4 h-4 shrink-0"
+                              style={{ color: isActive ? project.color : (project.color || undefined) }}
+                            />
+                            {!collapsed && (
+                              <>
+                                <span className="truncate flex-1">{project.name}</span>
+                                {projectTasks.length > 0 && (
+                                  <span className="font-mono text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">
+                                    {projectTasks.length}
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </Link>
+                        </ProjectContextMenu>
+                        {!collapsed && projectTasks.length > 0 && (
+                          <button
+                            onClick={() => toggleProjectCollapse(project.id)}
+                            className="p-1 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <ChevronDown className={`w-3 h-3 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Task list under project */}
+                      {!collapsed && !isCollapsed && projectTasks.length > 0 && (
+                        <div className="ml-3 mt-0.5 space-y-0">
+                          {projectTasks.slice(0, 4).map((task, idx) => (
+                            <div
+                              key={task.id}
+                              className="flex items-center gap-1.5 pl-5 pr-2 py-1 text-muted-foreground hover:text-foreground cursor-pointer hover:bg-sidebar-accent/50 rounded transition-all group"
+                              onClick={() => { navigate('/tasks'); onMobileClose(); }}
+                            >
+                              <span className="font-mono text-[9px] opacity-30 shrink-0">
+                                {idx === Math.min(projectTasks.length, 4) - 1 ? '└' : '├'}
+                              </span>
+                              <div className={`w-1 h-1 rounded-full shrink-0 ${
+                                task.priority >= 4 ? 'bg-red-500' :
+                                task.priority >= 3 ? 'bg-yellow-400' : 'bg-primary/60'
+                              }`} />
+                              <span className="text-xs truncate">{task.title || task.label}</span>
+                            </div>
+                          ))}
+                          {projectTasks.length > 4 && (
+                            <div
+                              className="pl-8 py-0.5 cursor-pointer hover:text-foreground transition-colors"
+                              onClick={() => { navigate('/tasks'); onMobileClose(); }}
+                            >
+                              <span className="font-mono text-[10px] text-muted-foreground">
+                                +{projectTasks.length - 4} more
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </motion.div>
                   );
                 })}
               </AnimatePresence>
+
               {!isLoading && projects.length === 0 && !collapsed && (
                 <button
                   onClick={() => setShowNewProject(true)}
@@ -318,6 +391,42 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                   <Plus className="w-4 h-4" />
                 </button>
               )}
+
+              {/* Standalone tasks (not linked to any project) */}
+              {!collapsed && (() => {
+                const standalone = sidebarTasks.filter(t =>
+                  t.status !== 'done' && !t.tags?.some(tag => tag.startsWith('project:'))
+                );
+                if (standalone.length === 0) return null;
+                return (
+                  <div className="mt-3">
+                    <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground px-3 mb-1">
+                      Standalone
+                    </p>
+                    {standalone.slice(0, 5).map(task => (
+                      <div
+                        key={task.id}
+                        className="flex items-center gap-2 px-3 py-1.5 text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 rounded-lg cursor-pointer transition-all"
+                        onClick={() => { navigate('/tasks'); onMobileClose(); }}
+                      >
+                        <div className={`w-1 h-1 rounded-full shrink-0 ${
+                          task.priority >= 4 ? 'bg-red-500' :
+                          task.priority >= 3 ? 'bg-yellow-400' : 'bg-primary/60'
+                        }`} />
+                        <span className="text-xs truncate">{task.title || task.label}</span>
+                      </div>
+                    ))}
+                    {standalone.length > 5 && (
+                      <div
+                        className="px-3 py-1 cursor-pointer"
+                        onClick={() => { navigate('/tasks'); onMobileClose(); }}
+                      >
+                        <span className="font-mono text-[10px] text-muted-foreground">+{standalone.length - 5} more</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </nav>

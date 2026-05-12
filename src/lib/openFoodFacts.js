@@ -1,7 +1,11 @@
 /**
- * Open Food Facts API — free, no API key
+ * Open Food Facts API — free, no API key required
+ * v1 search endpoint + v2 barcode lookup
  */
 
+const API_V2 = 'https://world.openfoodfacts.org/api/v2';
+
+// ─── Existing search (used by Groceries / Diet autocomplete) ──────────────────
 export async function searchOFF(query) {
   if (!query || query.length < 2) return [];
   try {
@@ -34,5 +38,81 @@ export async function searchOFF(query) {
     return results;
   } catch {
     return [];
+  }
+}
+
+// ─── v2 search (richer: image, nutriscore, barcode) ──────────────────────────
+export async function searchProduct(query) {
+  if (!query || query.length < 2) return [];
+  try {
+    const res = await fetch(
+      `${API_V2}/search?search_terms=${encodeURIComponent(query)}&page_size=10&fields=product_name,brands,image_url,nutriscore_grade,nutriments,code`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+    const data = await res.json();
+    return (data.products || [])
+      .filter(p => p.product_name)
+      .map(p => ({
+        name: p.product_name || 'Unknown Product',
+        brand: p.brands || '',
+        barcode: p.code || '',
+        image: p.image_url || '',
+        nutriscore: p.nutriscore_grade || '',
+        nutrition: {
+          kcal: p.nutriments?.['energy-kcal_100g'] || 0,
+          protein: p.nutriments?.proteins_100g || 0,
+          carbs: p.nutriments?.carbohydrates_100g || 0,
+          fat: p.nutriments?.fat_100g || 0,
+          fiber: p.nutriments?.fiber_100g || 0,
+        },
+        // Also expose flat fields for direct GroceryProduct mapping
+        calories_per_100: p.nutriments?.['energy-kcal_100g'] || null,
+        protein_per_100: p.nutriments?.proteins_100g || null,
+        carbs_per_100: p.nutriments?.carbohydrates_100g || null,
+        fat_per_100: p.nutriments?.fat_100g || null,
+        image_url: p.image_url || '',
+        has_nutrition: !!(p.nutriments?.['energy-kcal_100g']),
+        source: 'open_food_facts',
+      }));
+  } catch (e) {
+    console.error('OFF v2 search error:', e);
+    return [];
+  }
+}
+
+// ─── Barcode lookup ───────────────────────────────────────────────────────────
+export async function getProductByBarcode(barcode) {
+  if (!barcode) return null;
+  try {
+    const res = await fetch(
+      `${API_V2}/product/${barcode}?fields=product_name,brands,image_url,nutriscore_grade,nutriments`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+    const data = await res.json();
+    if (data.status !== 1) return null;
+    const p = data.product;
+    return {
+      name: p.product_name || 'Unknown',
+      brand: p.brands || '',
+      barcode,
+      image: p.image_url || '',
+      image_url: p.image_url || '',
+      nutriscore: p.nutriscore_grade || '',
+      nutrition: {
+        kcal: p.nutriments?.['energy-kcal_100g'] || 0,
+        protein: p.nutriments?.proteins_100g || 0,
+        carbs: p.nutriments?.carbohydrates_100g || 0,
+        fat: p.nutriments?.fat_100g || 0,
+      },
+      calories_per_100: p.nutriments?.['energy-kcal_100g'] || null,
+      protein_per_100: p.nutriments?.proteins_100g || null,
+      carbs_per_100: p.nutriments?.carbohydrates_100g || null,
+      fat_per_100: p.nutriments?.fat_100g || null,
+      has_nutrition: !!(p.nutriments?.['energy-kcal_100g']),
+      source: 'open_food_facts',
+    };
+  } catch (e) {
+    console.error('Barcode lookup error:', e);
+    return null;
   }
 }
