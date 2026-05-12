@@ -19,6 +19,21 @@ import { recordFieldValue } from '@/lib/learningDB';
 const SMOKE_CATEGORIES = ['cigarettes'];
 const ITEMIZED_CATEGORIES = ['groceries', 'food_out', 'pharmacy'];
 
+// Smart unit labels per category
+const CATEGORY_UNITS = {
+  cigarettes: { unit: 'pack',  label: 'packs',  trackQty: true  },
+  coffee:     { unit: 'cup',   label: 'cups',   trackQty: true  },
+  alcohol:    { unit: 'drink', label: 'drinks', trackQty: true  },
+  water:      { unit: 'L',     label: 'liters', trackQty: true  },
+  fuel:       { unit: 'L',     label: 'liters', trackQty: true  },
+  taxi:       { unit: 'trip',  label: 'trips',  trackQty: true  },
+  transport:  { unit: 'trip',  label: 'trips',  trackQty: true  },
+};
+
+function getUnitConfig(cat) {
+  return CATEGORY_UNITS[(cat || '').toLowerCase()] || { unit: 'x', label: 'times', trackQty: true };
+}
+
 export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
   const queryClient = useQueryClient();
   const [step, setStep] = useState(initialCategory ? 'details' : 'category');
@@ -132,7 +147,9 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
 
               {/* ── QUANTITY section ───────────────────────────────── */}
               <div className="bg-muted/40 rounded-xl p-4 border border-border/60">
-                <Label className="text-xs text-muted-foreground font-mono block mb-2">QUANTITY <span className="text-muted-foreground/50">(how many)</span></Label>
+                <Label className="text-xs text-muted-foreground font-mono block mb-2">
+                  QUANTITY <span className="text-muted-foreground/50">({getUnitConfig(category).label})</span>
+                </Label>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => update('quantity', Math.max(1, (form.quantity || 1) - 1))}
@@ -148,6 +165,7 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
                     }}
                     className="flex-1 bg-muted border-none font-mono text-2xl text-center h-12"
                   />
+                  <span className="font-mono text-xs text-muted-foreground min-w-[32px] text-center">{getUnitConfig(category).unit}</span>
                   <button
                     onClick={() => update('quantity', (form.quantity || 0) + 1)}
                     className="w-10 h-10 rounded-lg bg-muted border border-border font-mono text-lg hover:border-primary/40 transition-all flex items-center justify-center"
@@ -211,6 +229,11 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
                       >{amt}</button>
                     ))}
                   </div>
+                )}
+                {form.amount > 0 && form.quantity > 1 && (
+                  <p className="font-mono text-[11px] text-muted-foreground mt-2">
+                    ≈ {(Number(form.amount) / Number(form.quantity)).toFixed(2)} {form.currency} per {getUnitConfig(category).unit}
+                  </p>
                 )}
               </div>
 
