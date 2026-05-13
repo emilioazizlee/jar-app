@@ -1,3 +1,11 @@
+export default async function checkStaples(context) {
+  // ADD THIS FIRST:
+  if (!context.user?.email) {
+    return { error: 'Unauthorized' };
+  }
+  
+  // ... rest of your code
+}
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 // Scheduled daily. Checks all staple products and auto-adds to shopping list.
