@@ -41,9 +41,20 @@
     "user_id"
   ],
   "rls": {
-    "create": {},
-    "read": {
+    "create": {
       "data.user_id": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "update": {
       "data.user_id": "{{user.email}}"
