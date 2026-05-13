@@ -67,7 +67,11 @@
     "name"
   ],
   "rls": {
-    "create": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {},
     "update": {
       "$or": [
