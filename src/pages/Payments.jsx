@@ -230,7 +230,7 @@ export default function Payments() {
       <div className="flex items-center justify-between gap-2">
         <div>
           <h1 className="mono-header text-lg md:text-xl text-foreground">PAYMENTS</h1>
-          <p className="text-sm text-muted-foreground mt-1">{payments.length} {t('total').toLowerCase()}</p>
+          <p className="text-sm text-muted-foreground mt-1">{payments.length} total</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -244,12 +244,12 @@ export default function Payments() {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { labelKey: 'pending', val: totalPending, color: '#ffd60a' },
-          { labelKey: 'paid', val: totalPaid, color: '#39ff14' },
-          { labelKey: 'overdue', val: totalOverdue, color: '#ff2d2d' },
+          { label: 'PENDING', val: totalPending, color: '#ffd60a' },
+          { label: 'PAID', val: totalPaid, color: '#39ff14' },
+          { label: 'OVERDUE', val: totalOverdue, color: '#ff2d2d' },
         ].map(c => (
           <div key={c.label} className="bg-card border border-border rounded-2xl p-3 md:p-5">
-            <p className="mono-header text-[10px] text-muted-foreground mb-1">{t(c.labelKey)}</p>
+            <p className="mono-header text-[10px] text-muted-foreground mb-1">{c.label}</p>
             <p className="font-mono text-xl md:text-2xl font-bold" style={{ color: c.color }}>€{c.val.toFixed(0)}</p>
           </div>
         ))}
@@ -260,7 +260,7 @@ export default function Payments() {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1 flex-1 bg-muted rounded-lg px-3 py-1.5 min-w-[160px]">
             <Search className="w-3.5 h-3.5 text-muted-foreground" />
-            <input className="bg-transparent text-sm flex-1 outline-none font-mono" placeholder={t('search')} value={search} onChange={e => setSearch(e.target.value)} />
+            <input className="bg-transparent text-sm flex-1 outline-none font-mono" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           <select value={sortKey} onChange={e => handleSort(e.target.value)} className="bg-muted border-none rounded-lg px-3 py-1.5 font-mono text-xs text-foreground outline-none">
             {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
@@ -268,7 +268,7 @@ export default function Payments() {
           {['all', 'Pending', 'Paid', 'Overdue'].map(s => (
             <button key={s} onClick={() => setFilterStatus(s)}
               className={`px-3 py-1 rounded-full font-mono text-[11px] border transition-all ${filterStatus === s ? 'bg-orange-500/20 border-orange-400/40 text-orange-400' : 'border-border text-muted-foreground hover:text-foreground'}`}>
-              {s === 'all' ? t('all') : t(s.toLowerCase())}
+              {s === 'all' ? 'All' : s}
             </button>
           ))}
         </div>

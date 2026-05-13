@@ -22,7 +22,7 @@ export default function Diet() {
           <Apple className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <h1 className="mono-header text-lg text-foreground">{t('diet').toUpperCase()}</h1>
+          <h1 className="mono-header text-lg text-foreground">DIET</h1>
           <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">food log · macros · recipes · goals</p>
         </div>
       </div>
@@ -30,14 +30,14 @@ export default function Diet() {
       {/* Tabs — scrollable on mobile */}
       <div className="flex gap-1 overflow-x-auto scrollbar-none bg-muted/50 p-1 rounded-xl">
         {TAB_IDS.map((id) => {
-          const labelKey = id === 'today' ? 'today' : id === 'eating_out' ? 'eating_out' : id === 'recipes' ? 'recipes' : id === 'goals' ? 'goals' : 'history';
+          const labelMap = { today: 'Today', eating_out: 'Eating Out', recipes: 'Recipes', goals: 'Goals', history: 'History' };
           return (
             <button
               key={id}
               onClick={() => setTab(id)}
               className={`shrink-0 flex-1 min-w-[70px] px-3 py-2 rounded-lg text-xs font-mono font-bold transition-colors ${tab === id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              {t(labelKey)}
+              {labelMap[id] || id}
             </button>
           );
         })}

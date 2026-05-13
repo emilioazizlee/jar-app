@@ -94,11 +94,11 @@ export default function Tasks() {
       <div className="flex items-center justify-between gap-2">
         <div>
           <h1 className="mono-header text-lg md:text-xl text-foreground">TASKS</h1>
-          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">{filtered.length} {t('tasks').toLowerCase()}</p>
+          <p className="text-sm text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">{filtered.length} tasks</p>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden sm:block">
-          <JarVisual fillPercent={jarFill} completedJars={completedJars} size="sm" label={t('completed')} />
+          <JarVisual fillPercent={jarFill} completedJars={completedJars} size="sm" label="completed" />
           </div>
           {/* View toggle */}
           <div className="flex bg-muted rounded-lg p-1 gap-1">
@@ -255,7 +255,7 @@ export default function Tasks() {
               onClick={() => setShowForm(true)}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-xl font-mono text-sm"
             >
-              + {t('new_task')}
+              + NEW TASK
             </button>
           </div>
         )}

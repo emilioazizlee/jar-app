@@ -166,10 +166,10 @@ export default function Finance() {
           </button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          {numField('cash_on_hand', t('cash_hand'))}
-          {numField('bank_balance', t('bank_balance'))}
-          {numField('savings', t('savings'))}
-          {numField('monthly_income', t('monthly_income'))}
+          {numField('cash_on_hand', 'Cash on Hand')}
+          {numField('bank_balance', 'Bank Balance')}
+          {numField('savings', 'Savings')}
+          {numField('monthly_income', 'Monthly Income')}
         </div>
         {editingSnapshot && (
           <Button onClick={handleSaveSnapshot} className="w-full bg-primary text-primary-foreground font-mono mt-2">
@@ -210,9 +210,9 @@ export default function Finance() {
         <p className="mono-header text-[10px] text-muted-foreground mb-4">RECURRING OUTFLOW (ESTIMATED)</p>
         <div className="space-y-2">
           {[
-            { label: t('subscriptions'), value: subBurn, color: PALETTE.yellow },
-            { label: t('fixed_payments'), value: paymentsBurn, color: PALETTE.blue },
-            { label: t('daily_extrapolation'), value: extrapolatedSpend, color: PALETTE.orange },
+            { label: 'Subscriptions', value: subBurn, color: PALETTE.yellow },
+            { label: 'Fixed Payments', value: paymentsBurn, color: PALETTE.blue },
+            { label: 'Daily Extrapolation', value: extrapolatedSpend, color: PALETTE.orange },
           ].map(r => (
             <div key={r.label} className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
               <span className="font-mono text-xs text-muted-foreground">{r.label}</span>
