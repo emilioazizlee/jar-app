@@ -172,18 +172,36 @@ export default function Settings() {
   };
 
   const handleExportJSON = async () => {
+  if (allItems.length > 10000) {
+    toast.error('Too many items. Contact support for bulk export.');
+    return;
+  }
+  try {
     await exportAllDataJSON(allItems);
     setExportDone(true);
-    const t = setTimeout(() => setExportDone(false), 2500);
-    return () => clearTimeout(t);
-  };
+    setTimeout(() => setExportDone(false), 2500);
+    toast.success('Export complete');
+  } catch (err) {
+    toast.error('Export failed. Try again.');
+    console.error('Export error:', err);
+  }
+};
 
-  const handleExportCSV = async () => {
+const handleExportCSV = async () => {
+  if (allItems.length > 10000) {
+    toast.error('Too many items. Contact support for bulk export.');
+    return;
+  }
+  try {
     await exportAllDataCSV(allItems);
     setCsvExportDone(true);
-    const t = setTimeout(() => setCsvExportDone(false), 2500);
-    return () => clearTimeout(t);
-  };
+    setTimeout(() => setCsvExportDone(false), 2500);
+    toast.success('Export complete');
+  } catch (err) {
+    toast.error('Export failed. Try again.');
+    console.error('Export error:', err);
+  }
+};
 
  const handleLogout = async () => {
   try {
