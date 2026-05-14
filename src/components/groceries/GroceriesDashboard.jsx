@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { format, startOfMonth } from 'date-fns';
@@ -23,7 +22,6 @@ function StatCard({ icon: Icon, label, value, sub, color = PALETTE.green }) {
 }
 
 export default function GroceriesDashboard() {
-  const { t } = useTranslation();
   const now = new Date();
   const monthStart = format(startOfMonth(now), 'yyyy-MM-dd');
 
@@ -58,16 +56,16 @@ export default function GroceriesDashboard() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={ShoppingCart} label={t('groc.stat.thisMonth')} value={`€${monthTotal.toFixed(2)}`} sub={`${monthShops.length} ${t('groc.sub.shops')}`} color={PALETTE.yellow} />
-        <StatCard icon={Database} label={t('groc.stat.itemsDb')} value={products.length} sub={t('groc.sub.uniqueProducts')} />
-        <StatCard icon={AlertTriangle} label={t('groc.stat.expiringSoon')} value={expiringSoon.length} sub={t('groc.sub.within5days')} color={expiringSoon.length > 0 ? PALETTE.red : PALETTE.green} />
-        <StatCard icon={Store} label={t('groc.stat.shopsThisMonth')} value={monthShops.length} sub={t('groc.sub.trips')} color={PALETTE.orange} />
+        <StatCard icon={ShoppingCart} label="This Month" value={`€${monthTotal.toFixed(2)}`} sub={`${monthShops.length} shops`} color={PALETTE.yellow} />
+        <StatCard icon={Database} label="Items DB" value={products.length} sub="unique products" />
+        <StatCard icon={AlertTriangle} label="Expiring Soon" value={expiringSoon.length} sub="within 5 days" color={expiringSoon.length > 0 ? PALETTE.red : PALETTE.green} />
+        <StatCard icon={Store} label="Shops This Month" value={monthShops.length} sub="trips" color={PALETTE.orange} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {byStore.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-4">
-            <p className="font-mono text-[10px] text-muted-foreground mb-3">{t('groc.chart.byStore')}</p>
+            <p className="font-mono text-[10px] text-muted-foreground mb-3">Spend by Store</p>
             <div className="h-40">
               <ResponsivePie
                 data={byStore.map((s, i) => ({ id: s.name, label: s.name, value: s.value, color: COLORS[i % COLORS.length] }))}
@@ -100,7 +98,7 @@ export default function GroceriesDashboard() {
         )}
         {byCategory.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-4">
-            <p className="font-mono text-[10px] text-muted-foreground mb-3">{t('groc.chart.byCategory')}</p>
+            <p className="font-mono text-[10px] text-muted-foreground mb-3">Spend by Category</p>
             <div className="h-40">
               <ResponsivePie
                 data={byCategory.map((c, i) => ({ id: c.name, label: c.name, value: c.value, color: COLORS[i % COLORS.length] }))}
@@ -127,7 +125,7 @@ export default function GroceriesDashboard() {
 
       {recentShops.length > 0 && (
         <div className="bg-card border border-border rounded-xl p-4">
-          <p className="font-mono text-[10px] text-muted-foreground mb-3">{t('groc.recentShops')}</p>
+          <p className="font-mono text-[10px] text-muted-foreground mb-3">Recent Shops</p>
           <div className="space-y-2">
             {recentShops.map(s => (
               <div key={s.id} className="flex items-center justify-between py-1.5 border-b border-border/40 last:border-0">
@@ -135,7 +133,7 @@ export default function GroceriesDashboard() {
                   <Store className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                   <div>
                     <span className="font-mono text-sm">{s.store}</span>
-                    <span className="font-mono text-[10px] text-muted-foreground ml-2">{s.item_count || 0} {t('groc.items')}</span>
+                    <span className="font-mono text-[10px] text-muted-foreground ml-2">{s.item_count || 0} items</span>
                   </div>
                 </div>
                 <div className="text-right">

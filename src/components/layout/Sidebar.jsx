@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, DollarSign, RefreshCw, CreditCard, BarChart3,
   Calendar, CheckSquare, Apple, Settings, ShoppingBasket,
@@ -16,19 +15,19 @@ import NewProjectModal from '@/components/projects/NewProjectModal';
 import ProjectContextMenu from '@/components/projects/ProjectContextMenu';
 import { loadSidebarOrder, saveSidebarOrder } from '@/lib/sidebarOrder';
 
-const NAV_KEYS = {
-  '/': 'nav.dashboard',
-  '/jars': 'nav.jars',
-  '/spends': 'nav.dailySpends',
-  '/subscriptions': 'nav.subscriptions',
-  '/payments': 'nav.payments',
-  '/finance': 'nav.finance',
-  '/insights': 'nav.insights',
-  '/calendar': 'nav.calendar',
-  '/tasks': 'nav.tasks',
-  '/diet': 'nav.diet',
-  '/groceries': 'nav.groceries',
-  '/leisure': 'nav.leisure',
+const NAV_LABELS = {
+  '/': 'Dashboard',
+  '/jars': 'Jars',
+  '/spends': 'Daily Spends',
+  '/subscriptions': 'Subscriptions',
+  '/payments': 'Payments',
+  '/finance': 'Finance',
+  '/insights': 'Insights',
+  '/calendar': 'Calendar',
+  '/tasks': 'Tasks',
+  '/diet': 'Diet',
+  '/groceries': 'Groceries',
+  '/leisure': 'Leisure',
 };
 
 const NAV_ICONS = {
@@ -47,7 +46,6 @@ const NAV_ICONS = {
 };
 
 export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
-  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
@@ -161,8 +159,8 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
   }, []);
 
   const SECTIONS = [
-    { label: t('nav.tracking'), key: 'TRACKING' },
-    { label: t('nav.life'), key: 'LIFE' },
+    { label: 'Tracking', key: 'TRACKING' },
+    { label: 'Life', key: 'LIFE' },
   ];
 
   const targetWidth = collapsed ? 64 : (isDesktop ? sidebarWidth : 240);
@@ -249,7 +247,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
                         }`}
                       >
                         <Icon className="w-4 h-4 shrink-0" />
-                        {!collapsed && <span className="flex-1">{t(NAV_KEYS[path] || path)}</span>}
+                        {!collapsed && <span className="flex-1">{NAV_LABELS[path] || path}</span>}
                         {!collapsed && (
                           <GripVertical className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-40 cursor-grab transition-opacity" />
                         )}
@@ -441,17 +439,17 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
         {/* Bottom fixed links */}
         <div className="px-2 pb-4 border-t border-sidebar-border pt-2 flex-shrink-0 space-y-0.5">
           {[
-            { path: '/favorites', Icon: Star, labelKey: 'nav.favorites' },
-            { path: '/settings', Icon: Settings, labelKey: 'nav.settings' },
-            { path: '/help', Icon: HelpCircle, labelKey: 'nav.help' },
-          ].map(({ path, Icon, labelKey }) => (
+            { path: '/favorites', Icon: Star, label: 'Favorites' },
+            { path: '/settings', Icon: Settings, label: 'Settings' },
+            { path: '/help', Icon: HelpCircle, label: 'Help' },
+          ].map(({ path, Icon, label }) => (
             <Link
               key={path}
               to={path}
               className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
             >
               <Icon className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>{t(labelKey)}</span>}
+              {!collapsed && <span>{label}</span>}
             </Link>
           ))}
         </div>
