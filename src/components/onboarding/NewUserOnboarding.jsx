@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useSettings } from '@/lib/settingsContext';
-import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
 import StarterPackStep from './StarterPackStep';
 import FeatureTourStep from './FeatureTourStep';
@@ -187,7 +186,6 @@ export default function NewUserOnboarding({ user, onDone }) {
 }
 
 function WelcomeStep({ onNext, userName }) {
-  const { t } = useTranslation();
   const firstName = userName ? userName.split(' ')[0] : '';
   return (
     <motion.div
@@ -197,7 +195,7 @@ function WelcomeStep({ onNext, userName }) {
       <div className="space-y-4">
         <div className="text-7xl">🫙</div>
         <h1 className="font-mono text-3xl font-bold text-primary tracking-wider">
-          {t('onboarding.welcome')}{firstName ? `, ${firstName}` : ''} {t('onboarding.toJar')}
+          Welcome{firstName ? `, ${firstName}` : ''} to JAR
         </h1>
         <p className="font-mono text-lg text-foreground">Fill Your Life.</p>
         <div className="text-left bg-card border border-border rounded-2xl p-6 space-y-3">

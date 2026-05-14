@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useTranslation } from 'react-i18next';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { calculateJars, filterThisMonth } from '@/lib/jarsCalc';
 import { ChevronDown } from 'lucide-react';
@@ -53,7 +52,6 @@ const JarVisual = ({ label, emoji, score, entryCount, color }) => {
 };
 
 export default function JarsPage() {
-  const { t } = useTranslation();
   const { user } = useCurrentUser();
 
   const { data: items = [] } = useQuery({
@@ -114,12 +112,12 @@ export default function JarsPage() {
   const tasksOpen = monthItems.filter(i => i.type === 'task' && i.status !== 'done');
 
   const categoryScores = [
-    { label: t('nav.finance'),   emoji: '💰', score: spends.length * 1,                                             entryCount: spends.length,        color: '#22c55e' },
-    { label: t('nav.tasks'),     emoji: '✅', score: tasksDone.length * 3 + tasksOpen.length * 1,                   entryCount: tasksDone.length + tasksOpen.length, color: '#3b82f6' },
-    { label: t('nav.diet'),      emoji: '🍽️', score: monthDiet.length * 2,                                          entryCount: monthDiet.length,     color: '#f59e0b' },
-    { label: t('nav.leisure'),   emoji: '🎉', score: monthLeisure.length * 1.5,                                     entryCount: monthLeisure.length,  color: '#ec4899' },
-    { label: t('nav.health'),    emoji: '💧', score: monthWater.length * 0.5,                                       entryCount: monthWater.length,    color: '#ef4444' },
-    { label: t('nav.groceries'), emoji: '🛒', score: monthShops.length * 0.5,                                       entryCount: monthShops.length,    color: '#8b5cf6' },
+    { label: 'Finance',   emoji: '💰', score: spends.length * 1,                                           entryCount: spends.length,        color: '#22c55e' },
+    { label: 'Tasks',     emoji: '✅', score: tasksDone.length * 3 + tasksOpen.length * 1,                 entryCount: tasksDone.length + tasksOpen.length, color: '#3b82f6' },
+    { label: 'Diet',      emoji: '🍽️', score: monthDiet.length * 2,                                        entryCount: monthDiet.length,     color: '#f59e0b' },
+    { label: 'Leisure',   emoji: '🎉', score: monthLeisure.length * 1.5,                                   entryCount: monthLeisure.length,  color: '#ec4899' },
+    { label: 'Health',    emoji: '💧', score: monthWater.length * 0.5,                                     entryCount: monthWater.length,    color: '#ef4444' },
+    { label: 'Groceries', emoji: '🛒', score: monthShops.length * 0.5,                                     entryCount: monthShops.length,    color: '#8b5cf6' },
   ];
 
   const [scoringOpen, setScoringOpen] = useState(false);
@@ -136,10 +134,10 @@ export default function JarsPage() {
           {totalJars.toFixed(1)}
         </div>
         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#555', letterSpacing: 4, marginTop: 4 }}>
-          {t('jars.filledThisMonth')}
+          JARS FILLED THIS MONTH
         </div>
         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444', marginTop: 8 }}>
-          {totalEntries} {t('jars.totalEntries')}
+          {totalEntries} total entries
         </div>
       </div>
 
