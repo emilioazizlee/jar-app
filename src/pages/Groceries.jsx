@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ShoppingBasket } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import GroceriesDashboard from '@/components/groceries/GroceriesDashboard';
 import AtHomePage from '@/components/groceries/AtHomePage';
 import ShoppingListPage from '@/components/groceries/ShoppingListPage';
@@ -12,19 +11,18 @@ import TemplatesPage from '@/components/groceries/TemplatesPage';
 import ReceiptMode from '@/components/groceries/ReceiptMode';
 
 export default function Groceries() {
-  const { t } = useTranslation();
   const [tab, setTab] = useState('dashboard');
   const [receiptOpen, setReceiptOpen] = useState(false);
 
   const TABS = [
-    { id: 'dashboard', label: t('groc.tab.dashboard') },
-    { id: 'athome', label: t('groc.tab.atHome') },
-    { id: 'list', label: t('groc.tab.list') },
-    { id: 'log', label: t('groc.tab.log') },
-    { id: 'items', label: t('groc.tab.items') },
-    { id: 'stores', label: t('groc.tab.stores') },
-    { id: 'templates', label: t('groc.tab.templates') },
-    { id: 'stats', label: t('groc.tab.stats') },
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'athome', label: 'At Home' },
+    { id: 'list', label: 'Shopping List' },
+    { id: 'log', label: 'Shop Log' },
+    { id: 'items', label: 'Items DB' },
+    { id: 'stores', label: 'Stores' },
+    { id: 'templates', label: 'Templates' },
+    { id: 'stats', label: 'Stats' },
   ];
 
   const openReceiptMode = () => {
@@ -41,15 +39,15 @@ export default function Groceries() {
             <ShoppingBasket className="w-4 h-4 text-secondary" />
           </div>
           <div>
-            <h1 className="mono-header text-lg text-foreground">{t('groc.title')}</h1>
-            <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">{t('groc.subtitle')}</p>
+            <h1 className="mono-header text-lg text-foreground">GROCERIES</h1>
+            <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">pantry · shopping · receipts · prices</p>
           </div>
         </div>
         <button
           onClick={openReceiptMode}
           className="px-3 md:px-4 py-2 rounded-xl bg-secondary text-secondary-foreground font-mono text-sm font-bold hover:bg-secondary/90 transition-colors min-h-[44px] shrink-0 active:scale-95"
         >
-          {t('groc.newShop')}
+          + NEW SHOP
         </button>
       </div>
 
