@@ -185,10 +185,17 @@ export default function Settings() {
     return () => clearTimeout(t);
   };
 
-  const handleLogout = async () => {
+ const handleLogout = async () => {
+  try {
     await base44.auth.logout();
+  } catch (err) {
+    console.error('Logout failed:', err);
+  } finally {
     localStorage.clear();
-  };
+    sessionStorage.clear();
+    window.location.href = '/login';
+  }
+};
 
   const now = new Date();
   const exportFilename = `jar_export_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
