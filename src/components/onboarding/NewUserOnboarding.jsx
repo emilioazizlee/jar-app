@@ -1,275 +1,201 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
-import { useSettings } from '@/lib/settingsContext';
-import i18n from '@/i18n';
-import StarterPackStep from './StarterPackStep';
-import FeatureTourStep from './FeatureTourStep';
+import { X, Check, Sparkles } from 'lucide-react';
 
-const ONBOARDING_KEY = 'jar_onboarding_done';
+export default function NewUserOnboarding({ onComplete }) {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
+  const [selectedPack, setSelectedPack] = useState(null);
 
-const COUNTRY_CURRENCY = {
-  Azerbaijan: 'AZN',
-  Spain: 'EUR',
-  France: 'EUR',
-  Germany: 'EUR',
-  USA: 'USD',
-  UK: 'GBP',
-  Russia: 'RUB',
-  Turkey: 'TRY',
-  Other: 'EUR',
-};
+  // Check if onboarding already completed
+  useEffect(() => {
+    const completed = localStorage.getItem('jar_onboarding_completed');
+    if (completed === 'true') {
+      onComplete?.();
+    }
+  }, [onComplete]);
 
-const COUNTRY_TIMEZONE = {
-  Azerbaijan: 'Asia/Baku',
-  Spain: 'Europe/Madrid',
-  France: 'Europe/Paris',
-  Germany: 'Europe/Berlin',
-  USA: 'America/New_York',
-  UK: 'Europe/London',
-  Russia: 'Europe/Moscow',
-  Turkey: 'Europe/Istanbul',
-  Other: 'Auto-detect',
-};
-
-const COUNTRIES = Object.keys(COUNTRY_CURRENCY);
-
-const LANGUAGES = [
-  { code: 'en', label: 'English' },
-  { code: 'ru', label: 'Русский' },
-  { code: 'az', label: 'Azərbaycanca' },
-  { code: 'es', label: 'Español' },
-  { code: 'fr', label: 'Français' },
-  { code: 'tr', label: 'Türkçe' },
-  { code: 'de', label: 'Deutsch' },
-];
-
-const TIMEZONES = [
-  'Auto-detect', 'UTC', 'Europe/Madrid', 'Asia/Baku', 'Europe/London',
-  'America/New_York', 'Europe/Paris', 'Europe/Berlin', 'Europe/Moscow', 'Europe/Istanbul',
-];
-
-export function isOnboardingDone() {
-  return !!localStorage.getItem(ONBOARDING_KEY);
-}
-
-export function markOnboardingDone() {
-  localStorage.setItem(ONBOARDING_KEY, '1');
-}
-
-// Detect browser language code → app language code
-function detectLanguage() {
-  const browserLang = navigator.language || navigator.userLanguage || 'en';
-  const base = browserLang.split('-')[0].toLowerCase();
-  const valid = ['en', 'ru', 'az', 'es', 'fr', 'tr', 'de'];
-  return valid.includes(base) ? base : 'en';
-}
-
-// Detect likely country from browser timezone
-function detectCountry() {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    if (tz.includes('Baku'))    return 'Azerbaijan';
-    if (tz.includes('Moscow') || tz.includes('Russia')) return 'Russia';
-    if (tz.includes('Istanbul') || tz.includes('Ankara')) return 'Turkey';
-    if (tz.includes('London'))  return 'UK';
-    if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Los_Angeles')) return 'USA';
-    if (tz.includes('Madrid'))  return 'Spain';
-    if (tz.includes('Paris'))   return 'France';
-    if (tz.includes('Berlin'))  return 'Germany';
-  } catch {}
-  return 'Other';
-}
-
-export default function NewUserOnboarding({ user, onDone }) {
-  const { setPref, saveAll } = useSettings();
-  const [step, setStep] = useState(0); // 0=welcome 1=profile 2=starter 3=tour
-
-  const detectedCountry = detectCountry();
-  const [profile, setProfile] = useState({
-    country: detectedCountry,
-    currency: COUNTRY_CURRENCY[detectedCountry] || 'EUR',
-    timezone: COUNTRY_TIMEZONE[detectedCountry] || 'Auto-detect',
-    language: detectLanguage(),
-  });
-  const [saving, setSaving] = useState(false);
-
-  const updateProfile = (key, val) => {
-    setProfile(p => {
-      const next = { ...p, [key]: val };
-      if (key === 'country') {
-        next.currency = COUNTRY_CURRENCY[val] || 'EUR';
-        next.timezone = COUNTRY_TIMEZONE[val] || 'Auto-detect';
-      }
-      if (key === 'language') {
-        i18n.changeLanguage(val);
-        localStorage.setItem('jar_language', val);
-      }
-      return next;
-    });
+  const handleComplete = () => {
+    // Save completion flag to localStorage
+    localStorage.setItem('jar_onboarding_completed', 'true');
+    
+    // Call completion callback
+    if (onComplete) {
+      onComplete();
+    } else {
+      // Navigate to dashboard
+      navigate('/');
+    }
   };
 
-  const handleProfileNext = () => {
-    setPref('country', profile.country);
-    setPref('currency', profile.currency);
-    setPref('timezone', profile.timezone);
-    setPref('language', profile.language);
-    saveAll();
-    i18n.changeLanguage(profile.language);
-    localStorage.setItem('jar_language', profile.language);
-    setStep(2);
+  const handleSkip = () => {
+    handleComplete();
   };
 
-  const handleStarterDone = async (choice, importedCategories) => {
-    setSaving(true);
-    try {
-      await base44.entities.OnboardingAnalytics.create({
-        user_id: user?.email || '',
-        starter_pack: choice,
-        categories_imported: importedCategories || [],
-        steps_completed: 3,
-        completed_at: new Date().toISOString(),
-        country: profile.country,
-        language: profile.language,
-        currency: profile.currency,
-      });
-    } catch {}
-    setSaving(false);
-    setStep(3);
-  };
-
-  const handleFinish = () => {
-    markOnboardingDone();
-    onDone();
-  };
+  const starterPacks = [
+    {
+      id: 'basic',
+      name: 'Basic Tracking',
+      description: 'Simple expense and task tracking',
+      icon: '📊',
+    },
+    {
+      id: 'lifestyle',
+      name: 'Full Lifestyle',
+      description: 'Track everything: money, health, tasks, diet',
+      icon: '🌟',
+    },
+    {
+      id: 'minimal',
+      name: 'Minimalist',
+      description: 'Just the essentials, nothing extra',
+      icon: '✨',
+    },
+  ];
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-background/95 backdrop-blur-sm p-4">
-      <AnimatePresence mode="wait">
-        {step === 0 && (
-          <WelcomeStep key="welcome" onNext={() => setStep(1)} userName={user?.full_name} />
-        )}
-        {step === 1 && (
-          <ProfileStep
-            key="profile"
-            profile={profile}
-            onUpdate={updateProfile}
-            onNext={handleProfileNext}
-            onBack={() => setStep(0)}
-            countries={COUNTRIES}
-            languages={LANGUAGES}
-            timezones={TIMEZONES}
-          />
-        )}
-        {step === 2 && (
-          <StarterPackStep
-            key="starter"
-            user={user}
-            onDone={handleStarterDone}
-            onBack={() => setStep(1)}
-            saving={saving}
-          />
-        )}
-        {step === 3 && (
-          <FeatureTourStep key="tour" onFinish={handleFinish} />
-        )}
-      </AnimatePresence>
+    <div className="fixed inset-0 bg-background z-50 flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full">
+        {/* Progress indicator */}
+        <div className="flex items-center gap-2 mb-8">
+          {[1, 2, 3].map((num) => (
+            <div
+              key={num}
+              className={`h-1 flex-1 rounded-full transition-all ${
+                num <= step ? 'bg-primary' : 'bg-muted'
+              }`}
+            />
+          ))}
+        </div>
 
-      {/* Step dots */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-        {[0, 1, 2, 3].map(i => (
-          <div key={i} className={`w-2 h-2 rounded-full transition-all ${step === i ? 'bg-primary w-6' : 'bg-muted'}`} />
-        ))}
+        <AnimatePresence mode="wait">
+          {/* Step 1: Welcome */}
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="text-center"
+            >
+              <Sparkles className="w-16 h-16 mx-auto mb-6 text-primary" />
+              <h1 className="text-4xl font-bold mb-4">Welcome to JAR</h1>
+              <p className="text-xl text-muted-foreground mb-8">
+                Fill your life.
+              </p>
+              <p className="text-muted-foreground mb-8">
+                JAR helps you track everything that matters: expenses, tasks, diet, and more.
+                Let's get you set up in 3 quick steps.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={handleSkip}
+                  className="px-6 py-3 rounded-lg border border-border hover:bg-accent transition-colors"
+                >
+                  Skip Setup
+                </button>
+                <button
+                  onClick={() => setStep(2)}
+                  className="px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  Get Started
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 2: Pick Starter Pack */}
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+            >
+              <h2 className="text-3xl font-bold mb-2">Choose Your Style</h2>
+              <p className="text-muted-foreground mb-8">
+                We'll set up your dashboard based on what you want to track.
+              </p>
+
+              <div className="grid gap-4 mb-8">
+                {starterPacks.map((pack) => (
+                  <button
+                    key={pack.id}
+                    onClick={() => setSelectedPack(pack.id)}
+                    className={`text-left p-6 rounded-lg border transition-all ${
+                      selectedPack === pack.id
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="text-4xl">{pack.icon}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-lg">{pack.name}</h3>
+                          {selectedPack === pack.id && (
+                            <Check className="w-5 h-5 text-primary" />
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {pack.description}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setStep(1)}
+                  className="px-6 py-3 rounded-lg border border-border hover:bg-accent transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={() => setStep(3)}
+                  disabled={!selectedPack}
+                  className="flex-1 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Continue
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 3: Ready */}
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="text-center"
+            >
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <Check className="w-10 h-10 text-primary" />
+              </div>
+              <h2 className="text-3xl font-bold mb-4">You're All Set!</h2>
+              <p className="text-muted-foreground mb-8">
+                Your dashboard is ready. Start tracking what matters.
+              </p>
+              <button
+                onClick={handleComplete}
+                className="px-8 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Go to Dashboard
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Step indicator */}
+        <div className="text-center mt-8 text-sm text-muted-foreground">
+          Step {step} of 3
+        </div>
       </div>
     </div>
-  );
-}
-
-function WelcomeStep({ onNext, userName }) {
-  const firstName = userName ? userName.split(' ')[0] : '';
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}
-      className="max-w-lg w-full text-center space-y-8"
-    >
-      <div className="space-y-4">
-        <div className="text-7xl">🫙</div>
-        <h1 className="font-mono text-3xl font-bold text-primary tracking-wider">
-          Welcome{firstName ? `, ${firstName}` : ''} to JAR
-        </h1>
-        <p className="font-mono text-lg text-foreground">Fill Your Life.</p>
-        <div className="text-left bg-card border border-border rounded-2xl p-6 space-y-3">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            JAR is your personal life tracker — expenses, tasks, grocery, diet, fitness, and more — all in one place.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Every entry fills your jar. The fuller your jar, the more intentional your life.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            It takes 2 minutes to set up. Let's go.
-          </p>
-        </div>
-      </div>
-      <button
-        onClick={onNext}
-        className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-mono font-bold text-lg hover:opacity-90 transition-all"
-        style={{ boxShadow: '0 0 30px rgba(171,255,79,0.3)' }}
-      >
-        Let's set up your JAR →
-      </button>
-    </motion.div>
-  );
-}
-
-function ProfileStep({ profile, onUpdate, onNext, onBack, countries, languages, timezones }) {
-  const sel = { borderRadius: 10, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, width: '100%' };
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }}
-      className="max-w-md w-full space-y-6"
-    >
-      <div>
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-1">Step 2 of 4</p>
-        <h2 className="font-mono text-2xl font-bold text-foreground">Your Profile</h2>
-        <p className="text-sm text-muted-foreground mt-1">These help JAR tailor the experience for you.</p>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-2">Country</label>
-          <select style={sel} value={profile.country} onChange={e => onUpdate('country', e.target.value)}>
-            {countries.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-2">Currency</label>
-          <div className="bg-card border border-border rounded-xl px-4 py-3 font-mono text-foreground">
-            {profile.currency} <span className="text-muted-foreground text-xs">(auto-set from country)</span>
-          </div>
-        </div>
-        <div>
-          <label className="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-2">Timezone</label>
-          <select style={sel} value={profile.timezone} onChange={e => onUpdate('timezone', e.target.value)}>
-            {timezones.map(tz => <option key={tz} value={tz}>{tz}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="font-mono text-xs text-muted-foreground uppercase tracking-wider block mb-2">Language</label>
-          <select style={sel} value={profile.language} onChange={e => onUpdate('language', e.target.value)}>
-            {languages.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
-          </select>
-          <p className="font-mono text-[10px] text-muted-foreground mt-1.5">Auto-detected from browser</p>
-        </div>
-      </div>
-
-      <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-mono text-sm hover:border-foreground transition-all">
-          ← Back
-        </button>
-        <button onClick={onNext} className="flex-2 flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-mono font-bold hover:opacity-90 transition-all">
-          Continue →
-        </button>
-      </div>
-    </motion.div>
   );
 }
