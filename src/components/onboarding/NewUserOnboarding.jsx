@@ -199,3 +199,8 @@ export default function NewUserOnboarding({ onComplete }) {
     </div>
   );
 }
+
+// Helper function to check if onboarding is done
+export function isOnboardingDone() {
+  return localStorage.getItem('jar_onboarding_completed') === 'true';
+}
