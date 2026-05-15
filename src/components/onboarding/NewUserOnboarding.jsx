@@ -204,3 +204,8 @@ export default function NewUserOnboarding({ onComplete }) {
 export function isOnboardingDone() {
   return localStorage.getItem('jar_onboarding_completed') === 'true';
 }
+
+// Helper function to mark onboarding as done
+export function markOnboardingDone() {
+  localStorage.setItem('jar_onboarding_completed', 'true');
+}
