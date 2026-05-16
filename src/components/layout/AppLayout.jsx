@@ -216,7 +216,7 @@ export default function AppLayout() {
         {showOnboarding && user && (
           <NewUserOnboarding
             user={user}
-            onDone={() => setShowOnboarding(false)}
+            onComplete={() => setShowOnboarding(false)}
           />
         )}
       </div>
