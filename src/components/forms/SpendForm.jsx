@@ -47,13 +47,9 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
-  // Route to specialized forms (after all hooks)
-    return <SmokeForm open={open} onClose={onClose} onSaved={onSaved} category={category} />;
-  if (category && ITEMIZED_CATEGORIES.includes(category)) {
-  }
-
-    // Smoke and itemized categories are handled by routing above — just set category
-    if (!SMOKE_CATEGORIES.includes(cat) && !ITEMIZED_CATEGORIES.includes(cat)) {
+  const selectCategory = (cat) => {
+    setCategory(cat);
+    if (!ITEMIZED_CATEGORIES.includes(cat)) {
       setStep('details');
     }
   };

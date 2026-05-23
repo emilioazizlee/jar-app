@@ -79,6 +79,7 @@ function parseLine(line, contextDate) {
   // Try: number + optional-unit + "of"? + product
   const qtyUnitMatch = line.match(/^(\d+(?:[.,]\d+)?)\s*(?:Pack\s+of|packs?\s+of|l|liters?|litres?|ml|kg|g|cups?|glasses?|bottles?|cans?|slices?|pieces?|pcs?)?\s*(?:of\s+)?(.+)/i);
 
+  let quantity = 1;
   let title = line.trim();
 
   if (qtyUnitMatch) {
