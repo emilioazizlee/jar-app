@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
-import SmokeForm from './SmokeForm';
 import GroceriesForm from './GroceriesForm';
 import SmartInput from '@/components/learn/SmartInput';
 import { recordFieldValue } from '@/lib/learningDB';
@@ -21,7 +20,6 @@ const ITEMIZED_CATEGORIES = ['groceries', 'food_out', 'pharmacy'];
 
 // Smart unit labels per category
 const CATEGORY_UNITS = {
-  cigarettes: { unit: 'pack',  label: 'packs',  trackQty: true  },
   coffee:     { unit: 'cup',   label: 'cups',   trackQty: true  },
   alcohol:    { unit: 'drink', label: 'drinks', trackQty: true  },
   water:      { unit: 'L',     label: 'liters', trackQty: true  },
@@ -50,15 +48,10 @@ export default function SpendForm({ open, onClose, onSaved, initialCategory }) {
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
   // Route to specialized forms (after all hooks)
-  if (category && SMOKE_CATEGORIES.includes(category)) {
     return <SmokeForm open={open} onClose={onClose} onSaved={onSaved} category={category} />;
-  }
   if (category && ITEMIZED_CATEGORIES.includes(category)) {
-    return <GroceriesForm open={open} onClose={onClose} onSaved={onSaved} category={category} />;
   }
 
-  const selectCategory = (cat) => {
-    setCategory(cat);
     // Smoke and itemized categories are handled by routing above — just set category
     if (!SMOKE_CATEGORIES.includes(cat) && !ITEMIZED_CATEGORIES.includes(cat)) {
       setStep('details');
