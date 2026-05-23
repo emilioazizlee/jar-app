@@ -32,7 +32,6 @@ const UNIT_PATTERNS = [
 
 // ─── Category keyword map ─────────────────────────────────────────────────────
 const CATEGORY_KW = {
-  cigarette: 'cigarettes', cig: 'cigarettes', smok: 'cigarettes', marlboro: 'cigarettes', tobacco: 'cigarettes',
   coffee: 'coffee', cafe: 'coffee', espresso: 'coffee', latte: 'coffee', cappuccino: 'coffee',
   taxi: 'taxi', uber: 'taxi', cab: 'taxi', bolt: 'taxi', lyft: 'taxi',
   food: 'food_out', restaurant: 'food_out', lunch: 'food_out', dinner: 'food_out', breakfast: 'food_out', sushi: 'food_out', pizza: 'food_out',
@@ -52,8 +51,6 @@ const DATE_KW = {
 };
 
 const PLACEHOLDERS = [
-  'Yesterday: 5 cigarettes, coffee €3, taxi €8',
-  'April: 10 Pack of Cigarettes, 2L of Wine, 6 kg of apples',
   'March: rent 800, groceries 250, gym 40',
 ];
 
@@ -79,11 +76,9 @@ function parseLine(line, contextDate) {
     if (regex.test(line)) { unit = u; break; }
   }
 
-  // Quantity + unit pattern: "10 Pack of Cigarettes", "2L of Wine", "6 kg of apples"
   // Try: number + optional-unit + "of"? + product
   const qtyUnitMatch = line.match(/^(\d+(?:[.,]\d+)?)\s*(?:Pack\s+of|packs?\s+of|l|liters?|litres?|ml|kg|g|cups?|glasses?|bottles?|cans?|slices?|pieces?|pcs?)?\s*(?:of\s+)?(.+)/i);
 
-  let quantity = 1;
   let title = line.trim();
 
   if (qtyUnitMatch) {
@@ -98,7 +93,6 @@ function parseLine(line, contextDate) {
   const packOfMatch = line.match(/(\d+)\s+packs?\s+of\s+(.+)/i);
   if (packOfMatch) {
     quantity = parseInt(packOfMatch[1]);
-    unit = 'pack';
     title = packOfMatch[2].trim();
   }
 
