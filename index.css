@@ -1,0 +1,630 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* ─── JAR Palette ─────────────────────────────────────── */
+    --color-green:   #abff4f;
+    --color-yellow:  #ffee32;
+    --color-red:     #c1121f;
+    --color-blue:    #0096c7;
+    --color-orange:  #ff6d00;
+    --color-violet:  #9d4edd;
+    --color-pink:    #ffb3c6;
+
+    /* Dim variants (10% opacity backgrounds) */
+    --color-green-dim:  rgba(171, 255,  79, 0.10);
+    --color-yellow-dim: rgba(255, 238,  50, 0.10);
+    --color-red-dim:    rgba(193,  18,  31, 0.10);
+    --color-blue-dim:   rgba(  0, 150, 199, 0.10);
+    --color-orange-dim: rgba(255, 109,   0, 0.10);
+    --color-violet-dim: rgba(157,  78, 221, 0.10);
+    --color-pink-dim:   rgba(255, 179, 198, 0.10);
+
+    /* ─── Semantic role tokens ─────────────────────────────── */
+    --color-brand:     #abff4f;   /* JAR identity, jar fills, CTAs  */
+    --color-recurring: #ffee32;   /* subscriptions, monthly burn     */
+    --color-alert:     #c1121f;   /* errors, overdue, health-alert   */
+    --color-positive:  #abff4f;   /* on-track, under-target, streaks */
+    --color-warning:   #ffee32;   /* expiring soon (3-7 days)        */
+    --color-data-1:    #0096c7;   /* category viz — blue             */
+    --color-data-2:    #ff6d00;   /* category viz — orange           */
+    --color-data-3:    #9d4edd;   /* category viz — violet           */
+    --color-data-4:    #ffb3c6;   /* category viz — pink             */
+    /* ──────────────────────────────────────────────────────── */
+
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 7.8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7.8%;
+    --popover-foreground: 0 0% 100%;
+
+    /* primary = green #abff4f  → hsl(88 100% 65%) */
+    --primary: 88 100% 65%;
+    --primary-foreground: 0 0% 4%;
+
+    /* secondary = yellow #ffee32 → hsl(55 100% 60%) */
+    --secondary: 55 100% 60%;
+    --secondary-foreground: 0 0% 4%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 48%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 100%;
+
+    /* destructive = red #c1121f → hsl(355 83% 37%) */
+    --destructive: 355 83% 37%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 88 100% 65%;
+
+    /* Chart tokens mapped to palette */
+    --chart-1: 88 100% 65%;   /* green  */
+    --chart-2: 55 100% 60%;   /* yellow */
+    --chart-3: 355 83% 37%;   /* red    */
+    --chart-4: 196 100% 39%;  /* blue   */
+    --chart-5: 281 68% 59%;   /* violet */
+
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 5.5%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 88 100% 65%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 88 100% 65%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 7.8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7.8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 88 100% 65%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 55 100% 60%;
+    --secondary-foreground: 0 0% 4%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 48%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 355 83% 37%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 88 100% 65%;
+    --chart-1: 88 100% 65%;
+    --chart-2: 55 100% 60%;
+    --chart-3: 355 83% 37%;
+    --chart-4: 196 100% 39%;
+    --chart-5: 281 68% 59%;
+    --sidebar-background: 0 0% 5.5%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 88 100% 65%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 88 100% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+  /* Remove number input spinners globally */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* Mobile: prevent iOS autozoom on input focus */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area utilities */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Hide scrollbar but keep scroll */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch active feedback — disable hover on pure touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:bg-muted:hover { background: transparent; }
+  .hover\:bg-sidebar-accent:hover { background: transparent; }
+}
+
+/* Mobile form dialogs — full height scroll */
+@media (max-width: 640px) {
+  [role="dialog"] [data-radix-scroll-area-viewport] {
+    max-height: 100vh;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+/* ─── Responsive breakpoint helpers ──────────────────────────────── */
+/* Fluid typography */
+h1, .h1 { font-size: clamp(22px, 5vw, 48px); }
+h2, .h2 { font-size: clamp(18px, 4vw, 36px); }
+h3, .h3 { font-size: clamp(16px, 3vw, 28px); }
+
+/* iOS Safari 100dvh fix */
+.h-screen-safe {
+  height: 100vh;
+  height: 100dvh;
+}
+.min-h-screen-safe {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* iOS Safari: fix position:fixed when virtual keyboard opens */
+@supports (-webkit-touch-callout: none) {
+  .keyboard-fix {
+    position: sticky;
+    bottom: 0;
+  }
+}
+
+/* Bottom sheet / slide-up modals on mobile */
+@media (max-width: 767px) {
+  [data-modal-mobile="sheet"] {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0 !important;
+    transform: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Dialog pull handle */
+  [data-modal-mobile="sheet"]::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    margin: 10px auto 4px;
+    flex-shrink: 0;
+  }
+}
+
+/* Tablet modals: 80% width */
+@media (min-width: 768px) and (max-width: 1024px) {
+  [role="dialog"] > div {
+    max-width: 80vw !important;
+  }
+}
+
+/* Desktop modals: fixed 600px */
+@media (min-width: 1025px) {
+  [role="dialog"] > div {
+    max-width: 600px !important;
+  }
+}
+
+/* Touch targets — 44px minimum (Apple HIG / WCAG) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* touch-manipulation disables double-tap zoom for faster response */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Responsive card grids */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 768px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (min-width: 1025px) {
+  .card-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+@media (min-width: 1440px) {
+  .card-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+}
+
+/* Tablet sidebar collapsed icon-only mode */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .sidebar-tablet-collapse {
+    width: 64px !important;
+  }
+}
+
+/* Landscape phone: slightly more compact */
+@media (max-width: 896px) and (orientation: landscape) and (max-height: 430px) {
+  nav.bottom-nav-bar {
+    height: calc(48px + env(safe-area-inset-bottom)) !important;
+  }
+  header { height: 48px !important; }
+  main { padding-bottom: 3rem !important; }
+}
+
+/* Prevent content shift when scrollbar appears on desktop */
+@media (min-width: 1025px) {
+  html { overflow-y: scroll; }
+}
+
+/* ─── Additional device breakpoints ───────────────────────── */
+/* iPhone SE / very small phones */
+@media (max-width: 374px) {
+  .max-w-7xl { padding-left: 8px; padding-right: 8px; }
+  h1, .h1 { font-size: 18px; }
+}
+
+/* 2K+ monitors */
+@media (min-width: 1921px) {
+  .max-w-7xl { max-width: 1600px; }
+  .max-w-5xl { max-width: 1200px; }
+  body { font-size: 16px; }
+}
+
+/* 4K monitors */
+@media (min-width: 2561px) {
+  .max-w-7xl { max-width: 2000px; }
+  body { font-size: 18px; }
+}
+
+/* ─── Browser compatibility ────────────────────────────────── */
+/* Safari backdrop-filter support */
+@supports (-webkit-backdrop-filter: blur(10px)) {
+  .backdrop-blur-sm { -webkit-backdrop-filter: blur(4px); }
+  .backdrop-blur { -webkit-backdrop-filter: blur(8px); }
+  .backdrop-blur-md { -webkit-backdrop-filter: blur(12px); }
+}
+
+/* Firefox scrollbar styling */
+@-moz-document url-prefix() {
+  * { scrollbar-width: thin; scrollbar-color: #1f1f1f #0a0a0a; }
+}
+
+/* CSS grid fallback for older browsers */
+@supports not (display: grid) {
+  .card-grid { display: flex; flex-wrap: wrap; }
+  .card-grid > * { flex: 1 1 280px; }
+}
+
+/* ─── Touch & mouse optimization ──────────────────────────── */
+/* Minimum touch targets on mobile */
+@media (pointer: coarse) {
+  button, a, [role="button"], select, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Larger tap zones for icon buttons */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Desktop: smaller click targets are fine */
+@media (pointer: fine) {
+  button, a[role="button"] {
+    min-height: 32px;
+  }
+  /* Enable hover only on pointer-fine (non-touch) devices */
+  .hover-only:hover {
+    opacity: 0.8;
+  }
+}
+
+/* Smooth wheel scrolling everywhere */
+* {
+  scroll-behavior: smooth;
+}
+html {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Samsung Internet / Android Chrome: virtual keyboard fix */
+@media (max-width: 767px) {
+  .keyboard-aware-footer {
+    position: sticky;
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* Large desktop: wider max content */
+@media (min-width: 1920px) {
+  .max-w-7xl { max-width: 90rem; }
+  .max-w-5xl { max-width: 72rem; }
+}
+
+/* Focus visible for keyboard nav */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  z-index: 9999;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px 16px;
+  border-radius: 0 0 8px 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top 0.15s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* Drag handle resize cursor on desktop sidebar */
+.sidebar-resize-handle {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  transition: background 0.15s;
+}
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle:active {
+  background: hsl(var(--primary) / 0.3);
+}
+
+/* ─── Global border-radius enforcement ─────────────────────────────── */
+/* Cards: 10px */
+.bg-card { border-radius: 10px; }
+/* Modals/dialogs: 10px */
+[role="dialog"] > div { border-radius: 10px; }
+/* Buttons */
+button, [role="button"] { border-radius: 8px; }
+/* Inputs */
+input:not([type="checkbox"]):not([type="radio"]), textarea, select { border-radius: 8px; }
+/* Badges / pills — small rounded elements */
+.badge, [class*="rounded-full"]:not(.w-1\\.5):not(.w-2):not(.w-3):not(.animate-pulse) { border-radius: 6px; }
+
+/* Mono header style */
+.mono-header {
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ─── Reduced motion ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Prevent horizontal overflow ────────────────────── */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ─── Screen-reader only utility ─────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Neon glow effects */
+.neon-glow {
+  box-shadow: 0 0 20px var(--color-green-dim);
+}
+.neon-glow-hover:hover {
+  box-shadow: 0 0 25px rgba(171, 255, 79, 0.25);
+}
+.neon-gold-glow {
+  box-shadow: 0 0 20px var(--color-yellow-dim);
+}
+
+/* ─── Modern glassmorphism card upgrade ─────────────────── */
+.bg-card {
+  background: rgba(20, 20, 20, 0.7) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Clickable cards lift on hover */
+a .bg-card:hover,
+button .bg-card:hover,
+[class*="cursor-pointer"].bg-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(171, 255, 79, 0.08);
+}
+
+/* ─── Smoother global transitions ───────────────────────── */
+button, a, [role="button"] {
+  transition: color 0.15s ease, background-color 0.15s ease,
+              border-color 0.15s ease, box-shadow 0.15s ease,
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.15s ease;
+}
+
+/* ─── Modern shimmer skeleton ────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.animate-pulse {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 0%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.6s infinite !important;
+}
+
+/* ─── Gradient primary button ────────────────────────────── */
+.bg-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(88 90% 55%) 100%) !important;
+}
+.bg-secondary {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(55 90% 52%) 100%) !important;
+}
+
+/* ─── Better card hover shadows ──────────────────────────── */
+.hover\:border-primary\/30:hover,
+.hover\:border-blue-400\/20:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Theme 1: Earthy Brown/Yellow */
+.earthy-brown {
+    --background: 0 5% 26%;
+    --foreground: 0 0% 100%;
+    --card: 36 8% 34%;
+    --card-foreground: 0 0% 100%;
+    --popover: 36 8% 34%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 54 62% 62%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 66 77% 71%;
+    --secondary-foreground: 0 0% 4%;
+    --muted: 36 8% 40%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 54 62% 62%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 36 8% 45%;
+    --input: 36 8% 45%;
+    --ring: 54 62% 62%;
+}
+
+/* Theme 2: Deep Blue/Purple */
+.deep-blue {
+    --background: 220 67% 17%;
+    --foreground: 0 0% 100%;
+    --card: 248 46% 43%;
+    --card-foreground: 0 0% 100%;
+    --popover: 248 46% 43%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 254 46% 58%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 44 61% 74%;
+    --secondary-foreground: 0 0% 4%;
+    --muted: 248 46% 50%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 254 46% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 248 46% 50%;
+    --input: 248 46% 50%;
+    --ring: 254 46% 58%;
+}
+
+/* Theme 3: Vibrant Red/Purple */
+.vibrant-red {
+    --background: 0 69% 60%;
+    --foreground: 0 0% 100%;
+    --card: 327 60% 48%;
+    --card-foreground: 0 0% 100%;
+    --popover: 327 60% 48%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 282 58% 41%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 253 51% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 327 60% 55%;
+    --muted-foreground: 0 0% 80%;
+    --accent: 282 58% 41%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 327 60% 55%;
+    --input: 327 60% 55%;
+    --ring: 282 58% 41%;
+}
