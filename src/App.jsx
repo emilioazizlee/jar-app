@@ -20,7 +20,6 @@ const Payments         = lazy(() => import('./pages/Payments'));
 const Insights         = lazy(() => import('./pages/Insights'));
 const CalendarPage     = lazy(() => import('./pages/CalendarPage'));
 const ProjectPage      = lazy(() => import('./pages/ProjectPage'));
-const Diet             = lazy(() => import('./pages/Diet'));
 const Groceries        = lazy(() => import('./pages/Groceries'));
 const Leisure          = lazy(() => import('./pages/Leisure'));
 const Finance          = lazy(() => import('./pages/Finance'));
@@ -88,7 +87,6 @@ const AuthenticatedApp = () => {
         <Route path="/insights" element={<Insights />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/project/:projectId" element={<ProjectPage />} />
-        <Route path="/diet" element={<Diet />} />
         <Route path="/groceries" element={<Groceries />} />
 <Route path="/leisure" element={<Leisure />} />
         <Route path="/finance" element={<Finance />} />
