@@ -268,6 +268,32 @@ const handleExportCSV = async () => {
           control={<Toggle value={prefs.theme || 'Dark'} onChange={v => savePref('theme', v)} options={['Dark','Light']} />}
         />
         <SettingsRow
+          icon={Sun} title="Color Theme"
+          subtitle="Pick a visual color scheme"
+          control={
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[
+                { key: 'Default', color: '#abff4f', label: 'Default' },
+                { key: 'Grayscale', color: '#dedede', label: 'Gray' },
+                { key: 'Fire', color: '#ff6d00', label: 'Fire' },
+              ].map(t => (
+                <button
+                  key={t.key}
+                  onClick={e => { e.stopPropagation(); savePref('colorTheme', t.key); }}
+                  title={t.label}
+                  style={{
+                    width: 28, height: 28, borderRadius: '50%',
+                    background: t.color,
+                    border: (prefs.colorTheme || 'Default') === t.key ? '2px solid #fff' : '2px solid transparent',
+                    outline: (prefs.colorTheme || 'Default') === t.key ? '2px solid ' + t.color : 'none',
+                    cursor: 'pointer', flexShrink: 0,
+                  }}
+                />
+              ))}
+            </div>
+          }
+        />
+        <SettingsRow
           icon={AlignJustify} title="Density"
           subtitle="Card padding & row height"
           control={<Toggle value={prefs.density || 'Comfortable'} onChange={v => savePref('density', v)} options={['Compact','Comfortable']} />}

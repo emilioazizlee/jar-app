@@ -11,6 +11,7 @@ const defaults = {
   bedtime: '01:00',
   oneHand: 'Off',
   theme: 'Dark',
+  colorTheme: 'Default',
 };
 
 function getStored() {
@@ -61,15 +62,18 @@ export function SettingsProvider({ children }) {
     } else {
       root.style.setProperty('--radius', '0.75rem');
     }
-    // Theme
-    if (prefs.theme === 'Light') {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
+    // Theme (dark/light)
+    const allThemeClasses = ['dark', 'light', 'grayscale', 'fire'];
+    allThemeClasses.forEach(c => root.classList.remove(c));
+
+    if (prefs.colorTheme && prefs.colorTheme !== 'Default') {
+      root.classList.add(prefs.colorTheme.toLowerCase());
+    } else if (prefs.theme === 'Light') {
+      root.classList.add('light');
     } else {
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
     }
-  }, [prefs.density, prefs.radius, prefs.theme]);
+  }, [prefs.density, prefs.radius, prefs.theme, prefs.colorTheme]);
 
   // On mount, load from storage
   useEffect(() => {
