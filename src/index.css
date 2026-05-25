@@ -507,7 +507,7 @@ html {
 [role="dialog"] > div { border-radius: 10px; }
 button, [role="button"] { border-radius: 8px; }
 input:not([type="checkbox"]):not([type="radio"]), textarea, select { border-radius: 8px; }
-.badge, [class*="rounded-full"]:not(.w-1\\.5):not(.w-2):not(.w-3):not(.animate-pulse) { border-radius: 6px; }
+.badge, [class*="rounded-full"]:not(.w-1\.5):not(.w-2):not(.w-3):not(.animate-pulse):not(.h-4):not(.h-5):not(.h-3) { border-radius: 6px; }
 
 .mono-header {
   font-family: 'JetBrains Mono', monospace;

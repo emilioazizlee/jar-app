@@ -71,7 +71,8 @@ function SingleJar({ width, height, fill, color, opacity = 1 }) {
         height={height - 12}
         rx={6}
         fill="transparent"
-        stroke="#1f1f1f"
+        stroke={color}
+        strokeOpacity={0.6}
         strokeWidth={1.5}
       />
       {/* Jar neck */}
@@ -82,7 +83,8 @@ function SingleJar({ width, height, fill, color, opacity = 1 }) {
         height={10}
         rx={3}
         fill="transparent"
-        stroke="#1f1f1f"
+        stroke={color}
+        strokeOpacity={0.6}
         strokeWidth={1.5}
       />
       {/* Fill */}
