@@ -5,10 +5,10 @@ import { resetSidebarOrder } from '@/lib/sidebarOrder';
 import { useSettings } from '@/lib/settingsContext';
 import { toast } from 'sonner';
 import {
-  User, Shield, Globe, DollarSign, Clock, Languages, Sun, AlignJustify,
-  Circle, List, Moon, Database, Download, FileText, Trash2,
-  Lock, Eye, EyeOff, Heart, Phone, Info, Mail, ScrollText,
-  ChevronRight, CheckCircle2, AlertTriangle, Smartphone, Zap, BarChart2,
+  User, Shield, Globe, DollarSign, Clock, Sun, AlignJustify,
+  Circle, List, Moon, Download, FileText, Trash2,
+  Lock, Eye, EyeOff, Info, Mail, ScrollText,
+  ChevronRight, Smartphone, Zap, BarChart2,
   Calendar, Cloud, RefreshCw, Tag, Sliders, LayoutGrid, LogOut
 } from 'lucide-react';
 
@@ -17,8 +17,6 @@ import PremiumBadge from '@/components/premium/PremiumBadge';
 import PaywallModal from '@/components/premium/PaywallModal';
 import ProfileHeader from '@/components/settings/ProfileHeader';
 import CrisisResources from '@/components/settings/CrisisResources';
-// import BulkTextImportModal from '@/components/settings/BulkTextImportModal';
-// import CSVImportModal from '@/components/settings/CSVImportModal';
 import ClearDataModal from '@/components/settings/ClearDataModal';
 import { exportAllDataJSON, exportAllDataCSV } from '@/lib/exportData';
 
@@ -68,8 +66,6 @@ function SettingsRow({ icon: Icon, title, subtitle, control, last, onClick, dang
     </div>
   );
 }
-
-
 
 function InlineSelect({ value, onChange, options }) {
   return (
@@ -134,6 +130,12 @@ function Toggle({ value, onChange, options }) {
   );
 }
 
+const THEME_PALETTES = [
+  { key: 'Default', label: 'Default', colors: ['#0a0a0a', '#1a1a1a', '#abff4f', '#ffee32'] },
+  { key: 'Ocean',   label: 'Ocean',   colors: ['#010e0f', '#0a2122', '#00a3a3', '#4a8fa8'] },
+  { key: 'Sand',    label: 'Sand',    colors: ['#fff1e6', '#f0dfc8', '#b07d5a', '#8a8c6b'] },
+];
+
 export default function Settings() {
   const { prefs, setPref, saveAll, hasUnsaved } = useSettings();
   const { isPremium, subscription } = usePremium();
@@ -142,7 +144,6 @@ export default function Settings() {
   const [sidebarResetDone, setSidebarResetDone] = useState(false);
   const [exportDone, setExportDone] = useState(false);
   const [csvExportDone, setCsvExportDone] = useState(false);
-  const [showCSVImport, setShowCSVImport] = useState(false);
   const [showClearData, setShowClearData] = useState(false);
 
   const { data: allItems = [] } = useQuery({
@@ -155,9 +156,7 @@ export default function Settings() {
     base44.auth.me().then(u => { if (u) setUser(u); }).catch(() => {});
   }, []);
 
-  const savePref = (key, val) => {
-    setPref(key, val);
-  };
+  const savePref = (key, val) => setPref(key, val);
 
   const handleSaveAll = () => {
     saveAll();
@@ -167,56 +166,40 @@ export default function Settings() {
   const handleSidebarReset = () => {
     resetSidebarOrder();
     setSidebarResetDone(true);
-    const t = setTimeout(() => setSidebarResetDone(false), 2500);
-    return () => clearTimeout(t);
+    setTimeout(() => setSidebarResetDone(false), 2500);
   };
 
   const handleExportJSON = async () => {
-  if (allItems.length > 10000) {
-    toast.error('Too many items. Contact support for bulk export.');
-    return;
-  }
-  try {
-    await exportAllDataJSON(allItems);
-    setExportDone(true);
-    setTimeout(() => setExportDone(false), 2500);
-    toast.success('Export complete');
-  } catch (err) {
-    toast.error('Export failed. Try again.');
-    console.error('Export error:', err);
-  }
-};
+    if (allItems.length > 10000) { toast.error('Too many items.'); return; }
+    try {
+      await exportAllDataJSON(allItems);
+      setExportDone(true);
+      setTimeout(() => setExportDone(false), 2500);
+      toast.success('Export complete');
+    } catch { toast.error('Export failed.'); }
+  };
 
-const handleExportCSV = async () => {
-  if (allItems.length > 10000) {
-    toast.error('Too many items. Contact support for bulk export.');
-    return;
-  }
-  try {
-    await exportAllDataCSV(allItems);
-    setCsvExportDone(true);
-    setTimeout(() => setCsvExportDone(false), 2500);
-    toast.success('Export complete');
-  } catch (err) {
-    toast.error('Export failed. Try again.');
-    console.error('Export error:', err);
-  }
-};
+  const handleExportCSV = async () => {
+    if (allItems.length > 10000) { toast.error('Too many items.'); return; }
+    try {
+      await exportAllDataCSV(allItems);
+      setCsvExportDone(true);
+      setTimeout(() => setCsvExportDone(false), 2500);
+      toast.success('Export complete');
+    } catch { toast.error('Export failed.'); }
+  };
 
- const handleLogout = async () => {
-  try {
-    await base44.auth.logout();
-  } catch (err) {
-    console.error('Logout failed:', err);
-  } finally {
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.href = '/login';
-  }
-};
+  const handleLogout = async () => {
+    try { await base44.auth.logout(); } catch {}
+    finally {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/login';
+    }
+  };
 
   const now = new Date();
-  const exportFilename = `jar_export_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
+  const exportFilename = `jar_export_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
   return (
     <div className="max-w-2xl mx-auto pb-32">
@@ -227,7 +210,6 @@ const handleExportCSV = async () => {
             Unsaved changes
           </span>
         )}
-
       </div>
 
       <ProfileHeader user={user} items={allItems} onUserUpdated={() => base44.auth.me().then(u => { if (u) setUser(u); })} />
@@ -268,32 +250,35 @@ const handleExportCSV = async () => {
           subtitle={prefs.colorTheme && prefs.colorTheme !== 'Default' ? 'Override by color theme' : undefined}
           control={<Toggle value={prefs.theme || 'Dark'} onChange={v => savePref('theme', v)} options={['Dark','Light']} />}
         />
-        <SettingsRow
-          icon={Sun} title="Color Theme"
-          subtitle="Pick a visual scheme (overrides dark/light)"
-          control={
-            <div style={{ display: 'flex', gap: 8 }}>
-              {[
-                { key: 'Default', color: '#abff4f', label: 'Default' },
-                { key: 'Ocean', color: '#006466', label: 'Ocean' },
-                { key: 'Sand', color: '#cb997e', label: 'Sand' },
-              ].map(t => (
+        {/* Color Theme Palette Picker */}
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid #1f1f1f' }}>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: '#fff', marginBottom: 10 }}>Color Theme</p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {THEME_PALETTES.map(t => {
+              const active = (prefs.colorTheme || 'Default') === t.key;
+              return (
                 <button
                   key={t.key}
                   onClick={e => { e.stopPropagation(); savePref('colorTheme', t.key); }}
-                  title={t.label}
                   style={{
-                    width: 28, height: 28, borderRadius: '50%',
-                    background: t.color,
-                    border: (prefs.colorTheme || 'Default') === t.key ? '2px solid #fff' : '2px solid transparent',
-                    outline: (prefs.colorTheme || 'Default') === t.key ? '2px solid ' + t.color : 'none',
-                    cursor: 'pointer', flexShrink: 0,
+                    flex: 1, borderRadius: 10, overflow: 'hidden', cursor: 'pointer',
+                    border: active ? '2px solid #fff' : '2px solid rgba(255,255,255,0.08)',
+                    boxShadow: active ? '0 0 0 1px rgba(255,255,255,0.3)' : 'none',
+                    transition: 'all 0.15s',
+                    padding: 0, background: 'none',
                   }}
-                />
-              ))}
-            </div>
-          }
-        />
+                >
+                  <div style={{ display: 'flex', height: 36 }}>
+                    {t.colors.map((c, i) => <div key={i} style={{ flex: 1, background: c }} />)}
+                  </div>
+                  <div style={{ background: t.colors[0], padding: '5px 8px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: t.key === 'Sand' ? '#5a4a3a' : '#999', textAlign: 'center', margin: 0 }}>{t.label}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <SettingsRow
           icon={AlignJustify} title="Density"
           subtitle="Card padding & row height"
@@ -453,24 +438,23 @@ const handleExportCSV = async () => {
 
       {/* Modals */}
       {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
-      {/* showCSVImport modal hidden - import system pending connection architecture */}
       {showClearData && <ClearDataModal onClose={() => setShowClearData(false)} />}
 
       {/* Sticky Save button */}
       {hasUnsaved && (
-         <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100, display: 'flex', gap: 8 }}>
-           <button
-             onClick={handleSaveAll}
-             style={{
-               background: '#abff4f', color: '#0a0a0a', fontFamily: 'JetBrains Mono, monospace',
-               fontSize: 13, fontWeight: 700, padding: '12px 32px', borderRadius: 12,
-               border: 'none', cursor: 'pointer', boxShadow: '0 0 24px rgba(171,255,79,0.4)',
-             }}
-           >
-             Save Changes
-           </button>
-         </div>
-       )}
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+          <button
+            onClick={handleSaveAll}
+            style={{
+              background: '#abff4f', color: '#0a0a0a', fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 13, fontWeight: 700, padding: '12px 32px', borderRadius: 12,
+              border: 'none', cursor: 'pointer', boxShadow: '0 0 24px rgba(171,255,79,0.4)',
+            }}
+          >
+            Save Changes
+          </button>
+        </div>
+      )}
     </div>
   );
 }

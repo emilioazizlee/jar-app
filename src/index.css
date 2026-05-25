@@ -517,7 +517,7 @@ body {
 }
 
 .bg-card {
-  background: rgba(20, 20, 20, 0.7) !important;
+  background: hsl(var(--card)) !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
