@@ -41,16 +41,16 @@ export default function UniversalAddButton({ externalOpen, onExternalClose }) {
         <Plus className="w-6 h-6" strokeWidth={2.5} />
       </motion.button>
 
-      {/* Desktop floating button — bare + icon, no background */}
+      {/* Desktop floating button — bare icon, no background, no padding */}
       <motion.button
         onClick={() => setOpen(true)}
         className="fixed z-40 hidden md:flex items-center justify-center"
-        style={{ bottom: 28, right: 32, background: 'none', border: 'none', padding: 8, cursor: 'pointer' }}
-        whileHover={{ scale: 1.4 }}
+        style={{ bottom: 28, right: 32, background: 'none', border: 'none', padding: 0, width: 'auto', height: 'auto', cursor: 'pointer' }}
+        whileHover={{ scale: 1.3 }}
         whileTap={{ scale: 0.85 }}
         title="New entry (Ctrl+Shift+N)"
       >
-        <Plus style={{ width: 28, height: 28, color: 'hsl(var(--primary))' }} strokeWidth={1.5} />
+        <Plus style={{ width: 24, height: 24, color: 'hsl(var(--primary))' }} strokeWidth={2} />
       </motion.button>
 
       <TypePickerModal open={open} onClose={handleClose} />
