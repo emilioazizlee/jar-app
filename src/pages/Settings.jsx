@@ -34,7 +34,7 @@ function SectionLabel({ children }) {
 
 function SectionCard({ children }) {
   return (
-    <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+<div className="bg-card border-border" style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
       {children}
     </div>
   );
