@@ -147,38 +147,47 @@
 
   /* Theme: Sand (Light Bronze palette — light) */
   .sand {
-    --background: 26 100% 94%;
+    --background: 26 55% 87%;
     --foreground: 75 10% 18%;
-    --card: 24 43% 88%;
+    --card: 24 28% 80%;
     --card-foreground: 75 10% 18%;
-    --popover: 24 43% 88%;
+    --popover: 24 28% 80%;
     --popover-foreground: 75 10% 18%;
-    --primary: 21 43% 50%;
+    --primary: 21 43% 42%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 60 12% 52%;
+    --secondary: 60 12% 44%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 24 30% 82%;
-    --muted-foreground: 75 10% 40%;
-    --accent: 24 30% 82%;
+    --muted: 24 22% 73%;
+    --muted-foreground: 75 10% 38%;
+    --accent: 24 22% 73%;
     --accent-foreground: 75 10% 18%;
     --destructive: 355 83% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 60 12% 74%;
-    --input: 60 12% 74%;
-    --ring: 21 43% 50%;
-    --chart-1: 21 43% 50%;
-    --chart-2: 60 12% 52%;
+    --border: 60 10% 66%;
+    --input: 60 10% 66%;
+    --ring: 21 43% 42%;
+    --chart-1: 21 43% 42%;
+    --chart-2: 60 12% 44%;
     --chart-3: 355 83% 45%;
-    --chart-4: 75 10% 40%;
-    --chart-5: 24 43% 65%;
-    --sidebar-background: 26 100% 90%;
+    --chart-4: 75 10% 38%;
+    --chart-5: 24 35% 58%;
+    --sidebar-background: 26 50% 83%;
     --sidebar-foreground: 75 10% 18%;
-    --sidebar-primary: 21 43% 50%;
+    --sidebar-primary: 21 43% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 30% 84%;
+    --sidebar-accent: 24 22% 75%;
     --sidebar-accent-foreground: 75 10% 18%;
-    --sidebar-border: 60 12% 74%;
-    --sidebar-ring: 21 43% 50%;
+    --sidebar-border: 60 10% 66%;
+    --sidebar-ring: 21 43% 42%;
+    /* Earthy palette overrides for Sand */
+    --color-green:   #6e9b3a;
+    --color-yellow:  #b8892a;
+    --color-green-dim:  rgba(110, 155,  58, 0.12);
+    --color-yellow-dim: rgba(184, 137,  42, 0.12);
+    --color-brand:   #6e9b3a;
+    --color-recurring: #b8892a;
+    --color-positive: #6e9b3a;
+    --color-warning:  #b8892a;
   }
 }
 

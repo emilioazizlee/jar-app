@@ -11,12 +11,12 @@ const JarVisual = ({ label, emoji, score, entryCount, color }) => {
 
   return (
     <div style={{
-      background: '#111', border: '1px solid #222', borderRadius: 16,
-      padding: 20, display: 'flex', flexDirection: 'column', gap: 12
+      background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 16,
+    padding: 20, display: 'flex', flexDirection: 'column', gap: 12
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: 24 }}>{emoji}</span>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#555' }}>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))' }}>
           {entryCount} entries
         </span>
       </div>
@@ -26,14 +26,14 @@ const JarVisual = ({ label, emoji, score, entryCount, color }) => {
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} style={{
             width: 8, height: 8, borderRadius: '50%',
-            background: i < dots ? color : '#222',
+            background: i < dots ? color : 'hsl(var(--border))',
             transition: 'background 0.4s ease'
           }} />
         ))}
       </div>
 
       {/* Progress bar */}
-      <div style={{ height: 3, background: '#1a1a1a', borderRadius: 2 }}>
+      <div style={{ height: 3, background: 'hsl(var(--muted))', borderRadius: 2 }}>
         <div style={{
           height: '100%', borderRadius: 2,
           width: `${Math.min(100, pct)}%`, background: color,
@@ -42,7 +42,7 @@ const JarVisual = ({ label, emoji, score, entryCount, color }) => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#aaa' }}>{label}</span>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>{label}</span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color }}>
           {score.toFixed(1)} pts
         </span>
@@ -127,16 +127,16 @@ export default function JarsPage() {
       {/* Hero */}
       <div style={{
         textAlign: 'center', padding: '32px 0',
-        borderBottom: '1px solid #1a1a1a', marginBottom: 24
+        borderBottom: '1px solid hsl(var(--border))', marginBottom: 24
       }}>
         <div style={{ fontSize: 64, marginBottom: 8 }}>🫙</div>
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 700, color: '#abff4f' }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 700, color: 'hsl(var(--primary))' }}>
           {totalJars.toFixed(1)}
         </div>
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#555', letterSpacing: 4, marginTop: 4 }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))', letterSpacing: 4, marginTop: 4 }}>
           JARS FILLED THIS MONTH
         </div>
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444', marginTop: 8 }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))', marginTop: 8 }}>
           {totalEntries} total entries
         </div>
       </div>
@@ -151,7 +151,7 @@ export default function JarsPage() {
       {/* Expandable scoring panel — fixed at bottom */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: '#111', borderTop: '1px solid #222', zIndex: 40,
+        background: 'hsl(var(--card))', borderTop: '1px solid hsl(var(--border))', zIndex: 40,
       }}>
         <button
           onClick={() => setScoringOpen(v => !v)}
@@ -162,13 +162,13 @@ export default function JarsPage() {
             fontFamily: 'JetBrains Mono, monospace',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#7a7a7a' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>
             <span>💡</span>
             <span>How JAR Scoring Works</span>
           </div>
           <ChevronDown
             style={{
-              width: 16, height: 16, color: '#7a7a7a',
+              width: 16, height: 16, color: 'hsl(var(--muted-foreground))',
               transform: scoringOpen ? 'rotate(180deg)' : 'none',
               transition: 'transform 0.2s ease',
             }}
@@ -187,18 +187,18 @@ export default function JarsPage() {
                 { emoji: '🛒', label: 'Groceries', rows: ['Shop logged = 0.5pts'] },
               ].map(cat => (
                 <div key={cat.label} style={{
-                  background: '#0a0a0a', borderRadius: 10,
-                  border: '1px solid #1f1f1f', padding: '10px 12px',
+                  background: 'hsl(var(--background))', borderRadius: 10,
+                  border: '1px solid hsl(var(--border))', padding: '10px 12px',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                     <span style={{ fontSize: 16 }}>{cat.emoji}</span>
-                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#aaa' }}>{cat.label}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))' }}>{cat.label}</span>
                   </div>
                   {cat.rows.map(row => {
                     const parts = row.split('=');
                     return (
-                      <div key={row} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', marginBottom: 2 }}>
-                        {parts[0]}= <span style={{ color: '#abff4f' }}>{parts[1]}</span>
+                      <div key={row} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'hsl(var(--muted-foreground))', marginBottom: 2 }}>
+                        {parts[0]}= <span style={{ color: 'hsl(var(--primary))' }}>{parts[1]}</span>
                       </div>
                     );
                   })}
@@ -206,11 +206,11 @@ export default function JarsPage() {
               ))}
             </div>
             <div style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#444',
-              textAlign: 'center', borderTop: '1px solid #1f1f1f', paddingTop: 10,
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))',
+              textAlign: 'center', borderTop: '1px solid hsl(var(--border))', paddingTop: 10,
             }}>
-              <span style={{ color: '#abff4f' }}>10 points = 1.0 JAR</span>
-              <span style={{ margin: '0 8px' }}>·</span>
+              <span style={{ color: 'hsl(var(--primary))' }}>10 points = 1.0 JAR</span>
+              <span style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))' }}>·</span>
               The fuller your JAR, the more intentional your life
             </div>
           </div>

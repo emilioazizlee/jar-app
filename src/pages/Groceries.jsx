@@ -35,9 +35,7 @@ export default function Groceries() {
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center shrink-0">
-            <ShoppingBasket className="w-4 h-4 text-secondary" />
-          </div>
+          <ShoppingBasket className="w-7 h-7 text-secondary shrink-0" />
           <div>
             <h1 className="mono-header text-lg text-foreground">GROCERIES</h1>
             <p className="font-mono text-[10px] text-muted-foreground hidden sm:block">pantry · shopping · receipts · prices</p>

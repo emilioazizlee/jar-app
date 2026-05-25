@@ -24,16 +24,16 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 
 const CHART_CARD = {
-  background: '#141414',
-  border: '1px solid #1f1f1f',
+  background: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
   borderRadius: 12,
   padding: 22,
   boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03)',
 };
 
 const TOOLTIP_STYLE = {
-  background: '#141414', border: '1px solid #1f1f1f', borderRadius: 8,
-  padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: '#fff',
+  background: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: 8,
+  padding: '10px 14px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--popover-foreground))',
 };
 
 function ChartEmptyState({ noDataText = 'No data yet for this period', tryText = 'Try a different range or start logging.' }) {
@@ -55,8 +55,8 @@ function ChartCard({ title, children, delay = 0, className = '' }) {
       style={CHART_CARD}
       className={className}
     >
-      <p className="font-mono text-[10px] uppercase tracking-[2px] text-[#7a7a7a] mb-2">{title}</p>
-      <div className="h-px bg-[#1f1f1f] mb-4" />
+      <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground mb-2">{title}</p>
+      <div className="h-px bg-border mb-4" />
       {children}
     </motion.div>
   );
@@ -70,8 +70,8 @@ function KpiCard({ label, value, color, delay = 0 }) {
       transition={{ delay }}
       style={CHART_CARD}
     >
-      <p className="font-mono text-[10px] uppercase tracking-[2px] text-[#7a7a7a] mb-2">{label}</p>
-      <div className="h-px bg-[#1f1f1f] mb-3" />
+      <p className="font-mono text-[10px] uppercase tracking-[2px] text-muted-foreground mb-2">{label}</p>
+      <div className="h-px bg-border mb-3" />
       <p className="font-mono font-bold" style={{ fontSize: 30, color }}>{value}</p>
     </motion.div>
   );
@@ -284,7 +284,7 @@ export default function Insights() {
                 {typeDistribution.map(t => (
                   <div key={t.key} className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full shrink-0" style={{ background: t.color }} />
-                    <span className="font-mono text-[10px] text-[#7a7a7a] flex-1">{t.name}</span>
+                    <span className="font-mono text-[10px] text-muted-foreground flex-1">{t.name}</span>
                     <span className="font-mono text-[10px] text-foreground">{t.value}</span>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {Math.round((t.value / totalTypeCount) * 100)}%
@@ -296,7 +296,7 @@ export default function Insights() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 gap-2">
               <span className="text-2xl opacity-30">📊</span>
-              <p className="font-mono text-[10px] text-[#7a7a7a] text-center">Log entries to see your<br />activity distribution.</p>
+              <p className="font-mono text-[10px] text-muted-foreground text-center">Log entries to see your<br />activity distribution.</p>
             </div>
           )}
         </ChartCard>
