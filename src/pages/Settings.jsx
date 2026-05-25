@@ -5,10 +5,10 @@ import { resetSidebarOrder } from '@/lib/sidebarOrder';
 import { useSettings } from '@/lib/settingsContext';
 import { toast } from 'sonner';
 import {
-  User, Shield, Globe, DollarSign, Clock, Sun, AlignJustify,
-  Circle, List, Moon, Download, FileText, Trash2,
-  Lock, Eye, EyeOff, Info, Mail, ScrollText,
-  ChevronRight, Smartphone, Zap, BarChart2,
+  User, Shield, Globe, DollarSign, Clock, Languages, Sun, AlignJustify,
+  Circle, List, Moon, Database, Download, FileText, Trash2,
+  Lock, Eye, EyeOff, Heart, Phone, Info, Mail, ScrollText,
+  ChevronRight, CheckCircle2, AlertTriangle, Smartphone, Zap, BarChart2,
   Calendar, Cloud, RefreshCw, Tag, Sliders, LayoutGrid, LogOut
 } from 'lucide-react';
 
@@ -166,27 +166,32 @@ export default function Settings() {
   const handleSidebarReset = () => {
     resetSidebarOrder();
     setSidebarResetDone(true);
-    setTimeout(() => setSidebarResetDone(false), 2500);
+    const t = setTimeout(() => setSidebarResetDone(false), 2500);
+    return () => clearTimeout(t);
   };
 
   const handleExportJSON = async () => {
-    if (allItems.length > 10000) { toast.error('Too many items.'); return; }
+    if (allItems.length > 10000) { toast.error('Too many items. Contact support for bulk export.'); return; }
     try {
       await exportAllDataJSON(allItems);
       setExportDone(true);
       setTimeout(() => setExportDone(false), 2500);
       toast.success('Export complete');
-    } catch { toast.error('Export failed.'); }
+    } catch (err) {
+      toast.error('Export failed. Try again.');
+    }
   };
 
   const handleExportCSV = async () => {
-    if (allItems.length > 10000) { toast.error('Too many items.'); return; }
+    if (allItems.length > 10000) { toast.error('Too many items. Contact support for bulk export.'); return; }
     try {
       await exportAllDataCSV(allItems);
       setCsvExportDone(true);
       setTimeout(() => setCsvExportDone(false), 2500);
       toast.success('Export complete');
-    } catch { toast.error('Export failed.'); }
+    } catch (err) {
+      toast.error('Export failed. Try again.');
+    }
   };
 
   const handleLogout = async () => {
@@ -199,7 +204,7 @@ export default function Settings() {
   };
 
   const now = new Date();
-  const exportFilename = `jar_export_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const exportFilename = `jar_export_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
 
   return (
     <div className="max-w-2xl mx-auto pb-32">
@@ -250,7 +255,8 @@ export default function Settings() {
           subtitle={prefs.colorTheme && prefs.colorTheme !== 'Default' ? 'Override by color theme' : undefined}
           control={<Toggle value={prefs.theme || 'Dark'} onChange={v => savePref('theme', v)} options={['Dark','Light']} />}
         />
-        {/* Color Theme Palette Picker */}
+
+        {/* Color Theme — palette rectangles */}
         <div style={{ padding: '14px 18px', borderBottom: '1px solid #1f1f1f' }}>
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: '#fff', marginBottom: 10 }}>Color Theme</p>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -262,7 +268,7 @@ export default function Settings() {
                   onClick={e => { e.stopPropagation(); savePref('colorTheme', t.key); }}
                   style={{
                     flex: 1, borderRadius: 10, overflow: 'hidden', cursor: 'pointer',
-                    border: active ? '2px solid #fff' : '2px solid rgba(255,255,255,0.08)',
+                    border: active ? '2px solid #fff' : '2px solid transparent',
                     boxShadow: active ? '0 0 0 1px rgba(255,255,255,0.3)' : 'none',
                     transition: 'all 0.15s',
                     padding: 0, background: 'none',
@@ -279,6 +285,7 @@ export default function Settings() {
             })}
           </div>
         </div>
+
         <SettingsRow
           icon={AlignJustify} title="Density"
           subtitle="Card padding & row height"
@@ -442,7 +449,7 @@ export default function Settings() {
 
       {/* Sticky Save button */}
       {hasUnsaved && (
-        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 100, display: 'flex', gap: 8 }}>
           <button
             onClick={handleSaveAll}
             style={{
