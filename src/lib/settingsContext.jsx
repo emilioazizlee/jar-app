@@ -10,8 +10,8 @@ const defaults = {
   timezone: 'Auto-detect',
   bedtime: '01:00',
   oneHand: 'Off',
-  theme: 'Dark',
   colorTheme: 'Default',
+  defaultLight: false,
 };
 
 function getStored() {
@@ -72,8 +72,8 @@ export function SettingsProvider({ children }) {
     } else if (ct === 'Sand') {
       root.classList.add('sand');
     } else {
-      // Default: respect dark/light pref
-      root.classList.add(prefs.theme === 'Light' ? 'light' : 'dark');
+      // Default: toggle between dark and light
+      root.classList.add(prefs.defaultLight ? 'light' : 'dark');
     }
 
     // One-handed mode
@@ -81,7 +81,7 @@ export function SettingsProvider({ children }) {
     body.removeAttribute('data-onehand');
     if (prefs.oneHand === 'Left') body.setAttribute('data-onehand', 'left');
     else if (prefs.oneHand === 'Right') body.setAttribute('data-onehand', 'right');
-  }, [prefs.density, prefs.radius, prefs.theme, prefs.colorTheme, prefs.oneHand]);
+  }, [prefs.density, prefs.radius, prefs.defaultLight, prefs.colorTheme, prefs.oneHand]);
 
   // On mount, load from storage
   useEffect(() => {

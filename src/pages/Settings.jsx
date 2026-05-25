@@ -133,7 +133,7 @@ function Toggle({ value, onChange, options }) {
 const THEME_PALETTES = [
   { key: 'Default', label: 'Default', colors: ['#0a0a0a', '#141414', '#1f1f1f', '#2a2a2a', '#abff4f', '#ffee32'], textColor: '#999' },
   { key: 'Ocean',   label: 'Ocean',   colors: ['#006466', '#065a60', '#0b525b', '#144552', '#1b3a4b', '#212f45', '#272640', '#312244', '#3e1f47', '#4d194d'], textColor: '#7ecfcf' },
-  { key: 'Sand',    label: 'Sand',    colors: ['#cb997e', '#ddbea9', '#ffe8d6', '#b7b7a4', '#a5a58d', '#6b705c'], textColor: '#5a4a3a' },
+  { key: 'Sand',    label: 'Sand',    colors: ['#e8d4b8', '#d4b896', '#f9c74f', '#90be6d', '#fcefb4', '#8d6e4a'], textColor: '#5a4a3a' },
 ];
 
 export default function Settings() {
@@ -250,11 +250,7 @@ export default function Settings() {
           subtitle="Saved task templates"
           control={<ActionBtn onClick={() => window.location.href = '/settings/templates'}>Manage</ActionBtn>}
         />
-        <SettingsRow
-          icon={Moon} title="Theme"
-          subtitle={prefs.colorTheme && prefs.colorTheme !== 'Default' ? 'Override by color theme' : undefined}
-          control={<Toggle value={prefs.theme || 'Dark'} onChange={v => savePref('theme', v)} options={['Dark','Light']} />}
-        />
+
 
         {/* Color Theme — palette rectangles */}
         <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
@@ -284,6 +280,28 @@ export default function Settings() {
               );
             })}
           </div>
+
+          {/* Light mode toggle — only shown for Default theme */}
+          {(prefs.colorTheme || 'Default') === 'Default' && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>☀️ Light mode</span>
+              <button
+                onClick={e => { e.stopPropagation(); savePref('defaultLight', !prefs.defaultLight); }}
+                style={{
+                  width: 40, height: 22, borderRadius: 11, padding: 0, position: 'relative',
+                  background: prefs.defaultLight ? 'hsl(var(--primary))' : 'hsl(var(--muted))',
+                  border: '1px solid hsl(var(--border))', cursor: 'pointer', transition: 'background 0.2s',
+                }}
+              >
+                <div style={{
+                  width: 16, height: 16, borderRadius: '50%', background: '#fff',
+                  position: 'absolute', top: 2,
+                  left: prefs.defaultLight ? 20 : 2,
+                  transition: 'left 0.2s ease',
+                }} />
+              </button>
+            </div>
+          )}
         </div>
 
         <SettingsRow

@@ -145,6 +145,42 @@
     --sidebar-ring: 181 100% 32%;
   }
 
+  /* Theme: Default Light */
+  .light {
+    --background: 0 0% 97%;
+    --foreground: 0 0% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
+    --primary: 88 80% 34%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 55 80% 42%;
+    --secondary-foreground: 0 0% 8%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 0 0% 8%;
+    --destructive: 355 83% 37%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 87%;
+    --input: 0 0% 87%;
+    --ring: 88 80% 34%;
+    --chart-1: 88 80% 34%;
+    --chart-2: 55 80% 42%;
+    --chart-3: 355 83% 37%;
+    --chart-4: 196 80% 40%;
+    --chart-5: 281 68% 55%;
+    --sidebar-background: 0 0% 95%;
+    --sidebar-foreground: 0 0% 8%;
+    --sidebar-primary: 88 80% 34%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 90%;
+    --sidebar-accent-foreground: 0 0% 8%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 88 80% 34%;
+  }
+
   /* Theme: Sand (Light Bronze palette — light) */
   .sand {
     --background: 26 55% 87%;
@@ -180,14 +216,14 @@
     --sidebar-border: 60 10% 66%;
     --sidebar-ring: 21 43% 42%;
     /* Earthy palette overrides for Sand */
-    --color-green:   #6e9b3a;
-    --color-yellow:  #b8892a;
-    --color-green-dim:  rgba(110, 155,  58, 0.12);
-    --color-yellow-dim: rgba(184, 137,  42, 0.12);
-    --color-brand:   #6e9b3a;
-    --color-recurring: #b8892a;
-    --color-positive: #6e9b3a;
-    --color-warning:  #b8892a;
+    --color-green:   #90be6d;
+    --color-yellow:  #fcefb4;
+    --color-green-dim:  rgba(144, 190, 109, 0.12);
+    --color-yellow-dim: rgba(252, 239, 180, 0.12);
+    --color-brand:   #90be6d;
+    --color-recurring: #f9c74f;
+    --color-positive: #90be6d;
+    --color-warning:  #f9c74f;
   }
 }
 
