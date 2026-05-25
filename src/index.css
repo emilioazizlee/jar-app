@@ -112,7 +112,7 @@
   /* Theme: Ocean (Stormy Teal palette — dark) */
   .ocean {
     --background: 187 78% 4%;
-    --foreground: 0 0% 95%;
+    --foreground: 187 15% 82%;
     --card: 187 60% 8%;
     --card-foreground: 0 0% 95%;
     --popover: 187 60% 8%;
@@ -184,7 +184,7 @@
   /* Theme: Sand (Light Bronze palette — light) */
   .sand {
     --background: 26 55% 87%;
-    --foreground: 75 10% 18%;
+    --foreground: 75 12% 28%;
     --card: 24 28% 80%;
     --card-foreground: 75 10% 18%;
     --popover: 24 28% 80%;

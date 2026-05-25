@@ -170,7 +170,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
       <motion.aside
         className="h-screen bg-sidebar border-r border-sidebar-border flex flex-col overflow-hidden z-30 relative"
         animate={{ width: targetWidth }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         {/* Logo */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-sidebar-border flex-shrink-0">
