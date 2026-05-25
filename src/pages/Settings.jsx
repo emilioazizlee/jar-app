@@ -57,8 +57,8 @@ function SettingsRow({ icon: Icon, title, subtitle, control, last, onClick, dang
         </div>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, color: danger ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))', lineHeight: 1.3 }}>{title}</p>
-        {subtitle && <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>{subtitle}</p>}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, fontWeight: 400, color: danger ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))', lineHeight: 1.3 }}>{title}</p>
+        {subtitle && <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 400, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>{subtitle}</p>}
       </div>
       <div style={{ flexShrink: 0 }}>
         {control}
