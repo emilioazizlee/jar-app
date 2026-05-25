@@ -264,8 +264,8 @@ export default function Settings() {
                   onClick={e => { e.stopPropagation(); savePref('colorTheme', t.key); }}
                   style={{
                     flex: 1, borderRadius: 10, overflow: 'hidden', cursor: 'pointer',
-                    border: active ? '2px solid hsl(var(--foreground))' : '2px solid transparent',
-                    boxShadow: active ? '0 0 0 1px hsl(var(--foreground) / 0.3)' : 'none',
+                            border: active ? '2px solid hsl(var(--foreground))' : '2px solid transparent',
+                    outline: active ? '1px solid hsl(var(--foreground) / 0.3)' : 'none',
                     transition: 'all 0.15s',
                     padding: 0, background: 'none',
                   }}
@@ -283,7 +283,7 @@ export default function Settings() {
 
           {/* Light mode toggle — only shown for Default theme */}
           {(prefs.colorTheme || 'Default') === 'Default' && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>☀️ Light mode</span>
               <button
                 onClick={e => { e.stopPropagation(); savePref('defaultLight', !prefs.defaultLight); }}

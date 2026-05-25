@@ -42,20 +42,16 @@ export default function UniversalAddButton({ externalOpen, onExternalClose }) {
         <Plus className="w-6 h-6" strokeWidth={2.5} />
       </motion.button>
 
-      {/* Desktop floating button — bottom-right */}
+      {/* Desktop floating button — bare + sign, no background */}
       <motion.button
         onClick={() => setOpen(true)}
-        className="fixed z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground items-center justify-center shadow-lg hidden md:flex"
-        style={{
-          bottom: 24,
-          right: 24,
-          boxShadow: '0 0 20px rgba(171,255,79,0.35)',
-        }}
-        whileHover={{ scale: 1.08, boxShadow: '0 0 28px rgba(171,255,79,0.5)' }}
-        whileTap={{ scale: 0.92 }}
+        className="fixed z-40 items-center justify-center hidden md:flex select-none"
+        style={{ bottom: 28, right: 32, background: 'none', border: 'none', padding: 0, cursor: 'pointer', lineHeight: 1 }}
+        whileHover={{ scale: 1.35 }}
+        whileTap={{ scale: 0.9 }}
         title="New entry (Ctrl+Shift+N)"
       >
-        <Plus className="w-6 h-6" strokeWidth={2.5} />
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 300, color: 'hsl(var(--primary))', lineHeight: 1 }}>+</span>
       </motion.button>
 
       <TypePickerModal open={open} onClose={handleClose} />

@@ -446,6 +446,7 @@ export default function Sidebar({ collapsed, onToggle, onMobileClose }) {
             <Link
               key={path}
               to={path}
+              onClick={onMobileClose}
               className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all"
             >
               <Icon className="w-4 h-4 shrink-0" />
