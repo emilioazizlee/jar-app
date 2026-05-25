@@ -131,9 +131,9 @@ function Toggle({ value, onChange, options }) {
 }
 
 const THEME_PALETTES = [
-  { key: 'Default', label: 'Default', colors: ['#0a0a0a', '#1a1a1a', '#abff4f', '#ffee32'] },
-  { key: 'Ocean',   label: 'Ocean',   colors: ['#010e0f', '#0a2122', '#00a3a3', '#4a8fa8'] },
-  { key: 'Sand',    label: 'Sand',    colors: ['#fff1e6', '#f0dfc8', '#b07d5a', '#8a8c6b'] },
+  { key: 'Default', label: 'Default', colors: ['#0a0a0a', '#141414', '#1f1f1f', '#2a2a2a', '#abff4f', '#ffee32'], textColor: '#999' },
+  { key: 'Ocean',   label: 'Ocean',   colors: ['#006466', '#065a60', '#0b525b', '#144552', '#1b3a4b', '#212f45', '#272640', '#312244', '#3e1f47', '#4d194d'], textColor: '#7ecfcf' },
+  { key: 'Sand',    label: 'Sand',    colors: ['#cb997e', '#ddbea9', '#ffe8d6', '#b7b7a4', '#a5a58d', '#6b705c'], textColor: '#5a4a3a' },
 ];
 
 export default function Settings() {
@@ -278,7 +278,7 @@ export default function Settings() {
                     {t.colors.map((c, i) => <div key={i} style={{ flex: 1, background: c }} />)}
                   </div>
                   <div style={{ background: t.colors[0], padding: '5px 8px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: t.key === 'Sand' ? '#5a4a3a' : '#999', textAlign: 'center', margin: 0 }}>{t.label}</p>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: t.textColor, textAlign: 'center', margin: 0 }}>{t.label}</p>
                   </div>
                 </button>
               );
