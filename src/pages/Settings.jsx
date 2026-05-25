@@ -59,8 +59,8 @@ function SettingsRow({ icon: Icon, title, subtitle, control, last, onClick, dang
         </div>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 15, color: danger ? '#ef4444' : '#ffffff', lineHeight: 1.3 }}>{title}</p>
-        {subtitle && <p style={{ fontSize: 13, color: '#7a7a7a', marginTop: 2 }}>{subtitle}</p>}
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: danger ? '#ef4444' : '#ffffff', lineHeight: 1.3 }}>{title}</p>
+        {subtitle && <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a', marginTop: 2 }}>{subtitle}</p>}
       </div>
       <div style={{ flexShrink: 0 }}>
         {control}
@@ -339,10 +339,10 @@ const handleExportCSV = async () => {
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <p style={{ fontSize: 15, color: '#fff' }}>Current Plan</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: '#fff' }}>Current Plan</p>
               {isPremium ? <PremiumBadge /> : <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', border: '1px solid #2a2a2a', borderRadius: 6, padding: '2px 8px' }}>FREE</span>}
             </div>
-            <p style={{ fontSize: 13, color: '#7a7a7a', marginTop: 2 }}>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a', marginTop: 2 }}>
               {isPremium
                 ? subscription?.status === 'trial'
                   ? `Trial ends ${subscription?.end_date ? new Date(subscription.end_date).toLocaleDateString() : 'soon'}`
