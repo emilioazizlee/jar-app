@@ -10,7 +10,6 @@ export default function UniversalAddButton({ externalOpen, onExternalClose }) {
     if (externalOpen) setOpen(true);
   }, [externalOpen]);
 
-  // Keyboard shortcut: Cmd+Shift+N or Ctrl+Shift+N
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'N') {
@@ -42,16 +41,16 @@ export default function UniversalAddButton({ externalOpen, onExternalClose }) {
         <Plus className="w-6 h-6" strokeWidth={2.5} />
       </motion.button>
 
-      {/* Desktop floating button — bare + sign, no background */}
+      {/* Desktop floating button — bare + icon, no background */}
       <motion.button
         onClick={() => setOpen(true)}
-        className="fixed z-40 items-center justify-center hidden md:flex select-none"
-        style={{ bottom: 28, right: 32, background: 'none', border: 'none', padding: 0, cursor: 'pointer', lineHeight: 1 }}
-        whileHover={{ scale: 1.35 }}
-        whileTap={{ scale: 0.9 }}
+        className="fixed z-40 hidden md:flex items-center justify-center"
+        style={{ bottom: 28, right: 32, background: 'none', border: 'none', padding: 8, cursor: 'pointer' }}
+        whileHover={{ scale: 1.4 }}
+        whileTap={{ scale: 0.85 }}
         title="New entry (Ctrl+Shift+N)"
       >
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 300, color: 'hsl(var(--primary))', lineHeight: 1 }}>+</span>
+        <Plus style={{ width: 28, height: 28, color: 'hsl(var(--primary))' }} strokeWidth={1.5} />
       </motion.button>
 
       <TypePickerModal open={open} onClose={handleClose} />
