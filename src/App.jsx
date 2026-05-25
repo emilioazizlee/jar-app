@@ -43,6 +43,7 @@ const CurrencyRates    = lazy(() => import('./pages/CurrencyRates'));
 const CloudSync        = lazy(() => import('./pages/CloudSync'));
 const AccountantExport = lazy(() => import('./pages/AccountantExport'));
 const JarsPage         = lazy(() => import('./pages/Jars'));
+const QuickTapManager  = lazy(() => import('./pages/QuickTapManager'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -109,6 +110,7 @@ const AuthenticatedApp = () => {
         <Route path="/marketplace" element={<ComponentMarketplace />} />
         <Route path="/starter" element={<StarterPackBrowser />} />
         <Route path="/jars" element={<JarsPage />} />
+        <Route path="/settings/quick-taps" element={<QuickTapManager />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

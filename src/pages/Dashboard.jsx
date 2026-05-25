@@ -12,7 +12,7 @@ import TypePickerModal from '@/components/add/TypePickerModal';
 import RepeatLastEntry from '@/components/dashboard/RepeatLastEntry';
 import CatchUpModal from '@/components/dashboard/CatchUpModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap } from 'lucide-react';
+import { Zap, Settings2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveBar } from '@nivo/bar';
@@ -177,14 +177,24 @@ export default function Dashboard() {
       }, 0);
   }, [allItems]);
 
-  const QUICK_TAPS = [
+  const DEFAULT_QUICK_TAPS = [
     { key: 'cigarettes', label: 'Cigarettes', icon: '🚬', color: CATEGORY_COLORS.cigarettes },
     { key: 'coffee',     label: 'Coffee',     icon: '☕', color: CATEGORY_COLORS.coffee     },
     { key: 'taxi',       label: 'Taxi',       icon: '🚕', color: CATEGORY_COLORS.taxi       },
     { key: 'food_out',   label: 'Food Out',   icon: '🍽️', color: CATEGORY_COLORS.food_out   },
     { key: 'groceries',  label: 'Groceries',  icon: '🛒', color: CATEGORY_COLORS.groceries  },
-    { key: '__custom__', label: 'Custom',     icon: '➕', color: CATEGORY_COLORS.other       },
   ];
+
+  const { data: userPresets = [] } = useQuery({
+    queryKey: ['quick-tap-presets', user?.email],
+    queryFn: () => user ? base44.entities.QuickTapPreset.filter({ created_by: user.email }, 'order', 100) : [],
+    enabled: !!user,
+    initialData: [],
+  });
+
+  const QUICK_TAPS = userPresets.length > 0
+    ? userPresets.map(p => ({ key: p.category_key, label: p.label, icon: p.icon, color: p.color || '#abff4f' }))
+    : DEFAULT_QUICK_TAPS;
 
   const getQuickTapCount = (category) => displayItems.filter(i => i.category === category).length;
 
@@ -419,13 +429,22 @@ export default function Dashboard() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <p className="mono-header text-[10px] text-muted-foreground">QUICK TAP</p>
-          <button
-            onClick={() => setCatchUpOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border hover:border-secondary/40 transition-all font-mono text-[10px] text-muted-foreground hover:text-secondary"
-          >
-            <Zap className="w-3 h-3" />
-            Catch-up
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/settings/quick-taps')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border hover:border-primary/40 transition-all font-mono text-[10px] text-muted-foreground hover:text-primary"
+            >
+              <Settings2 className="w-3 h-3" />
+              Manage
+            </button>
+            <button
+              onClick={() => setCatchUpOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 border border-border hover:border-secondary/40 transition-all font-mono text-[10px] text-muted-foreground hover:text-secondary"
+            >
+              <Zap className="w-3 h-3" />
+              Catch-up
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
           {QUICK_TAPS.map((tap, i) => (
@@ -439,6 +458,15 @@ export default function Dashboard() {
               delay={0.05 * i}
             />
           ))}
+          <QuickTapTile
+            key="__add__"
+            label="Manage"
+            icon="⚙️"
+            todayCount={0}
+            color="hsl(var(--muted-foreground))"
+            onClick={() => navigate('/settings/quick-taps')}
+            delay={0.05 * QUICK_TAPS.length}
+          />
         </div>
         {/* Repeat last entry */}
         <RepeatLastEntry items={allItems} />

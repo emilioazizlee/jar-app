@@ -1,0 +1,45 @@
+{
+  "name": "QuickTapPreset",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string",
+      "description": "Display name e.g. Marlboro Red"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji icon"
+    },
+    "category_key": {
+      "type": "string",
+      "description": "Category key used when logging (e.g. cigarettes, coffee, marlboro_red)"
+    },
+    "color": {
+      "type": "string",
+      "description": "Hex accent color"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "label",
+    "icon",
+    "category_key"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
