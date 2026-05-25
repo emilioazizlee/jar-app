@@ -1,8 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const NAV_ROUTES = ['/', '/spends', '/subscriptions', '/payments', '/insights', '/calendar', '/tasks', '/diet', '/groceries'];
-
+const NAV_ROUTES = ['/', '/spends', '/subscriptions', '/payments', '/insights', '/calendar', '/tasks', '/groceries'];
 /**
  * Global keyboard shortcut handler.
  * onOpenAdd    — opens universal + menu
