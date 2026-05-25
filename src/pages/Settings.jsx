@@ -26,7 +26,7 @@ const TIMEZONES = ['Auto-detect','Europe/Madrid','Asia/Baku','Europe/London','Am
 
 function SectionLabel({ children }) {
   return (
-    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#7a7a7a', marginBottom: 8, marginTop: 8 }}>
+    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, color: 'hsl(var(--muted-foreground))', marginBottom: 8, marginTop: 8 }}>
       {children}
     </p>
   );
@@ -46,19 +46,19 @@ function SettingsRow({ icon: Icon, title, subtitle, control, last, onClick, dang
       onClick={onClick}
       style={{
         display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px',
-        borderBottom: last ? 'none' : '1px solid #1f1f1f',
+        borderBottom: last ? 'none' : '1px solid hsl(var(--border))',
         cursor: onClick ? 'pointer' : 'default',
       }}
       className={onClick ? 'hover:bg-white/[0.02] transition-colors' : ''}
     >
       {Icon && (
         <div style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <Icon size={16} color={danger ? '#c1121f' : '#7a7a7a'} />
+          <Icon size={16} color={danger ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))'} />
         </div>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: danger ? '#ef4444' : '#ffffff', lineHeight: 1.3 }}>{title}</p>
-        {subtitle && <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a', marginTop: 2 }}>{subtitle}</p>}
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, color: danger ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))', lineHeight: 1.3 }}>{title}</p>
+        {subtitle && <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>{subtitle}</p>}
       </div>
       <div style={{ flexShrink: 0 }}>
         {control}
@@ -72,7 +72,7 @@ function InlineSelect({ value, onChange, options }) {
     <select
       value={value}
       onChange={e => onChange(e.target.value)}
-      style={{ borderRadius: 8, background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
+      style={{ borderRadius: 8, background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))', padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13 }}
       onClick={e => e.stopPropagation()}
     >
       {options.map(o => <option key={o.value || o} value={o.value || o}>{o.label || o}</option>)}
@@ -81,7 +81,7 @@ function InlineSelect({ value, onChange, options }) {
 }
 
 function ComingSoon() {
-  return <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#7a7a7a', border: '1px solid #2a2a2a', borderRadius: 6, padding: '3px 8px' }}>COMING SOON</span>;
+  return <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', borderRadius: 6, padding: '3px 8px' }}>COMING SOON</span>;
 }
 
 function ActionBtn({ children, onClick, danger, done, small }) {
@@ -92,10 +92,10 @@ function ActionBtn({ children, onClick, danger, done, small }) {
         borderRadius: 8,
         padding: small ? '4px 10px' : '6px 14px',
         fontFamily: 'JetBrains Mono, monospace',
-        fontSize: 11,
-        border: done ? '1px solid rgba(171,255,79,0.4)' : danger ? '1px solid rgba(193,18,31,0.4)' : '1px solid #2a2a2a',
-        color: done ? '#abff4f' : danger ? '#ef4444' : '#aaa',
-        background: done ? 'rgba(171,255,79,0.08)' : danger ? 'rgba(193,18,31,0.08)' : 'transparent',
+        fontSize: 12,
+        border: done ? '1px solid hsl(var(--primary) / 0.4)' : danger ? '1px solid hsl(var(--destructive) / 0.4)' : '1px solid hsl(var(--border))',
+        color: done ? 'hsl(var(--primary))' : danger ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))',
+        background: done ? 'hsl(var(--primary) / 0.08)' : danger ? 'hsl(var(--destructive) / 0.08)' : 'transparent',
         cursor: 'pointer',
         whiteSpace: 'nowrap',
       }}
@@ -107,7 +107,7 @@ function ActionBtn({ children, onClick, danger, done, small }) {
 
 function Toggle({ value, onChange, options }) {
   return (
-    <div style={{ display: 'flex', background: '#1a1a1a', borderRadius: 8, border: '1px solid #2a2a2a', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', background: 'hsl(var(--muted))', borderRadius: 8, border: '1px solid hsl(var(--border))', overflow: 'hidden' }}>
       {options.map(opt => (
         <button
           key={opt}
@@ -115,9 +115,9 @@ function Toggle({ value, onChange, options }) {
           style={{
             padding: '5px 12px',
             fontFamily: 'JetBrains Mono, monospace',
-            fontSize: 11,
-            background: value === opt ? '#abff4f' : 'transparent',
-            color: value === opt ? '#0a0a0a' : '#7a7a7a',
+            fontSize: 12,
+            background: value === opt ? 'hsl(var(--primary))' : 'transparent',
+            color: value === opt ? 'hsl(var(--primary-foreground))' : 'hsl(var(--muted-foreground))',
             border: 'none',
             cursor: 'pointer',
             transition: 'all 0.15s',
@@ -209,9 +209,9 @@ export default function Settings() {
   return (
     <div className="max-w-2xl mx-auto pb-32">
       <div className="flex items-center justify-between mb-5">
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: 2, color: '#7a7a7a' }}>SETTINGS</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, textTransform: 'uppercase', letterSpacing: 2, color: 'hsl(var(--muted-foreground))' }}>SETTINGS</p>
         {hasUnsaved && (
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#ffee32', border: '1px solid rgba(255,238,50,0.3)', borderRadius: 6, padding: '3px 8px' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--secondary))', border: '1px solid hsl(var(--secondary) / 0.3)', borderRadius: 6, padding: '3px 8px' }}>
             Unsaved changes
           </span>
         )}
@@ -308,7 +308,7 @@ export default function Settings() {
               value={prefs.bedtime || '01:00'}
               onChange={e => savePref('bedtime', e.target.value)}
               onClick={e => e.stopPropagation()}
-              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, color: '#fff', padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
+              style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: 8, color: 'hsl(var(--foreground))', padding: '5px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13 }}
             />
           }
         />
@@ -352,16 +352,16 @@ export default function Settings() {
       {/* PREMIUM */}
       <SectionLabel>PREMIUM</SectionLabel>
       <SectionCard>
-        <div style={{ padding: '16px 18px', borderBottom: '1px solid #1f1f1f', display: 'flex', alignItems: 'center', gap: 14, background: isPremium ? 'linear-gradient(135deg, rgba(255,238,50,0.05) 0%, rgba(255,109,0,0.05) 100%)' : 'transparent' }}>
+        <div style={{ padding: '16px 18px', borderBottom: '1px solid hsl(var(--border))', display: 'flex', alignItems: 'center', gap: 14, background: isPremium ? 'linear-gradient(135deg, hsl(var(--secondary) / 0.05) 0%, hsl(var(--destructive) / 0.05) 100%)' : 'transparent' }}>
           <div style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Zap size={16} color={isPremium ? '#ffee32' : '#7a7a7a'} fill={isPremium ? '#ffee32' : 'none'} />
+            <Zap size={16} color={isPremium ? 'hsl(var(--secondary))' : 'hsl(var(--muted-foreground))'} fill={isPremium ? 'hsl(var(--secondary))' : 'none'} />
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: '#fff' }}>Current Plan</p>
-              {isPremium ? <PremiumBadge /> : <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', border: '1px solid #2a2a2a', borderRadius: 6, padding: '2px 8px' }}>FREE</span>}
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, color: 'hsl(var(--foreground))' }}>Current Plan</p>
+              {isPremium ? <PremiumBadge /> : <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', borderRadius: 6, padding: '2px 8px' }}>FREE</span>}
             </div>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a', marginTop: 2 }}>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>
               {isPremium
                 ? subscription?.status === 'trial'
                   ? `Trial ends ${subscription?.end_date ? new Date(subscription.end_date).toLocaleDateString() : 'soon'}`
@@ -371,7 +371,7 @@ export default function Settings() {
           </div>
           {!isPremium && (
             <button onClick={() => setShowPaywall(true)}
-              style={{ padding: '7px 14px', borderRadius: 8, background: 'linear-gradient(135deg, #ffee32 0%, #ff6d00 100%)', color: '#0a0a0a', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              style={{ padding: '7px 14px', borderRadius: 8, background: 'linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--chart-3)) 100%)', color: 'hsl(var(--secondary-foreground))', fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
               Upgrade ⚡
             </button>
           )}
@@ -420,7 +420,7 @@ export default function Settings() {
         <div style={{ padding: '14px 18px' }}>
           <button
             onClick={handleLogout}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px 16px', borderRadius: 8, background: 'rgba(193,18,31,0.1)', border: '1px solid rgba(193,18,31,0.3)', color: '#ef4444', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, cursor: 'pointer' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px 16px', borderRadius: 8, background: 'hsl(var(--destructive) / 0.1)', border: '1px solid hsl(var(--destructive) / 0.3)', color: 'hsl(var(--destructive))', fontFamily: 'JetBrains Mono, monospace', fontSize: 14, cursor: 'pointer' }}
           >
             <LogOut size={15} />
             Logout
@@ -453,9 +453,9 @@ export default function Settings() {
           <button
             onClick={handleSaveAll}
             style={{
-              background: '#abff4f', color: '#0a0a0a', fontFamily: 'JetBrains Mono, monospace',
-              fontSize: 13, fontWeight: 700, padding: '12px 32px', borderRadius: 12,
-              border: 'none', cursor: 'pointer', boxShadow: '0 0 24px rgba(171,255,79,0.4)',
+              background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 14, fontWeight: 700, padding: '12px 32px', borderRadius: 12,
+              border: 'none', cursor: 'pointer', boxShadow: '0 0 24px hsl(var(--primary) / 0.4)',
             }}
           >
             Save Changes

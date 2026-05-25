@@ -55,35 +55,35 @@ const DEFAULT_RESOURCES = RESOURCES['US'];
 export default function CrisisResources({ country }) {
   const resources = RESOURCES[country] || DEFAULT_RESOURCES;
   return (
-    <div style={{ background: '#141414', border: '1px solid #1f1f1f', borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+    <div className="bg-card border border-border" style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
       {resources.map((r, i) => (
         <div
           key={r.label}
           style={{
             display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px',
-            borderBottom: i < resources.length - 1 ? '1px solid #1f1f1f' : 'none',
+            borderBottom: i < resources.length - 1 ? '1px solid hsl(var(--border))' : 'none',
           }}
         >
-          <Phone size={16} color="#7a7a7a" style={{ flexShrink: 0 }} />
+          <Phone size={17} color="hsl(var(--muted-foreground))" style={{ flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 15, color: '#fff' }}>{r.label}</p>
-            <p style={{ fontSize: 13, color: '#7a7a7a', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{r.number}</p>
+            <p style={{ fontSize: 16, color: 'hsl(var(--foreground))' }}>{r.label}</p>
+            <p style={{ fontSize: 14, color: 'hsl(var(--muted-foreground))', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{r.number}</p>
           </div>
           <a
             href={`tel:${r.number.replace(/[^0-9+]/g, '')}`}
             style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
-              color: '#abff4f', border: '1px solid rgba(171,255,79,0.3)',
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 12,
+              color: 'hsl(var(--primary))', border: '1px solid hsl(var(--primary) / 0.3)',
               borderRadius: 8, padding: '4px 12px', textDecoration: 'none',
-              background: 'rgba(171,255,79,0.06)',
+              background: 'hsl(var(--primary) / 0.06)',
             }}
           >
             Call
           </a>
         </div>
       ))}
-      <div style={{ padding: '12px 18px', borderTop: '1px solid #1f1f1f' }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#555', lineHeight: 1.5 }}>
+      <div style={{ padding: '12px 18px', borderTop: '1px solid hsl(var(--border))' }}>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'hsl(var(--muted-foreground))', lineHeight: 1.5 }}>
           These are public resources for your country. JAR is not a medical service.
         </p>
       </div>
