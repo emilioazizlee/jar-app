@@ -34,7 +34,7 @@ function SectionLabel({ children }) {
 
 function SectionCard({ children }) {
   return (
-<div className="bg-card border-border" style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+<div className="bg-card border border-border" style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
       {children}
     </div>
   );
@@ -257,8 +257,8 @@ export default function Settings() {
         />
 
         {/* Color Theme — palette rectangles */}
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid #1f1f1f' }}>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: '#fff', marginBottom: 10 }}>Color Theme</p>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, color: 'hsl(var(--foreground))', marginBottom: 10 }}>Color Theme</p>
           <div style={{ display: 'flex', gap: 10 }}>
             {THEME_PALETTES.map(t => {
               const active = (prefs.colorTheme || 'Default') === t.key;
@@ -268,8 +268,8 @@ export default function Settings() {
                   onClick={e => { e.stopPropagation(); savePref('colorTheme', t.key); }}
                   style={{
                     flex: 1, borderRadius: 10, overflow: 'hidden', cursor: 'pointer',
-                    border: active ? '2px solid #fff' : '2px solid transparent',
-                    boxShadow: active ? '0 0 0 1px rgba(255,255,255,0.3)' : 'none',
+                    border: active ? '2px solid hsl(var(--foreground))' : '2px solid transparent',
+                    boxShadow: active ? '0 0 0 1px hsl(var(--foreground) / 0.3)' : 'none',
                     transition: 'all 0.15s',
                     padding: 0, background: 'none',
                   }}
@@ -278,7 +278,7 @@ export default function Settings() {
                     {t.colors.map((c, i) => <div key={i} style={{ flex: 1, background: c }} />)}
                   </div>
                   <div style={{ background: t.colors[0], padding: '5px 8px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: t.textColor, textAlign: 'center', margin: 0 }}>{t.label}</p>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: t.textColor, textAlign: 'center', margin: 0 }}>{t.label}</p>
                   </div>
                 </button>
               );
@@ -435,12 +435,12 @@ export default function Settings() {
       {/* ABOUT */}
       <SectionLabel>ABOUT</SectionLabel>
       <SectionCard>
-        <SettingsRow icon={Info} title="App" subtitle="JAR — Fill your life." control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>v1.0.0</span>} />
-        <SettingsRow icon={Info} title="Build Date" control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#7a7a7a' }}>2026-05-06</span>} />
+        <SettingsRow icon={Info} title="App" subtitle="JAR — Fill your life." control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>v1.0.0</span>} />
+        <SettingsRow icon={Info} title="Build Date" control={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--muted-foreground))' }}>2026-05-06</span>} />
         <SettingsRow icon={Info} title="Credits" subtitle="Built with Base44 · Nivo · Framer Motion · PapaParse" control={null} />
-        <SettingsRow icon={Mail} title="Send Feedback" control={<a href="mailto:feedback@jar.app" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#abff4f' }}>feedback@jar.app</a>} />
-        <SettingsRow icon={ScrollText} title="Privacy Policy" onClick={() => window.location.href = '/privacy'} control={<ChevronRight size={16} color="#555" />} />
-        <SettingsRow icon={ScrollText} title="Terms of Service" onClick={() => window.location.href = '/terms'} control={<ChevronRight size={16} color="#555" />} last />
+        <SettingsRow icon={Mail} title="Send Feedback" control={<a href="mailto:feedback@jar.app" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'hsl(var(--primary))' }}>feedback@jar.app</a>} />
+        <SettingsRow icon={ScrollText} title="Privacy Policy" onClick={() => window.location.href = '/privacy'} control={<ChevronRight size={16} color="hsl(var(--muted-foreground))" />} />
+        <SettingsRow icon={ScrollText} title="Terms of Service" onClick={() => window.location.href = '/terms'} control={<ChevronRight size={16} color="hsl(var(--muted-foreground))" />} last />
       </SectionCard>
 
       {/* Modals */}
