@@ -62,18 +62,26 @@ export function SettingsProvider({ children }) {
     } else {
       root.style.setProperty('--radius', '0.75rem');
     }
-    // Theme (dark/light)
-    const allThemeClasses = ['dark', 'light', 'grayscale', 'fire'];
+    // Color theme classes
+    const allThemeClasses = ['dark', 'light', 'ocean', 'sand', 'grayscale', 'fire'];
     allThemeClasses.forEach(c => root.classList.remove(c));
 
-    if (prefs.colorTheme && prefs.colorTheme !== 'Default') {
-      root.classList.add(prefs.colorTheme.toLowerCase());
-    } else if (prefs.theme === 'Light') {
-      root.classList.add('light');
+    const ct = prefs.colorTheme || 'Default';
+    if (ct === 'Ocean') {
+      root.classList.add('ocean');
+    } else if (ct === 'Sand') {
+      root.classList.add('sand');
     } else {
-      root.classList.add('dark');
+      // Default: respect dark/light pref
+      root.classList.add(prefs.theme === 'Light' ? 'light' : 'dark');
     }
-  }, [prefs.density, prefs.radius, prefs.theme, prefs.colorTheme]);
+
+    // One-handed mode
+    const body = document.body;
+    body.removeAttribute('data-onehand');
+    if (prefs.oneHand === 'Left') body.setAttribute('data-onehand', 'left');
+    else if (prefs.oneHand === 'Right') body.setAttribute('data-onehand', 'right');
+  }, [prefs.density, prefs.radius, prefs.theme, prefs.colorTheme, prefs.oneHand]);
 
   // On mount, load from storage
   useEffect(() => {

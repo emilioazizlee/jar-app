@@ -230,7 +230,7 @@ const handleExportCSV = async () => {
 
       </div>
 
-      <ProfileHeader user={user} items={allItems} />
+      <ProfileHeader user={user} items={allItems} onUserUpdated={() => base44.auth.me().then(u => { if (u) setUser(u); })} />
 
       {/* ACCOUNT */}
       <SectionLabel>ACCOUNT</SectionLabel>
@@ -265,17 +265,18 @@ const handleExportCSV = async () => {
         />
         <SettingsRow
           icon={Moon} title="Theme"
+          subtitle={prefs.colorTheme && prefs.colorTheme !== 'Default' ? 'Override by color theme' : undefined}
           control={<Toggle value={prefs.theme || 'Dark'} onChange={v => savePref('theme', v)} options={['Dark','Light']} />}
         />
         <SettingsRow
           icon={Sun} title="Color Theme"
-          subtitle="Pick a visual color scheme"
+          subtitle="Pick a visual scheme (overrides dark/light)"
           control={
             <div style={{ display: 'flex', gap: 8 }}>
               {[
                 { key: 'Default', color: '#abff4f', label: 'Default' },
-                { key: 'Grayscale', color: '#dedede', label: 'Gray' },
-                { key: 'Fire', color: '#ff6d00', label: 'Fire' },
+                { key: 'Ocean', color: '#006466', label: 'Ocean' },
+                { key: 'Sand', color: '#cb997e', label: 'Sand' },
               ].map(t => (
                 <button
                   key={t.key}

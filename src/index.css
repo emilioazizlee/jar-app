@@ -109,58 +109,76 @@
     --sidebar-ring: 88 100% 65%;
   }
 
-  /* Theme 1: Grayscale */
-  .grayscale {
-    --background: 0 0% 13%;
-    --foreground: 0 0% 97%;
-    --card: 0 0% 21%;
-    --card-foreground: 0 0% 97%;
-    --popover: 0 0% 21%;
-    --popover-foreground: 0 0% 97%;
-    --primary: 0 0% 87%;
-    --primary-foreground: 0 0% 13%;
-    --secondary: 0 0% 68%;
-    --secondary-foreground: 0 0% 13%;
-    --muted: 0 0% 29%;
-    --muted-foreground: 0 0% 80%;
-    --accent: 0 0% 42%;
-    --accent-foreground: 0 0% 97%;
-    --destructive: 0 0% 50%;
-    --destructive-foreground: 0 0% 97%;
-    --border: 0 0% 42%;
-    --input: 0 0% 42%;
-    --ring: 0 0% 68%;
-    --sidebar-background: 0 0% 13%;
-    --sidebar-foreground: 0 0% 97%;
-    --sidebar-primary: 0 0% 87%;
-    --sidebar-primary-foreground: 0 0% 13%;
+  /* Theme: Ocean (Stormy Teal palette — dark) */
+  .ocean {
+    --background: 187 78% 4%;
+    --foreground: 0 0% 95%;
+    --card: 187 60% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 187 60% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 181 100% 32%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 201 47% 45%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 187 40% 12%;
+    --muted-foreground: 187 20% 55%;
+    --accent: 187 40% 14%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 355 83% 37%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 187 40% 16%;
+    --input: 187 40% 16%;
+    --ring: 181 100% 32%;
+    --chart-1: 181 100% 32%;
+    --chart-2: 201 47% 45%;
+    --chart-3: 355 83% 37%;
+    --chart-4: 242 25% 40%;
+    --chart-5: 266 33% 40%;
+    --sidebar-background: 187 78% 3%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 181 100% 32%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 187 40% 10%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 187 40% 14%;
+    --sidebar-ring: 181 100% 32%;
   }
 
-  /* Theme 2: Fire (Red/Orange/Yellow) */
-  .fire {
-    --background: 237 75% 6%;
-    --foreground: 0 0% 100%;
-    --card: 354 89% 12%;
-    --card-foreground: 0 0% 100%;
-    --popover: 354 89% 12%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 18 100% 50%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 39 100% 52%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 0 100% 41%;
-    --muted-foreground: 0 0% 90%;
-    --accent: 16 100% 50%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 100% 41%;
+  /* Theme: Sand (Light Bronze palette — light) */
+  .sand {
+    --background: 26 100% 94%;
+    --foreground: 75 10% 18%;
+    --card: 24 43% 88%;
+    --card-foreground: 75 10% 18%;
+    --popover: 24 43% 88%;
+    --popover-foreground: 75 10% 18%;
+    --primary: 21 43% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 12% 52%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 24 30% 82%;
+    --muted-foreground: 75 10% 40%;
+    --accent: 24 30% 82%;
+    --accent-foreground: 75 10% 18%;
+    --destructive: 355 83% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 354 89% 20%;
-    --input: 354 89% 20%;
-    --ring: 18 100% 50%;
-    --sidebar-background: 237 75% 6%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 18 100% 50%;
-    --sidebar-primary-foreground: 0 0% 0%;
+    --border: 60 12% 74%;
+    --input: 60 12% 74%;
+    --ring: 21 43% 50%;
+    --chart-1: 21 43% 50%;
+    --chart-2: 60 12% 52%;
+    --chart-3: 355 83% 45%;
+    --chart-4: 75 10% 40%;
+    --chart-5: 24 43% 65%;
+    --sidebar-background: 26 100% 90%;
+    --sidebar-foreground: 75 10% 18%;
+    --sidebar-primary: 21 43% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 24 30% 84%;
+    --sidebar-accent-foreground: 75 10% 18%;
+    --sidebar-border: 60 12% 74%;
+    --sidebar-ring: 21 43% 50%;
   }
 }
 
