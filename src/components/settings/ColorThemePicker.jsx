@@ -3,38 +3,38 @@ import { useEffect } from 'react';
 
 export function ColorThemePicker({ value, onChange, className = '' }) {
   const themeOptions = [
-    { id: 'default', label: 'Default', description: 'Dark neutral theme' },
-    { id: 'brown', label: 'Brown', description: 'Warm browns and beige' },
-    { id: 'grape', label: 'Grape', description: 'Purple and lilac tones' },
-    { id: 'tropic', label: 'Tropic', description: 'Vibrant reds and purples' },
+    { id: 'Default', label: 'Default', description: 'Dark neutral theme' },
+    { id: 'Brown', label: 'Brown', description: 'Warm browns and beige' },
+    { id: 'Grape', label: 'Grape', description: 'Purple and lilac tones' },
+    { id: 'Tropic', label: 'Tropic', description: 'Vibrant reds and purples' },
   ];
 
   const applyTheme = (themeId) => {
     console.log('🎨 Applying theme:', themeId);
     
-    const allThemes = ['default', 'brown', 'grape', 'tropic'];
+    const allThemes = ['Default', 'Brown', 'Grape', 'Tropic'];
     allThemes.forEach(t => {
       document.documentElement.classList.remove(t);
       console.log('❌ Removed:', t);
     });
     
-    if (themeId && themeId !== 'default') {
+    if (themeId && themeId !== 'Default') {
       document.documentElement.classList.add(themeId);
       console.log('✅ Added:', themeId);
     } else {
-      console.log('✅ Using default theme');
+      console.log('✅ Using Default theme');
     }
     
     console.log('📌 HTML classes now:', document.documentElement.className);
     
-    localStorage.setItem('jar-theme', themeId || 'default');
+    localStorage.setItem('jar-theme', themeId || 'Default');
     console.log('💾 Saved to localStorage:', themeId);
     
     onChange?.(themeId);
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('jar-theme') || 'default';
+    const savedTheme = localStorage.getItem('jar-theme') || 'Default';
     console.log('🔄 Component mounted, saved theme:', savedTheme);
     applyTheme(savedTheme);
   }, []);
