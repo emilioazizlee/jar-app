@@ -12,29 +12,40 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
     { id: 'tropic', label: 'Tropic', description: 'Vibrant reds and purples' },
   ];
 
-  // LINE 19: Apply theme to HTML element
   const applyTheme = (themeId) => {
-    // Remove all theme classes
-    document.documentElement.classList.remove(
-      'default', 'light', 'ocean', 'sand', 'brown', 'grape', 'tropic'
-    );
+    console.log('🎨 Applying theme:', themeId); // DEBUG LOG
     
-    // Add the new theme class
+    // Remove ALL theme classes from html
+    const allThemes = ['default', 'light', 'ocean', 'sand', 'brown', 'grape', 'tropic'];
+    allThemes.forEach(t => {
+      document.documentElement.classList.remove(t);
+      console.log('❌ Removed:', t); // DEBUG
+    });
+    
+    // Add new theme (EXCEPT default - it's the :root fallback)
     if (themeId && themeId !== 'default') {
       document.documentElement.classList.add(themeId);
+      console.log('✅ Added:', themeId); // DEBUG
+    } else {
+      console.log('✅ Using default theme'); // DEBUG
     }
+    
+    // Verify what classes are now on html
+    console.log('📌 HTML classes now:', document.documentElement.className); // DEBUG
     
     // Save to localStorage
     localStorage.setItem('jar-theme', themeId || 'default');
+    console.log('💾 Saved to localStorage:', themeId); // DEBUG
+    
+    // Call callback
     onChange?.(themeId);
   };
 
-  // LINE 35: Load saved theme on mount
+  // Load saved theme on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('jar-theme') || 'default';
-    if (value !== savedTheme) {
-      applyTheme(value || savedTheme);
-    }
+    console.log('🔄 Component mounted, saved theme:', savedTheme); // DEBUG
+    applyTheme(savedTheme);
   }, []);
 
   return (
@@ -43,7 +54,10 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
         {themeOptions.map((theme) => (
           <button
             key={theme.id}
-            onClick={() => applyTheme(theme.id)}
+            onClick={() => {
+              console.log('🖱️ Clicked theme:', theme.id); // DEBUG
+              applyTheme(theme.id);
+            }}
             className={`
               p-3 rounded-lg border-2 transition-all duration-200
               text-left group cursor-pointer
