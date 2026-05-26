@@ -3,19 +3,20 @@ import { useEffect } from 'react';
 
 export function ColorThemePicker({ value, onChange, className = '' }) {
   const themeOptions = [
-    { id: 'default', label: 'Default', description: 'Light neutral theme' },
+    { id: 'default', label: 'Default', description: 'Dark neutral theme' },
+    { id: 'light', label: 'Light', description: 'Bright white theme' },
     { id: 'ocean', label: 'Ocean', description: 'Cool blue and teal tones' },
     { id: 'sand', label: 'Sand', description: 'Warm earth tones' },
-    { id: 'brown-yellow', label: 'Brown/Yellow', description: 'Warm browns and golds' },
-    { id: 'blue-purple', label: 'Blue/Purple', description: 'Cool purples and blues' },
-    { id: 'red-purple', label: 'Red/Purple', description: 'Vibrant reds and purples' },
+    { id: 'brown', label: 'Brown', description: 'Warm browns and beige' },
+    { id: 'grape', label: 'Grape', description: 'Purple and lilac tones' },
+    { id: 'tropic', label: 'Tropic', description: 'Vibrant reds and purples' },
   ];
 
-  // LINE 19: Apply theme to HTML element when theme changes
+  // LINE 19: Apply theme to HTML element
   const applyTheme = (themeId) => {
-    // Remove all theme classes from <html>
+    // Remove all theme classes
     document.documentElement.classList.remove(
-      'default', 'ocean', 'sand', 'brown-yellow', 'blue-purple', 'red-purple'
+      'default', 'light', 'ocean', 'sand', 'brown', 'grape', 'tropic'
     );
     
     // Add the new theme class
@@ -23,14 +24,12 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
       document.documentElement.classList.add(themeId);
     }
     
-    // Save to localStorage for persistence
+    // Save to localStorage
     localStorage.setItem('jar-theme', themeId || 'default');
-    
-    // Call the onChange callback
     onChange?.(themeId);
   };
 
-  // LINE 35: When component mounts, load saved theme
+  // LINE 35: Load saved theme on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('jar-theme') || 'default';
     if (value !== savedTheme) {
@@ -40,7 +39,7 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
         {themeOptions.map((theme) => (
           <button
             key={theme.id}
@@ -50,7 +49,7 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
               text-left group cursor-pointer
               ${
                 value === theme.id
-                  ? 'border-primary bg-primary bg-opacity-5'
+                  ? 'border-primary bg-primary bg-opacity-10'
                   : 'border-sidebar-border hover:border-sidebar-border-hover'
               }
             `}
@@ -60,7 +59,7 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
               <div className="w-4 h-4 rounded-full bg-blue-500" />
               <div className="w-4 h-4 rounded-full bg-yellow-500" />
             </div>
-            <p className="text-sm font-medium text-foreground group-hover:text-foreground">
+            <p className="text-sm font-medium text-foreground">
               {theme.label}
             </p>
             <p className="text-xs text-muted-foreground mt-1">{theme.description}</p>
