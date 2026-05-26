@@ -4,58 +4,49 @@ import { useEffect } from 'react';
 export function ColorThemePicker({ value, onChange, className = '' }) {
   const themeOptions = [
     { id: 'default', label: 'Default', description: 'Dark neutral theme' },
-    { id: 'light', label: 'Light', description: 'Bright white theme' },
-    { id: 'ocean', label: 'Ocean', description: 'Cool blue and teal tones' },
-    { id: 'sand', label: 'Sand', description: 'Warm earth tones' },
     { id: 'brown', label: 'Brown', description: 'Warm browns and beige' },
     { id: 'grape', label: 'Grape', description: 'Purple and lilac tones' },
     { id: 'tropic', label: 'Tropic', description: 'Vibrant reds and purples' },
   ];
 
   const applyTheme = (themeId) => {
-    console.log('🎨 Applying theme:', themeId); // DEBUG LOG
+    console.log('🎨 Applying theme:', themeId);
     
-    // Remove ALL theme classes from html
-    const allThemes = ['default', 'light', 'ocean', 'sand', 'brown', 'grape', 'tropic'];
+    const allThemes = ['default', 'brown', 'grape', 'tropic'];
     allThemes.forEach(t => {
       document.documentElement.classList.remove(t);
-      console.log('❌ Removed:', t); // DEBUG
+      console.log('❌ Removed:', t);
     });
     
-    // Add new theme (EXCEPT default - it's the :root fallback)
     if (themeId && themeId !== 'default') {
       document.documentElement.classList.add(themeId);
-      console.log('✅ Added:', themeId); // DEBUG
+      console.log('✅ Added:', themeId);
     } else {
-      console.log('✅ Using default theme'); // DEBUG
+      console.log('✅ Using default theme');
     }
     
-    // Verify what classes are now on html
-    console.log('📌 HTML classes now:', document.documentElement.className); // DEBUG
+    console.log('📌 HTML classes now:', document.documentElement.className);
     
-    // Save to localStorage
     localStorage.setItem('jar-theme', themeId || 'default');
-    console.log('💾 Saved to localStorage:', themeId); // DEBUG
+    console.log('💾 Saved to localStorage:', themeId);
     
-    // Call callback
     onChange?.(themeId);
   };
 
-  // Load saved theme on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('jar-theme') || 'default';
-    console.log('🔄 Component mounted, saved theme:', savedTheme); // DEBUG
+    console.log('🔄 Component mounted, saved theme:', savedTheme);
     applyTheme(savedTheme);
   }, []);
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         {themeOptions.map((theme) => (
           <button
             key={theme.id}
             onClick={() => {
-              console.log('🖱️ Clicked theme:', theme.id); // DEBUG
+              console.log('🖱️ Clicked theme:', theme.id);
               applyTheme(theme.id);
             }}
             className={`
