@@ -192,7 +192,7 @@ export default function Settings() {
 
         {/* Data & Privacy Section */}
         <section className="space-y-4">
-          <SettingsLabel>Data & Privacy</SettingsLabel>
+          <SettingsLabel>Data &amp; Privacy</SettingsLabel>
 
           <SettingsCard>
             {/* Templates Management */}
@@ -301,10 +301,10 @@ export default function Settings() {
 
         {/* Save Notice */}
         {hasUnsaved && (
-          <div className="fixed bottom-6 right-6 bg-primary text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="fixed bottom-6 right-6">
             <button
               onClick={saveAll}
-              className="font-medium hover:opacity-90 transition-opacity"
+              className="font-medium bg-primary text-primary-foreground px-6 py-2.5 rounded-full shadow-lg hover:opacity-90 transition-opacity"
             >
               Save Changes
             </button>

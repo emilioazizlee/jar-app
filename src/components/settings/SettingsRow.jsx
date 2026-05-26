@@ -26,11 +26,11 @@ export function SettingsRow({
         />
       )}
       <div className="flex-1">
-        <p className={`text-sm font-medium ${danger ? 'text-red-500' : 'text-foreground'}`}>
+        <p className={`text-base font-medium ${danger ? 'text-red-500' : 'text-foreground'}`}>
           {title}
         </p>
         {subtitle && (
-          <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+          <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>
         )}
       </div>
     </div>

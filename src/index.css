@@ -222,7 +222,7 @@
   html.brown {
     --background: 25 30% 15%;
     --foreground: 35 25% 75%;
-    --card: 30 35% 75%;                    /* BEIGE/CREAM boxes */
+    --card: 35 20% 28%;                    /* DARK WARM BROWN boxes */
     --card-foreground: 25 30% 25%;
     --popover: 30 35% 75%;
     --popover-foreground: 25 30% 25%;

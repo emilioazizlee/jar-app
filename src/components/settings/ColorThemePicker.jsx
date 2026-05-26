@@ -54,7 +54,7 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
               text-left group cursor-pointer
               ${
                 value === theme.id
-                  ? 'border-primary bg-primary bg-opacity-10'
+                  ? 'border-primary bg-primary/5'
                   : 'border-sidebar-border hover:border-sidebar-border-hover'
               }
             `}

@@ -30,7 +30,7 @@ export default function UniversalAddButton({ externalOpen, onExternalClose }) {
       {/* Mobile floating button — sits above bottom nav */}
       <motion.button
         onClick={() => setOpen(true)}
-        className="fixed left-1/2 -translate-x-1/2 z-40 w-14 h-14 flex items-center justify-center md:hidden hollow-plus-mobile"
+        className="fixed right-4 z-40 w-14 h-14 flex items-center justify-center md:hidden hollow-plus-mobile"
         style={{
           bottom: 'calc(env(safe-area-inset-bottom) + 56px + 4px)',
         }}
