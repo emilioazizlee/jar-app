@@ -63,17 +63,19 @@ export function SettingsProvider({ children }) {
       root.style.setProperty('--radius', '0.75rem');
     }
     // Color theme classes
-    const allThemeClasses = ['dark', 'light', 'ocean', 'sand', 'grayscale', 'fire'];
+    const allThemeClasses = ['dark', 'brown', 'grape', 'tropic'];
     allThemeClasses.forEach(c => root.classList.remove(c));
 
     const ct = prefs.colorTheme || 'Default';
-    if (ct === 'Ocean') {
-      root.classList.add('ocean');
-    } else if (ct === 'Sand') {
-      root.classList.add('sand');
+    if (ct === 'Brown') {
+      root.classList.add('brown');
+    } else if (ct === 'Grape') {
+      root.classList.add('grape');
+    } else if (ct === 'Tropic') {
+      root.classList.add('tropic');
     } else {
-      // Default: toggle between dark and light
-      root.classList.add(prefs.defaultLight ? 'light' : 'dark');
+      // Default theme
+      root.classList.add('dark');
     }
 
     // One-handed mode
