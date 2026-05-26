@@ -226,7 +226,104 @@
     --color-warning:  #f9c74f;
   }
 }
+/* ═══════════════════════════════════════════════════════════ */
+/* Theme: Brown/Yellow (Warm earthy palette) — LINE 233+ */
+/* ═══════════════════════════════════════════════════════════ */
+.brown-yellow {
+  --background: 25 30% 15%;
+  --foreground: 35 25% 75%;
+  --card: 25 28% 22%;
+  --card-foreground: 35 25% 75%;
+  --popover: 25 28% 22%;
+  --popover-foreground: 35 25% 75%;
+  --primary: 35 60% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 45 50% 55%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 25 25% 25%;
+  --muted-foreground: 35 20% 50%;
+  --accent: 25 25% 28%;
+  --accent-foreground: 35 25% 75%;
+  --destructive: 355 83% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 25 25% 20%;
+  --input: 25 25% 20%;
+  --ring: 35 60% 45%;
+  --sidebar-background: 25 30% 12%;
+  --sidebar-foreground: 35 25% 75%;
+  --sidebar-primary: 35 60% 45%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 25 25% 28%;
+  --sidebar-accent-foreground: 35 25% 75%;
+  --sidebar-border: 25 25% 20%;
+  --sidebar-ring: 35 60% 45%;
+}
 
+/* ═══════════════════════════════════════════════════════════ */
+/* Theme: Blue/Purple (Cool vibrant palette) — LINE 268+ */
+/* ═══════════════════════════════════════════════════════════ */
+.blue-purple {
+  --background: 255 35% 15%;
+  --foreground: 255 20% 85%;
+  --card: 255 30% 22%;
+  --card-foreground: 255 20% 85%;
+  --popover: 255 30% 22%;
+  --popover-foreground: 255 20% 85%;
+  --primary: 250 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 270 70% 60%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 255 30% 25%;
+  --muted-foreground: 255 20% 55%;
+  --accent: 255 30% 28%;
+  --accent-foreground: 255 20% 85%;
+  --destructive: 355 83% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 255 30% 25%;
+  --input: 255 30% 25%;
+  --ring: 250 100% 40%;
+  --sidebar-background: 255 35% 12%;
+  --sidebar-foreground: 255 20% 85%;
+  --sidebar-primary: 250 100% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 255 30% 28%;
+  --sidebar-accent-foreground: 255 20% 85%;
+  --sidebar-border: 255 30% 25%;
+  --sidebar-ring: 250 100% 40%;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* Theme: Red/Purple (Vibrant dramatic palette) — LINE 303+ */
+/* ═══════════════════════════════════════════════════════════ */
+.red-purple {
+  --background: 15 50% 20%;
+  --foreground: 15 20% 85%;
+  --card: 15 45% 28%;
+  --card-foreground: 15 20% 85%;
+  --popover: 15 45% 28%;
+  --popover-foreground: 15 20% 85%;
+  --primary: 0 80% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 280 60% 55%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 15 40% 28%;
+  --muted-foreground: 15 20% 55%;
+  --accent: 15 40% 32%;
+  --accent-foreground: 15 20% 85%;
+  --destructive: 355 83% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 15 40% 30%;
+  --input: 15 40% 30%;
+  --ring: 0 80% 50%;
+  --sidebar-background: 15 50% 17%;
+  --sidebar-foreground: 15 20% 85%;
+  --sidebar-primary: 0 80% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 15 40% 32%;
+  --sidebar-accent-foreground: 15 20% 85%;
+  --sidebar-border: 15 40% 30%;
+  --sidebar-ring: 0 80% 50%;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;
