@@ -226,6 +226,16 @@
     --color-warning:  #f9c74f;
   }
 }
+/* Load saved theme on page load */
+:root {
+  /* Default is set, no class needed */
+}
+
+html.ocean { /* All your ocean CSS vars */ }
+html.sand { /* All your sand CSS vars */ }
+html.brown-yellow { /* etc */ }
+html.blue-purple { /* etc */ }
+html.red-purple { /* etc */ }
 /* ═══════════════════════════════════════════════════════════ */
 /* Theme: Brown/Yellow (Warm earthy palette) — LINE 233+ */
 /* ═══════════════════════════════════════════════════════════ */
