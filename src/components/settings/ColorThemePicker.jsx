@@ -1,4 +1,6 @@
 // /src/components/settings/ColorThemePicker.jsx
+import { useEffect } from 'react';
+
 export function ColorThemePicker({ value, onChange, className = '' }) {
   const themeOptions = [
     { id: 'default', label: 'Default', description: 'Light neutral theme' },
@@ -9,13 +11,40 @@ export function ColorThemePicker({ value, onChange, className = '' }) {
     { id: 'red-purple', label: 'Red/Purple', description: 'Vibrant reds and purples' },
   ];
 
+  // LINE 19: Apply theme to HTML element when theme changes
+  const applyTheme = (themeId) => {
+    // Remove all theme classes from <html>
+    document.documentElement.classList.remove(
+      'default', 'ocean', 'sand', 'brown-yellow', 'blue-purple', 'red-purple'
+    );
+    
+    // Add the new theme class
+    if (themeId && themeId !== 'default') {
+      document.documentElement.classList.add(themeId);
+    }
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('jar-theme', themeId || 'default');
+    
+    // Call the onChange callback
+    onChange?.(themeId);
+  };
+
+  // LINE 35: When component mounts, load saved theme
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('jar-theme') || 'default';
+    if (value !== savedTheme) {
+      applyTheme(value || savedTheme);
+    }
+  }, []);
+
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         {themeOptions.map((theme) => (
           <button
             key={theme.id}
-            onClick={() => onChange?.(theme.id)}
+            onClick={() => applyTheme(theme.id)}
             className={`
               p-3 rounded-lg border-2 transition-all duration-200
               text-left group cursor-pointer
